@@ -1,0 +1,50 @@
+
+services:
+  # Backend (Laravel)
+  backend:
+    build:
+      context: ./backend
+    container_name: duan25_ut
+    restart: always
+    volumes:
+      - ./backend:/var/www/html
+    ports:
+      - "8000:80"
+    depends_on:
+      - mysql
+    environment:
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_DATABASE: duan25_mysql
+      DB_USERNAME: root
+      DB_PASSWORD: phamngoctam
+
+  # Database (MySQL)
+  mysql:
+    image: mysql:8.0
+    container_name: duan25_db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: phamngoctam
+      MYSQL_DATABASE: duan25_mysql
+    volumes:
+      - mysql_data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+
+  # PHPMyAdmin
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: phpmyadmin
+    restart: always
+    depends_on:
+      - mysql
+    environment:
+      PMA_HOST: mysql
+      PMA_USER: root
+      PMA_PASSWORD: phamngoctam
+    ports:
+      - "8080:80"
+
+volumes:
+  mysql_data:
