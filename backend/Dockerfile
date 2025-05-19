@@ -20,18 +20,25 @@ WORKDIR /var/www/html
 
 # 4. Copy source code (loại trừ thư mục không cần thiết)
 COPY . .
+# Cấu hình Apache
+COPY docker/000-default.conf /etc/apache2/sites-available/000-default.conf
 
 # 5. Cài đặt dependencies Laravel
 RUN composer install --no-interaction --optimize-autoloader --no-dev
 
-# 6. Tạo và cấp quyền cho thư mục storage
-RUN mkdir -p storage/framework/{cache,sessions,views} storage/logs bootstrap/cache \
-    && chown -R www-data:www-data storage bootstrap/cache \
-    && chmod -R 775 storage bootstrap/cache
 
-# 7. Cấu hình Apache
-COPY docker/000-default.conf /etc/apache2/sites-available/000-default.conf
+# Thiết lập quyền
+# RUN chown -R www-data:www-data /var/www/html \
+#     && chmod -R 775 /var/www/html/storage \
+#     && chmod -R 775 /var/www/html/bootstrap/cache
 
+    # RUN mkdir -p /var/www/html/storage \
+    # && mkdir -p /var/www/html/bootstrap/cache \
+    # && chown -R www-data:www-data /var/www/html \
+    # && chmod -R 775 /var/www/html/storage \
+    # && chmod -R 775 /var/www/html/bootstrap/cache
+
+    
 # 8. Port và CMD
 EXPOSE 80
 CMD ["apache2-foreground"]
