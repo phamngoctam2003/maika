@@ -28,15 +28,15 @@ RUN composer install --no-interaction --optimize-autoloader --no-dev
 
 
 # Thiết lập quyền
-# RUN chown -R www-data:www-data /var/www/html \
-#     && chmod -R 775 /var/www/html/storage \
-#     && chmod -R 775 /var/www/html/bootstrap/cache
+RUN chown -R www-data:www-data /var/www/html \
+    && chmod -R 775 /var/www/html/storage \
+    && chmod -R 775 /var/www/html/bootstrap/cache
 
-    # RUN mkdir -p /var/www/html/storage \
-    # && mkdir -p /var/www/html/bootstrap/cache \
-    # && chown -R www-data:www-data /var/www/html \
-    # && chmod -R 775 /var/www/html/storage \
-    # && chmod -R 775 /var/www/html/bootstrap/cache
+    RUN mkdir -p /var/www/html/storage \
+    && mkdir -p /var/www/html/bootstrap/cache \
+    && chown -R www-data:www-data /var/www/html \
+    && chmod -R 775 /var/www/html/storage \
+    && chmod -R 775 /var/www/html/bootstrap/cache
 
     
 # 8. Port và CMD
