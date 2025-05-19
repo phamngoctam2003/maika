@@ -1,6 +1,6 @@
 FROM php:8.2-apache
 
-# Cài đặt dependencies
+# 1. Cài đặt dependencies và extensions PHP
 RUN apt-get update && apt-get install -y \
     git \
     curl \
@@ -9,26 +9,29 @@ RUN apt-get update && apt-get install -y \
     libxml2-dev \
     zip \
     unzip \
-    && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
+    && docker-php-ext-install pdo pdo_mysql mbstring exif pcntl bcmath gd \
+    && a2enmod rewrite
 
-# Cài đặt Composer
+# 2. Cài đặt Composer (sửa lại cách copy)
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Copy code Laravel
+# 3. Thiết lập thư mục làm việc
 WORKDIR /var/www/html
+
+# 4. Copy source code (loại trừ thư mục không cần thiết)
 COPY . .
 
-# Cài đặt dependencies
-RUN composer install
+# 5. Cài đặt dependencies Laravel
+RUN composer install --no-interaction --optimize-autoloader --no-dev
 
-# Tạo thư mục cần thiết nếu chưa có
-RUN mkdir -p /var/www/storage /var/www/bootstrap/cache
+# 6. Tạo và cấp quyền cho thư mục storage
+RUN mkdir -p storage/framework/{cache,sessions,views} storage/logs bootstrap/cache \
+    && chown -R www-data:www-data storage bootstrap/cache \
+    && chmod -R 775 storage bootstrap/cache
 
-# Cấp quyền cho thư mục storage và bootstrap/cache
-RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
+# 7. Cấu hình Apache
+COPY docker/000-default.conf /etc/apache2/sites-available/000-default.conf
 
-# Cấp quyền
-RUN chown -R www-data:www-data /var/www/storage
-
+# 8. Port và CMD
 EXPOSE 80
 CMD ["apache2-foreground"]
