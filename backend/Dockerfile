@@ -22,12 +22,12 @@ WORKDIR /var/www/html
 COPY . .
 
 # Tạo thư mục và set quyền trước khi cài đặt composer
-RUN mkdir -p storage/framework/cache storage/framework/sessions storage/framework/views storage/logs bootstrap/cache \
-    && chown -R www-data:www-data storage bootstrap/cache \
-    && chmod -R 775 storage bootstrap/cache
+# RUN mkdir -p storage/framework/cache storage/framework/sessions storage/framework/views storage/logs bootstrap/cache \
+#     && chown -R www-data:www-data storage bootstrap/cache \
+#     && chmod -R 775 storage bootstrap/cache
 
-# Cài đặt dependencies Laravel
-RUN composer install --no-interaction --optimize-autoloader --no-dev
+# # Cài đặt dependencies Laravel
+# RUN composer install --no-interaction --optimize-autoloader --no-dev
 
 # Copy cấu hình Apache
 COPY docker/000-default.conf /etc/apache2/sites-available/000-default.conf
