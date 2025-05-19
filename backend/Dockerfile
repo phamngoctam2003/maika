@@ -21,6 +21,7 @@ WORKDIR /var/www/html
 # Copy source code
 COPY . .
 
+RUN apt-get update && apt-get install -y php8.2-intl
 # Tạo thư mục và set quyền trước khi cài đặt composer
 # RUN mkdir -p storage/framework/cache storage/framework/sessions storage/framework/views storage/logs bootstrap/cache \
 #     && chown -R www-data:www-data storage bootstrap/cache \
