@@ -7,7 +7,7 @@ use App\Http\Controllers\RoleController;
 
 Route::get('test-api', function () {
     return response()->json([
-        'message' => 'Api đã hoạt động',
+        'message' => 'Api đã hoạt động!',
         'status' => 200,
     ]);
 });
