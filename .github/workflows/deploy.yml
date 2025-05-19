@@ -1,0 +1,22 @@
+name: Auto Deploy
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@master
+        with:
+          host: 36.50.54.224
+          username: root
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: 4444
+          script: |
+            cd /var/www/deploy-scripts
+            ./deploy.sh
