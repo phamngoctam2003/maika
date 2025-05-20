@@ -20,3 +20,4 @@ jobs:
           script: |
             cd /var/www/deploy-scripts
             ./deploy.sh
+          debug: true
