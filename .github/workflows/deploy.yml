@@ -1,23 +1,26 @@
-name: Auto Deploy
+name: Deploy to VPS
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
 
 jobs:
   deploy:
+    name: Deploy code to VPS
     runs-on: ubuntu-latest
+    
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v3
       
-      - name: Deploy via SSH
-        uses: appleboy/ssh-action@master
+      - name: Deploy over SSH
+        uses: appleboy/ssh-action@v1.0.0
         with:
-          host: 36.50.54.224
-          username: root
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          port: 22
+          port: ${{ secrets.VPS_PORT }}
           script: |
-            cd /var/www/deploy-scripts
-            ./deploy.sh
+            bash /var/www/deploy-scripts/deploy.sh
           debug: true
