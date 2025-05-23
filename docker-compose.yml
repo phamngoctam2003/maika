@@ -1,9 +1,9 @@
+
 services:
   # Backend (Laravel)
   backend:
     build:
-      context: .
-      dockerfile: backend/Dockerfile
+      context: ./backend
     container_name: duan25_ut
     restart: always
     volumes:
@@ -41,7 +41,7 @@ services:
       - mysql
     environment:
       PMA_HOST: mysql
-      PMA_USER: root
+      PMA_USER: root  
       PMA_PASSWORD: phamngoctam
     ports:
       - "8080:80"

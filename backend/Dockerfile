@@ -28,7 +28,8 @@ RUN mkdir -p storage/framework/cache storage/framework/sessions storage/framewor
 RUN composer install --no-interaction --optimize-autoloader --no-dev
 
 # Copy cấu hình Apache
-COPY docker/000-default.conf /etc/apache2/sites-available/000-default.conf
+COPY ./docker/000-default.conf /etc/apache2/sites-available/000-default.conf
+
 
 EXPOSE 80
 
