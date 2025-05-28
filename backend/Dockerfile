@@ -29,7 +29,8 @@ RUN composer install --no-interaction --optimize-autoloader --no-dev
 
 # Copy cấu hình Apache
 # COPY ./docker/000-default.conf /etc/apache2/sites-available/000-default.conf
-COPY ./docker/etc/apache2/sites-available/api.conf /etc/apache2/sites-available/000-default.conf
+COPY ./docker/etc/apache2/sites-available/000-default.conf /etc/apache2/sites-available/000-default.conf
+
 
 
 
