@@ -41,10 +41,9 @@ services:
       - mysql
     environment:
       PMA_HOST: mysql
-      PMA_USER: root  
-      PMA_PASSWORD: phamngoctam
+    # Chỉ cho phép truy cập từ máy localhost
     ports:
-      - "8080:80"
+      - "127.0.0.1:8080:80"  
 
 volumes:
   mysql_data:
