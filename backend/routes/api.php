@@ -7,7 +7,7 @@ use App\Http\Controllers\RoleController;
 
 Route::get('test-api', function () {
     return response()->json([
-        'message' => 'Api đã hoạt động rồi nhé!',
+        'message' => 'Api đã hoạt động rồi!',
         'data' => [
             'name' => 'Laravel API',
             'version' => '1.0.0',
