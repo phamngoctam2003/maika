@@ -16,17 +16,21 @@ Route::get('test-api', function () {
         'status' => 200,
     ]);
 });
+route::get('test', [CategoryController::class, 'test']);
+route::group((['prefix' => 'roles']), function () {
+    Route::resource('/', RoleController::class)->except(['create', 'show', 'destroy', 'update']);
+    Route::post('create', [RoleController::class, 'create']);
+    Route::get('permissions', [RoleController::class, 'showPermissions']);
+    Route::get('showrole/{id}', [RoleController::class, 'show']);
+    Route::post('update/{id}', [RoleController::class, 'update']);
+    Route::post('destroy', [RoleController::class, 'destroy']);
+});
 
-Route::resource('roles', RoleController::class)->except(['create', 'show', 'destroy', 'update']);
-Route::post('roles/create', [RoleController::class, 'create']);
-Route::get('roles/permissions', [RoleController::class, 'showPermissions']);
-Route::get('roles/showrole/{id}', [RoleController::class, 'show']);
-Route::post('roles/update/{id}', [RoleController::class, 'update']);
-Route::post('roles/destroy', [RoleController::class, 'destroy']);
 Route::group([
     'middleware' => ['api'],
     'prefix' => 'auth'
 ], function () {
+    Route::post('/login-google', [AuthController::class, 'loginGoogle']);
     Route::post('login', [AuthController::class, 'login']);
     Route::post('register', [AuthController::class, 'register']);
     Route::get('me', [AuthController::class, 'me']);

@@ -1,0 +1,47 @@
+import axios from "../config/axios-customize";
+
+const apiPost = async (url, data) => {
+  const response = await axios.post(url, data);
+  return response;
+};
+
+const apiGet = async (url) => {
+  const response = await axios.get(url);
+  return response;
+};
+
+const AuthService = {
+  register: async (data) => {
+    return apiPost("/auth/register", data);
+  },
+
+  login: async (email, password) => {
+    return apiPost("/auth/login", { email, password });
+  },
+
+  logout: async () => {
+    try {
+      const response = await apiPost("/auth/logout", {}, true);
+      localStorage.removeItem("token");
+      return response;
+    } catch (error) {
+      localStorage.removeItem("token");
+      throw error.response ? error.response : error;
+    }
+  },
+
+  getCurrentUser: async () => {
+    return apiGet("/auth/me");
+  },
+
+  isAuthenticated: () => {
+    const token = localStorage.getItem("token");
+    return token && token.trim() !== "";
+  },
+
+  Login_Google: async (accessToken) => {
+    return apiPost("/auth/login-google", { access_token: accessToken });
+  },
+};
+
+export { AuthService };

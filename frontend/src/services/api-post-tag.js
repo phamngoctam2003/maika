@@ -1,4 +1,4 @@
-import axios from "../utils/axios-customize";
+import axios from "../config/axios-customize";
 import Cookies from "js-cookie";
 const getHeaders = () => ({
     "Content-Type": "multipart/form-data",

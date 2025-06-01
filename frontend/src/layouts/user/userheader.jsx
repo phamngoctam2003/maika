@@ -1,11 +1,15 @@
 import { useState, useRef, useEffect } from 'react';
 import MobileDetect from 'mobile-detect';
 import { useNavigate, Link } from 'react-router-dom';
-import { callLogin, checkAuth, calllogout, callRegister } from '../../services/api';
 import { message, notification as Notification } from 'antd';
-// import { AuthService } from '../../services/authservice';
+import { AuthService } from '../../services/api-auth';
+import { useAuth } from '../../contexts/authcontext';
+import { Loading } from '../../components/loading/loading';
+import { LoginGoogle } from '../../components/loginGoogle/LoginGoogle';
 export const UserHeader = () => {
+    const URL_IMG = import.meta.env.VITE_URL_IMG;
     const navigate = useNavigate();
+    const [loading, setLoading] = useState(false);
     const [showSearchBar, setShowSearchBar] = useState(false);
     const [showMobileMenu, setShowMobileMenu] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
@@ -13,7 +17,6 @@ export const UserHeader = () => {
     const [token, setToken] = useState(localStorage.getItem('token'));
 
     const [loggedIn, setLoggedIn] = useState(null); // Thay đổi trạng thái đăng nhập
-    const [user, setUser] = useState(null); // Thay đổi thông tin người dùng
     const [isPopupActive, setIsPopupActive] = useState(false);
     const [isPopupLogin, setIsPopupLogin] = useState(true);
 
@@ -23,9 +26,11 @@ export const UserHeader = () => {
     const iconcloseRef = useRef(null);
     const btnCuasoRef = useRef(null);
 
+    const { isAuthenticated, currentUser, setCurrentUser, roles, permissions, setPermissions } = useAuth();
     const toggleMobileMenu = () => {
         setShowMobileMenu(prevState => !prevState);
     };
+
 
     const toggleSearchBar = () => {
         setShowSearchBar(prevState => !prevState);
@@ -40,11 +45,11 @@ export const UserHeader = () => {
                 localStorage.setItem('token', res.access_token);
                 setIsPopupActive(false);
                 setToken(res.access_token);
-                setUser(res.user);
-                if (res.user.role === 'admin' || res.user.role === 'editor' || res.user.role === 'moderator') {
+                setCurrentUser(res.user);
+                if (permissions.length > 0 && roles !== 'user') {
                     navigate('/admin');
                 }
-                message.success((isPopupLogin) ? 'Đăng nhập tài khoản thành công.' : 'Đăng ký, đăng nhập tài khoản thành công.');
+                setLoginGoogle(res);
                 return true;
             } else {
                 Notification.error({
@@ -61,10 +66,20 @@ export const UserHeader = () => {
         }
     };
 
+    const setLoginGoogle = (response) => {
+        // localStorage.setItem("token", response.token);
+        message.success("Đăng nhập thành công");
+        const user = response.user;
+        const permissions = response.permissions || [];
+        setCurrentUser(user);
+        setPermissions(permissions);
+        setIsPopupActive(false);
+        setToken(response.access_token);
+    }
     const handleLogin = async (formData) => {
         const email = formData.get('email');
         const password = formData.get('password');
-        return await callLogin(email, password);
+        return await AuthService.login(email, password);
     };
 
     const handleRegister = async (formData) => {
@@ -75,7 +90,7 @@ export const UserHeader = () => {
             password: formData.get('password'),
             password_confirmation: formData.get('password_confirmation'),
         }
-        return await callRegister(objectData);
+        return await AuthService.register(objectData);
     }
 
     const handleSignupClick = () => {
@@ -97,7 +112,6 @@ export const UserHeader = () => {
         setIsPopupActive(false);
         setIsPopupLogin(true);
     };
-    console.log(user);
     useEffect(() => {
         // Lấy thông tin userAgent
         const md = new MobileDetect(window.navigator.userAgent);
@@ -111,24 +125,17 @@ export const UserHeader = () => {
             console.log('Đây là thiết bị máy tính');
         }
     }, []);
-
     useEffect(() => {
         (async () => {
             try {
-                const response = await checkAuth();
-                const { user } = response;
-                if (user === null) {
+                if (!isAuthenticated) {
                     setLoggedIn(null);
-                    console.log("Người dùng chưa đăng nhập");
                 } else {
                     setIsLoading(true);
-                    setUser(user);
                     setLoggedIn(true);
                 }
             } catch (error) {
-                setToken(null);
-                localStorage.removeItem('token');
-                console.log("Người dùng chưa đăng nhập", error);
+                console.error('Lỗi khi lấy thông tin người dùng', error);
             } finally {
                 setIsLoading(false);
             }
@@ -137,18 +144,20 @@ export const UserHeader = () => {
 
     const handleLogout = async () => {
         try {
-            const response = await calllogout();
-            (response) ? message.success('Đã đăng xuất') : message.error('Đăng xuất thất bại!');
+            const response = await AuthService.logout();
+            if (response) {
+                message.success('Đã đăng xuất')
+            } else {
+                message.error('Đăng xuất thất bại!');
+            };
         } catch (error) {
             console.error('Lỗi khi đăng xuất', error);
         } finally {
-            localStorage.removeItem('token');
             setLoggedIn(null);
-            setUser(null);
+            setCurrentUser(null);
             setToken(null);
         }
     }
-    console.log(ismobile)
     if (isLoading) return null;
     return (
         <>
@@ -247,11 +256,11 @@ export const UserHeader = () => {
                                 <div className="mobile-user-section">
                                     <div className="mobile-user-info">
                                         <img
-                                            src={user.image || 'img/Screenshot 2024-04-01 153617.png'}
+                                            src={URL_IMG + currentUser?.image || 'img/Screenshot 2024-04-01 153617.png'}
                                             alt="Hình ảnh khách hàng"
                                             className="mobile-user-avatar"
                                         />
-                                        <p className="mobile-user-name">{user.fullName}</p>
+                                        <p className="mobile-user-name">{currentUser?.fullName || ''}</p>
                                     </div>
 
                                     <Link to="#" className="mobile-membership-button">
@@ -340,7 +349,7 @@ export const UserHeader = () => {
                         <div className="form-submit">
                             {loggedIn ? (
                                 <Link to="#">
-                                    <img src="https://tse3.mm.bing.net/th?id=OIP.v6uzcpp3obKaXzgpB7hPpgHaHv&pid=Api&P=0&h=180" alt="Hình ảnh khách hàng" />
+                                    <img src={URL_IMG + currentUser?.image || 'img/Screenshot 2024-04-01 153617.png'} alt="Hình ảnh khách hàng" />
                                     <button className="down"></button>
                                 </Link>
                             ) : (
@@ -350,8 +359,8 @@ export const UserHeader = () => {
                             {loggedIn && (
                                 <div className="admin-khachhang">
                                     <div className="taikhoan">
-                                        <p>{user.fullName}</p>
-                                        <img src={`${user.image || 'img/Screenshot 2024-04-01 153617.png'}`} alt="Hình ảnh khách hàng" />
+                                        <p>{currentUser?.fullName || ''}</p>
+                                        <img src={URL_IMG + currentUser?.image || 'https://tse3.mm.bing.net/th?id=OIP.v6uzcpp3obKaXzgpB7hPpgHaHv&pid=Api&P=0&h=180'} alt="Hình ảnh khách hàng" />
                                     </div>
                                     <button className="hoivien-aac"><Link to="#">Trở thành hội viên</Link></button>
                                     <div className="flex-p">
@@ -402,13 +411,22 @@ export const UserHeader = () => {
                                     <input type="password" name="password" />
                                     <label>Password</label>
                                 </div>
-                                <div className="remember-forgot">
-                                    <label><input type="checkbox" />Lưu Đăng Nhập</label>
-                                    <Link to="#">Quên mật khẩu?</Link>
+                                <div className="remember-forgot flex justify-end items-end">
+                                    {/* <label className='cursor-pointer select-none'><input type="checkbox" className='cursor-pointer' />Lưu Đăng Nhập</label> */}
+
+                                    <Link to="#" >Quên mật khẩu?</Link>
                                 </div>
                                 <button type="submit" className="btn">Đăng Nhập</button>
-                                <div className="login-register">
-                                    <p>không có tài khoản? <Link to="#" ref={linkdangkyRef} className="linkdangky" onClick={handleSignupClick}>Đăng Ký</Link></p>
+                                <div className="login-register mt-6">
+                                    <p>Không có tài khoản? <Link to="#" ref={linkdangkyRef} className="linkdangky" onClick={handleSignupClick}>Đăng Ký</Link></p>
+                                </div>
+                                <div className="flex items-center">
+                                    <hr className="flex-grow border-t border-gray-300" />
+                                    <span className="px-3 text-gray-500">hoặc</span>
+                                    <hr className="flex-grow border-t border-gray-300" />
+                                </div>
+                                <div className="w-full flex items-center justify-center">
+                                    <LoginGoogle onSuccess={setLoginGoogle} setLoading={setLoading} />
                                 </div>
                             </form>
                         )}
@@ -450,13 +468,14 @@ export const UserHeader = () => {
                                     <label><input type="checkbox" />Tôi đồng ý với tất cả điều khoản</label>
                                 </div>
                                 <button type="submit" className="btn">Đăng Ký</button>
-                                <div className="login-register">
+                                <div className="login-register mt-2">
                                     <p>Bạn đã có tài khoản? <Link to="#" ref={linkdangnhapRef} className="linkdangnhap" onClick={handleLoginClick}>Đăng Nhập</Link></p>
                                 </div>
                             </form>
                         )}
                     </div>
                 </div>
+                <Loading isLoading={loading} />
             </div>
         </>
     );
