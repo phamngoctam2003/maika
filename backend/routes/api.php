@@ -16,14 +16,16 @@ Route::get('test-api', function () {
         'status' => 200,
     ]);
 });
-route::get('test', [CategoryController::class, 'test']);
-route::group((['prefix' => 'roles']), function () {
-    Route::resource('/', RoleController::class)->except(['create', 'show', 'destroy', 'update']);
-    Route::post('create', [RoleController::class, 'create']);
+Route::resource('roles', RoleController::class)->except(['create', 'show', 'destroy', 'update']);
+Route::group(['prefix' => 'roles'], function () {
     Route::get('permissions', [RoleController::class, 'showPermissions']);
-    Route::get('showrole/{id}', [RoleController::class, 'show']);
-    Route::post('update/{id}', [RoleController::class, 'update']);
-    Route::post('destroy', [RoleController::class, 'destroy']);
+    Route::post('create', [RoleController::class, 'create'])->middleware('check.permission:create-role');
+    Route::get('showrole/{id}', [RoleController::class, 'show'])->middleware('check.permission:update-role');
+    Route::post('update/{id}', [RoleController::class, 'update'])->middleware('check.permission:update-role');
+    Route::post('destroy', [RoleController::class, 'destroy'])->middleware('check.permission:delete-role');
+    // route::get('trash', [TrashedRoleController::class, 'index'])->middleware('check.permission:delete-role');
+    // route::post('restore', [TrashedRoleController::class, 'restore'])->middleware('check.permission:delete-role');
+    // route::delete('force-delete/{id}', [TrashedRoleController::class, 'forceDelete'])->middleware('check.permission:delete-role');
 });
 
 Route::group([

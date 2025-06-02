@@ -2,10 +2,10 @@ import { useState, useRef, useEffect } from 'react';
 import MobileDetect from 'mobile-detect';
 import { useNavigate, Link } from 'react-router-dom';
 import { message, notification as Notification } from 'antd';
-import { AuthService } from '../../services/api-auth';
-import { useAuth } from '../../contexts/authcontext';
-import { Loading } from '../../components/loading/loading';
-import { LoginGoogle } from '../../components/loginGoogle/LoginGoogle';
+import { AuthService } from '@/services/api-auth';
+import { useAuth } from '@/contexts/authcontext';
+import { Loading } from '@components/loading/loading';
+import { LoginGoogle } from '@components/LoginGoogle/LoginGoogle';
 export const UserHeader = () => {
     const URL_IMG = import.meta.env.VITE_URL_IMG;
     const navigate = useNavigate();
@@ -14,7 +14,6 @@ export const UserHeader = () => {
     const [showMobileMenu, setShowMobileMenu] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
     const [ismobile, setIsMobile] = useState(false);
-    const [token, setToken] = useState(localStorage.getItem('token'));
 
     const [loggedIn, setLoggedIn] = useState(null); // Thay đổi trạng thái đăng nhập
     const [isPopupActive, setIsPopupActive] = useState(false);
@@ -26,11 +25,10 @@ export const UserHeader = () => {
     const iconcloseRef = useRef(null);
     const btnCuasoRef = useRef(null);
 
-    const { isAuthenticated, currentUser, setCurrentUser, roles, permissions, setPermissions } = useAuth();
+    const { isAuthenticated, currentUser, setCurrentUser, roles, permissions, token, setToken, setPermissions } = useAuth();
     const toggleMobileMenu = () => {
         setShowMobileMenu(prevState => !prevState);
     };
-
 
     const toggleSearchBar = () => {
         setShowSearchBar(prevState => !prevState);
@@ -42,11 +40,7 @@ export const UserHeader = () => {
             const res = isPopupLogin ? await handleLogin(formData) : await handleRegister(formData);
 
             if (res && res.access_token) {
-                localStorage.setItem('token', res.access_token);
-                setIsPopupActive(false);
-                setToken(res.access_token);
-                setCurrentUser(res.user);
-                if (permissions.length > 0 && roles !== 'user') {
+                if (res.user.permissions.length > 0 || res.user.roles !== 'user') {
                     navigate('/admin');
                 }
                 setLoginGoogle(res);
@@ -67,8 +61,8 @@ export const UserHeader = () => {
     };
 
     const setLoginGoogle = (response) => {
-        // localStorage.setItem("token", response.token);
         message.success("Đăng nhập thành công");
+        console.log(response.user)
         const user = response.user;
         const permissions = response.permissions || [];
         setCurrentUser(user);
@@ -97,7 +91,6 @@ export const UserHeader = () => {
         vobocloginRef.current?.classList.add('active');
         setIsPopupLogin(false);
     };
-
     const handleLoginClick = () => {
         vobocloginRef.current?.classList.remove('active');
         setIsPopupLogin(true);
@@ -256,7 +249,11 @@ export const UserHeader = () => {
                                 <div className="mobile-user-section">
                                     <div className="mobile-user-info">
                                         <img
-                                            src={URL_IMG + currentUser?.image || 'img/Screenshot 2024-04-01 153617.png'}
+                                            src={
+                                                currentUser?.image
+                                                    ? URL_IMG + currentUser.image
+                                                    : 'https://tse3.mm.bing.net/th?id=OIP.v6uzcpp3obKaXzgpB7hPpgHaHv&pid=Api&P=0&h=180'
+                                            }
                                             alt="Hình ảnh khách hàng"
                                             className="mobile-user-avatar"
                                         />
@@ -349,7 +346,11 @@ export const UserHeader = () => {
                         <div className="form-submit">
                             {loggedIn ? (
                                 <Link to="#">
-                                    <img src={URL_IMG + currentUser?.image || 'img/Screenshot 2024-04-01 153617.png'} alt="Hình ảnh khách hàng" />
+                                    <img src={
+                                        currentUser?.image
+                                            ? URL_IMG + currentUser.image
+                                            : 'https://tse3.mm.bing.net/th?id=OIP.v6uzcpp3obKaXzgpB7hPpgHaHv&pid=Api&P=0&h=180'
+                                    } />
                                     <button className="down"></button>
                                 </Link>
                             ) : (
@@ -360,7 +361,14 @@ export const UserHeader = () => {
                                 <div className="admin-khachhang">
                                     <div className="taikhoan">
                                         <p>{currentUser?.fullName || ''}</p>
-                                        <img src={URL_IMG + currentUser?.image || 'https://tse3.mm.bing.net/th?id=OIP.v6uzcpp3obKaXzgpB7hPpgHaHv&pid=Api&P=0&h=180'} alt="Hình ảnh khách hàng" />
+                                        <img
+                                            src={
+                                                currentUser?.image
+                                                    ? URL_IMG + currentUser.image
+                                                    : 'https://tse3.mm.bing.net/th?id=OIP.v6uzcpp3obKaXzgpB7hPpgHaHv&pid=Api&P=0&h=180'
+                                            }
+                                            alt="Hình ảnh khách hàng"
+                                        />
                                     </div>
                                     <button className="hoivien-aac"><Link to="#">Trở thành hội viên</Link></button>
                                     <div className="flex-p">
@@ -475,8 +483,8 @@ export const UserHeader = () => {
                         )}
                     </div>
                 </div>
-                <Loading isLoading={loading} />
             </div>
+            <Loading isLoading={loading} />
         </>
     );
 };

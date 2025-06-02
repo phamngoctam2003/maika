@@ -1,12 +1,12 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import './App.css'
 import { Slideshow } from "./pages/user/router";
-import { UserLayout } from "./layouts/user/userlayout";
-import { AdminLayout } from "./layouts/admin/adminlayout";
+import { UserLayout } from "./components/layouts/user/userlayout";
+import { AdminLayout } from "./components/layouts/admin/adminlayout";
 import { ProtectedRoute } from "./services/ProtectedRoute";
 import { UserHome, UserSachnoi, UserSachdientu } from "./pages/user/router";
 // router admin
-import { Home, User, Categories, Create_category, Roles, UpdateRole, Create_role } from "./pages/admin/router";
+import { Home, User, Categories, Create_category, Roles, Update_Role, Create_role } from "./pages/admin/router";
 // -------------------------------
 import { Notfound404 } from "./components/notfound404";
 function App() {
@@ -16,7 +16,7 @@ function App() {
     { path: 'categories', element: < Categories /> },
     { path: 'categories/create', element: < Create_category /> },
     { path: 'roles', element: < Roles /> },
-    { path: 'roles/update/:roleId', element: < UpdateRole /> },
+    { path: 'roles/update/:roleId', element: < Update_Role /> },
     { path: 'roles/create', element: < Create_role /> },
 
   ];
@@ -29,7 +29,7 @@ function App() {
     {
       path: "/admin",
       element: (
-        <ProtectedRoute role={['admin', 'editor']}>
+        <ProtectedRoute role={['user']}>
           <AdminLayout />
         </ProtectedRoute>
       ),

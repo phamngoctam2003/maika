@@ -1,12 +1,13 @@
-
-import { message, notification } from "antd";
-import { useParams, useNavigate } from 'react-router-dom';
+import { AntNotification } from '@components/ui/notification';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import { showRole, showPermission, update } from "../../../services/api-roles";
+import { RolesService } from "../../../services/api-roles";
+import { Loading } from '@components/loading/loading';
 
-export const UpdateRole = () => {
+export const Update_Role = () => {
     const Navigate = useNavigate();
     const { roleId } = useParams('');
+    const [loading, setLoading] = useState(false);
     const [Role, setRole] = useState({});
     const [permissions, setPermissions] = useState([]);
     const [selectPermiss, setSelectPermiss] = useState([]);
@@ -14,49 +15,41 @@ export const UpdateRole = () => {
     useEffect(() => {
         (async () => {
             try {
-                const res = await showPermission();
+                const res = await RolesService.showPermission();
                 setPermissions(res?.permissions || []);
             } catch (error) {
-                notification.error({
-                    message: "Lỗi trong quá trình gọi api",
-                    description: error.message || "Vui lòng thử lại sau",
-                    duration: 5,
-                });
+                AntNotification.handleError(error);
             }
         })();
     }, []);
     useEffect(() => {
-        setfilteredPermissions(permissions.filter((permission) => permission.guard_name === Role.guard_name));
-    }, [permissions, Role]);
+        setfilteredPermissions(permissions.filter((permission) => permission.guard_name === "api"));
+    }, [permissions]);
+
     const handleGuardNameChange = (e) => {
         e.preventDefault();
-        setfilteredPermissions(permissions.filter(permission => permission.guard_name === e.target.value).map((permiss) => permiss.id));
+        setfilteredPermissions(permissions.filter(permission => permission.guard_name === e.target.value));
     };
     useEffect(() => {
         (async () => {
             try {
-                const res = await showRole(roleId);
+                setLoading(true);
+                const res = await RolesService.showRole(roleId);
                 if (res.status === 200) {
                     setRole(res.role);
                     setSelectPermiss(res.role.permissions.map((permiss) => permiss.id));
                 } else {
-                    notification.error({
-                        message: "Có lỗi xảy ra",
-                        description: res?.message || "Vui lòng thử lại sau",
-                        duration: 5,
-                    });
+                    AntNotification.showNotification("Có lỗi xảy ra", res.message, "error");
+                    Navigate('/admin/roles');
                 }
             } catch (error) {
-                notification.error({
-                    message: "Trang không tồn tại",
-                    description: error.message || "Vui lòng thử lại sau",
-                    duration: 5,
-                });
+                AntNotification.handleError(error);
                 Navigate('/admin/roles');
+            } finally {
+                setLoading(false);
             }
         })();
     }, [roleId]);
-
     const handlePermissChange = (event) => {
         const roleId = parseInt(event.target.value);
         setSelectPermiss((perv) => {
@@ -76,27 +69,15 @@ export const UpdateRole = () => {
             });
         }
         try {
-            const res = await update(formData, roleId);
+            const res = await RolesService.update(formData, roleId);
             if (res?.status === 200) {
-                notification.success({
-                    message: "Cập nhật thành công",
-                    description: res?.message || "Vui lòng thử lại sau",
-                    duration: 5,
-                });
+                AntNotification.showNotification("Cập nhật thành công", res.message, "success");
                 Navigate('/admin/roles');
             } else {
-                notification.error({
-                    message: "Có lỗi xảy ra",
-                    description: res?.message || "Vui lòng thử lại sau",
-                    duration: 5,
-                });
+                AntNotification.showNotification("Cập nhật thất bại", res.message, "error");
             }
         } catch (error) {
-            notification.error({
-                message: "Lỗi trong quá trình gọi api",
-                description: error.message || "Vui lòng thử lại sau",
-                duration: 5,
-            });
+            AntNotification.handleError(error);
         }
     };
     return (
@@ -105,12 +86,12 @@ export const UpdateRole = () => {
             <nav className="rounded-md w-full my-2">
                 <ol className="list-reset flex">
                     <li>
-                        <a
-                            href="/admin"
+                    <Link
+                            to="/admin"
                             className="text-primary transition duration-150 ease-in-out hover:text-primary-600 focus:text-primary-600 active:text-primary-700 dark:text-primary-400 dark:hover:text-primary-500 dark:focus:text-primary-500 dark:active:text-primary-600"
                         >
-                            Dashboard
-                        </a>
+                            Quản Trị
+                        </Link>
                     </li>
                     <li>
                         <span className="mx-2 text-neutral-500 dark:text-neutral-400">
@@ -118,12 +99,12 @@ export const UpdateRole = () => {
                         </span>
                     </li>
                     <li>
-                        <a
-                            href="/admin/roles"
+                        <Link
+                            to="/admin/roles"
                             className="text-primary transition duration-150 ease-in-out hover:text-primary-600 focus:text-primary-600 active:text-primary-700 dark:text-primary-400 dark:hover:text-primary-500 dark:focus:text-primary-500 dark:active:text-primary-600"
                         >
                             Quản lý vai trò
-                        </a>
+                        </Link>
                     </li>
                     <li>
                         <span className="mx-2 text-neutral-500 dark:text-neutral-400">
@@ -167,7 +148,7 @@ export const UpdateRole = () => {
 
                         {
                             (filteredPermissions.length > 0) ? (
-                                permissions.map((permission) => (
+                                filteredPermissions.map((permission) => (
                                     <div key={permission.id} className="flex gap-4 select-none">
                                         <input type="checkbox" checked={selectPermiss.includes(permission.id)}
                                             onChange={handlePermissChange}
@@ -183,6 +164,7 @@ export const UpdateRole = () => {
                     <button type="submit" className="mt-5 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Submit</button>
                 </form>
             </div>
+            <Loading isLoading={loading} />
         </div>
     );
 }

@@ -1,57 +1,53 @@
-import axios from "../config/axios-customize";
-
-const getHeaders = () => ({
-    'Content-Type': 'multipart/form-data',
-});
+import axios from "@/config/axios-customize.js";
 
 const apiPost = async (url, data) => {
-    try {
-        const response = await axios.post(url, data, {
-            headers: getHeaders(),
-            withCredentials: true,
-        });
-        return response;
-    } catch (error) {
-        console.error("API POST error:", error);
-        throw error;
-    }
+  const response = await axios.post(url, data);
+  return response;
 };
 
-const apiGet = async (url) => {
-    try {
-        const response = await axios.get(url, {
-            headers: getHeaders(),
-            withCredentials: true
-        });
-        return response;
-    } catch (error) {
-        console.error("API GET error:", error);
-        throw error;
-    }
+const apiGet = async (url, options = {}) => {
+  const response = await axios.get(url, {
+    ...options,
+  });
+  return response;
 };
 
-export const callRoles = async () => {
-    return apiGet("/roles");
+const apiDelete = async (url, data) => {
+  const response = await axios.delete(url, data);
+  return response;
 };
 
-export const showPermission = async () => {
+const RolesService = {
+  callRoles: async ({ page, per_page, sortorder, keyword }) => {
+    return apiGet("/roles", {
+        params: { page, per_page, sortorder, keyword },
+      });
+  },
+  showPermission: async () => {
     return apiGet("/roles/permissions");
-};
-
-export const showRole = async (id) => {
+  },
+  showRole: async (id) => {
     return apiGet(`/roles/showrole/${id}`);
-};
-
-export const createRole = async (formData) => {
+  },
+  create: async (formData) => {
     return apiPost("/roles/create", formData);
-};
-
-export const destroyRole = async (ids) => {
+  },
+  destroy: async (ids) => {
     return apiPost("/roles/destroy", { ids });
-};
-
-export const update = async (formData, id) => {
+  },
+  update: async (formData, id) => {
     return apiPost(`/roles/update/${id}`, formData);
+  },
+  roleTrash: async ({ page, per_page, sortorder, keyword }) => {
+    return apiGet("roles/trash", {
+      params: { page, per_page, sortorder, keyword },
+    });
+  },
+  restore: async (ids) => {
+    return apiPost("/roles/restore", { ids });
+  },
+  forceDelete: async (id) => {
+    return apiDelete(`/roles/force-delete/${id}`);
+  },
 };
-
-
+export { RolesService };

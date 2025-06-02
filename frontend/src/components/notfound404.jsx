@@ -7,7 +7,7 @@ export const Notfound404 = () => {
                     <div className="text-center text-sm-right mr-sm-4 mb-5 mb-sm-0">
                         <img
                             className="w-60 w-sm-100 mx-auto"
-                            src="../../src/assets/imgs/svg/think.svg"
+                            src="/images/svg/think.svg"
                             alt="Image Description"
                             style={{ maxWidth: "15rem" }}
                         />

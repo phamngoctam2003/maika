@@ -9,7 +9,6 @@ export const LoginGoogle = ({ onSuccess, setLoading }) => {
             try {
                 setLoading(true);
                 const response = await AuthService.Login_Google(tokenResponse.access_token);
-                localStorage.setItem("token", response.access_token);
                 // localStorage.setItem("refreshToken", response.refresh_token);
                 onSuccess(response);
             } catch (error) {

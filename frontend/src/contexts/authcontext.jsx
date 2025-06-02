@@ -9,7 +9,16 @@ export const AuthProvider = ({ children }) => {
     const [roles, setRoles] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [token, setToken] = useState(localStorage.getItem('token') || null);
 
+    // Lưu token vào localStorage khi có sự thay đổi
+    useEffect(() => {
+        if (token) {
+            localStorage.setItem('token', token);
+        } else {
+            localStorage.removeItem('token');
+        }
+    }, [token]);
     // Kiểm tra xem người dùng đã đăng nhập khi component mount
     useEffect(() => {
         (async () => {
@@ -45,10 +54,13 @@ export const AuthProvider = ({ children }) => {
         roles,
         loading,
         error,
+        token,
+        setToken,
         setPermissions,
         hasPermission,
         hasRole,
-        isAuthenticated: AuthService.isAuthenticated(),
+        // isAuthenticated: AuthService.isAuthenticated(),
+        isAuthenticated: !!token,
         setCurrentUser
     };
 
