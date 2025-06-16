@@ -1,43 +1,47 @@
-import axios from "../config/axios-customize";
-import Cookies from "js-cookie";
-const getHeaders = () => ({
-    'Content-Type': 'multipart/form-data',
-    'Authorization': `Bearer ${Cookies.get('user-info')}`,
-});
+import axios from "@/config/axios-customize";
 
 const apiPost = async (url, data) => {
-    try {
-        const response = await axios.post(url, data, {
-            headers: getHeaders(),
-            withCredentials: true,
-
-        });
-        return response;
-    } catch (error) {
-        console.log("lỗi khi gọi api, file: api",error);
-        throw error;
-    }
-}
-
-const apiGet = async (url) => {
-    try {
-        const response = await axios.get(url, {
-            headers: getHeaders(),
-            withCredentials: true,
-        });
-        return response;
-    } catch (error) {
-        console.log("lỗi khi gọi api, file: api",error);
-        throw error;
-    }
-}
-
-
-export const callCategory = async (id = null) => {
-    const url = id ? `/getcategory/${id}` : "/getcategory";
-    return apiGet(url);
+  const response = await axios.post(url, data);
+  return response;
 };
 
-export const createCategory = async (data) => {
-    return apiPost("/createcategory", data);
+const apiDelete = async (url, data) => {
+  const response = await axios.delete(url, data);
+  return response;
 };
+
+const apiGet = async (url, options = {}) => {
+  const response = await axios.get(url, {
+    ...options,
+  });
+  return response;
+};
+
+const CategoriesService = {
+  getCategories: async ({ page, per_page, sort_order, keyword }) => {
+    return apiGet("/categories", {
+      params: { page, per_page, sort_order, keyword },
+    });
+  },
+
+  getAll: async () => {
+    return apiGet("/categories");
+  },
+
+  getCategoryById: async (id) => {
+    return apiGet(`/categories/${id}`);
+  },
+
+  create: async (data) => {
+    return apiPost("/categories/create", data);
+  },
+
+  update: async (id, data) => {
+    return apiPost(`/categories/update/${id}`, data);
+  },
+
+  destroy: async (id) => {
+    return apiPost(`/categories/${id}/delete`, {});
+  },
+};
+export default CategoriesService ;

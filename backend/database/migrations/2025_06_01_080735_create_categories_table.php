@@ -11,6 +11,8 @@ return new class extends Migration {
             $table->string('name', 255);
             $table->text('description')->nullable();
             $table->timestamps();
+            $table->softDeletes(); // Thêm cột deleted_at để hỗ trợ soft delete
+            
         });
     }
 

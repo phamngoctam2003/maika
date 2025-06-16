@@ -10,6 +10,7 @@ export const AuthProvider = ({ children }) => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [token, setToken] = useState(localStorage.getItem('token') || null);
+    // const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem('token'));
 
     // Lưu token vào localStorage khi có sự thay đổi
     useEffect(() => {
@@ -25,10 +26,10 @@ export const AuthProvider = ({ children }) => {
             try {
                 if (AuthService.isAuthenticated()) {
                     const response = await AuthService.getCurrentUser();
-                    console.log('Current user:', response);
                     setCurrentUser(response.user);
                     setPermissions(response.permissions || []);
                     setRoles(response.roles || []);
+                    // setIsAuthenticated(true);
                 }
             } catch (err) {
                 setError(err);
@@ -55,12 +56,14 @@ export const AuthProvider = ({ children }) => {
         loading,
         error,
         token,
+        setRoles,
         setToken,
         setPermissions,
         hasPermission,
         hasRole,
         // isAuthenticated: AuthService.isAuthenticated(),
         isAuthenticated: !!token,
+        // setIsAuthenticated,
         setCurrentUser
     };
 

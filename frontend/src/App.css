@@ -1,28 +1,36 @@
 /* ckeditor */
-@import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,400;0,700;1,400;1,700&display=swap");
 
 @media print {
-	body {
-		margin: 0 !important;
-	}
+  body {
+    margin: 0 !important;
+  }
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
 .main-container {
-	font-family: 'Lato';
-	width: fit-content;
-	margin-left: auto;
-	margin-right: auto;
+  font-family: "Lato";
+  width: fit-content;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .ck-content {
-	font-family: 'Lato';
-	line-height: 1.6;
-	word-break: break-word;
+  font-family: "Lato";
+  line-height: 1.6;
+  word-break: break-word;
 }
 
 .editor-container_classic-editor .editor-container__editor {
-	min-width: 795px;
-	max-width: 795px;
+  min-width: 795px;
+  max-width: 795px;
 }
 /* ======================================== */
 
@@ -36,8 +44,8 @@
   background-color: #121214;
   color: rgb(255, 255, 255);
 }
-.bg-color-root-admin{
-  background-color: #F9FAFB;
+.bg-color-root-admin {
+  background-color: #f9fafb;
 }
 /* body {
   align-items: center;
@@ -51,7 +59,7 @@
 body::-webkit-scrollbar {
   width: 10px;
 }
-h2{
+h2 {
   font-size: 1.4em;
   font-weight: 600;
 }
@@ -63,41 +71,48 @@ body::-webkit-scrollbar-track {
   background-color: #ccc;
 }
 header {
+  position: fixed;
   background: linear-gradient(
     to bottom,
     rgba(0, 0, 0, 0.8) 8%,
     rgba(0, 0, 0, 0) 90%
   );
-  position: fixed;
   top: 0;
   left: 0;
   width: 100%;
-  padding: 20px 50px;
+  padding: 20px;
   display: flex;
   justify-content: space-between;
-  z-index: 99;
+  z-index: 10;
 }
-header a{
+.header-mobile {
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.8) 8%,
+    rgba(0, 0, 0, 0) 90%
+  );
+  z-index: 10;
+}
+
+header a {
   text-decoration: none;
 }
-header a:hover{
+header a:hover {
   text-decoration: none;
 }
 .logomaika {
-
   font-family: "Kumar One", serif;
   font-weight: 900;
   font-style: normal;
   font-size: 2.4em;
   color: #15b088;
-  user-select: none;
 }
 .navigation {
   display: flex;
   flex-wrap: wrap;
 }
 
-.maka1{
+.maka1 {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -191,7 +206,6 @@ header a:hover{
   display: flex;
 }
 
-
 .flex-p .icon-flex a {
   cursor: pointer;
   border-radius: 10px;
@@ -207,8 +221,8 @@ header a:hover{
 .flex-p .icon-flex a:hover {
   background-color: #4b4b4b;
 }
-.flex-p .icon-flex a svg{
- margin-right: 10px;
+.flex-p .icon-flex a svg {
+  margin-right: 10px;
 }
 .admin-khachhang .hoivien-aac {
   height: 40px;
@@ -263,11 +277,11 @@ header a:hover{
   width: 100%;
   height: 100%;
   background-color: rgba(0, 0, 0, 0.5);
-  z-index: 99; 
+  z-index: 99;
 }
 
 .voboclogin {
-  z-index: 1000;
+  z-index: 100;
   position: absolute;
   max-width: 750px;
   height: 480px;
@@ -425,7 +439,6 @@ header a:hover{
   color: #fff;
   font-weight: 500;
   margin: -10px 0 15px;
-
 }
 
 .remember-forgot label input {
@@ -531,8 +544,7 @@ header a:hover{
   z-index: 2;
 }
 
-
-.buttons{
+.buttons {
   position: absolute;
   top: 45%;
   left: 5%;
@@ -541,7 +553,7 @@ header a:hover{
   justify-content: space-between;
   align-items: center;
 }
-.buttons button{
+.buttons button {
   outline: none;
   width: 50px;
   height: 50px;
@@ -554,12 +566,12 @@ header a:hover{
   z-index: 2;
 }
 
-.buttons button:hover{
+.buttons button:hover {
   background: #fff;
   color: #000;
 }
 
-.buttons button svg{
+.buttons button svg {
   width: 30px;
   margin: auto;
 }
@@ -576,11 +588,9 @@ header a:hover{
 }
 
 .slider-image img {
-
   display: block;
   width: 100%;
   height: auto;
-
 }
 
 @media (min-width: 1920px) {
@@ -610,7 +620,7 @@ header a:hover{
   white-space: nowrap;
   position: relative;
 }
-.container-2 input#search {
+.container-2 input.search {
   background: none;
   margin: auto;
   width: 35px;
@@ -629,10 +639,10 @@ header a:hover{
   -o-transition: width 0.55s ease;
   transition: width 0.55s ease;
 }
-.container-2 input#search::-webkit-input-placeholder {
+.container-2 input.search::-webkit-input-placeholder {
   font-size: 0.1em;
 }
-.container-2:hover input#search::-webkit-input-placeholder {
+.container-2:hover input.search::-webkit-input-placeholder {
   font-size: 1.1em;
   color: #b3b3b3;
 }
@@ -652,14 +662,14 @@ header a:hover{
   height: 30px;
   color: #ffffff;
 }
-.container-2 input#search:focus,
-.container-2 input#search:active {
+.container-2 input.search:focus,
+.container-2 input.search:active {
   border-radius: 20px;
   border: 1px solid #ffffff;
   outline: none;
   width: 250px;
 }
-.container-2:hover input#search {
+.container-2:hover input.search {
   width: 250px;
   border: 1px solid #ffffff;
 }
@@ -700,7 +710,6 @@ header a:hover{
   border-radius: 10px;
   width: auto;
   height: 327px;
-  
 }
 .scrollbar .sach1 a {
   text-decoration: none;
@@ -1306,110 +1315,102 @@ audio::-webkit-media-controls-seek-forward-button {
   position: sticky;
   bottom: 0;
 }
-.remove-session{
+.remove-session {
   margin-left: 10px;
   width: 54px;
   height: 54px;
-background: none;
-border: none;
+  background: none;
+  border: none;
 }
-.remove-session ion-icon{
+.remove-session ion-icon {
   color: #c0c0c0;
   font-size: 3em;
 }
 /* ============================================ */
 /* ---------------------footer------------------ */
-.container{
-  
+.container {
   max-width: 80%;
 }
 .footer-clean {
   width: 100%;
   padding: 70px 0;
   background-color: #121214;
-  color:#ffffff;
+  color: #ffffff;
 }
 
 .footer-clean h3 {
-  margin-top:0;
-  margin-bottom:12px;
-  font-weight:bold;
-  font-size:16px;
+  margin-top: 0;
+  margin-bottom: 12px;
+  font-weight: bold;
+  font-size: 16px;
 }
 
 .footer-clean ul {
-  list-style:none;
+  list-style: none;
   line-height: 2;
-  font-size:16px;
-  margin-bottom:0;
+  font-size: 16px;
+  margin-bottom: 0;
 }
 
 .footer-clean ul a {
-  color:inherit;
-  text-decoration:none;
-  opacity:0.8;
+  color: inherit;
+  text-decoration: none;
+  opacity: 0.8;
 }
 
 .footer-clean ul a:hover {
-  opacity:1;
+  opacity: 1;
 }
 
-
-
 .footer-clean .copyright {
-  margin-top:14px;
-  margin-bottom:0;
-  font-size:13px;
-  opacity:0.6;
+  margin-top: 14px;
+  margin-bottom: 0;
+  font-size: 13px;
+  opacity: 0.6;
 }
 
 #ftLogo {
   margin-bottom: 20px;
 }
 
-#anhFt1{
- 
+#anhFt1 {
   width: 130px;
- 
 }
 
-#anhFt2{
-  
+#anhFt2 {
   width: 130px;
 }
 
 /* ----------------sidebar--------------------- */
- 
+
 /* ----------------end footer--------------------- */
 
-
-.button-ccv{
+.button-ccv {
   display: flex;
 }
-.button-ccv .yeuthich{
+.button-ccv .yeuthich {
   margin-left: 20px;
   text-align: center;
   min-width: 50px;
 }
-.button-ccv .yeuthich ion-icon{
-
+.button-ccv .yeuthich ion-icon {
   margin-top: 10px;
   font-size: 1.8em;
 }
 
 /* Loading */
-/* From Uiverse.io by paesjr */ 
-/* From Uiverse.io by G4b413l */ 
+/* From Uiverse.io by paesjr */
+/* From Uiverse.io by G4b413l */
 .loader {
   width: 100%;
   height: 100%;
-  position: absolute;
+  position: fixed;
   top: 50%;
   left: 50%;
   background-color: rgba(18, 18, 20, 0.8);
   transform: translate(-50%, -50%);
   display: flex;
-  z-index: 9999999;
+  z-index: 101;
   justify-content: center;
   align-items: center;
 }
@@ -1431,19 +1432,19 @@ border: none;
 .seconde {
   transform-origin: center right;
   animation: spin2 3s linear infinite;
-  animation-delay: .2s;
+  animation-delay: 0.2s;
 }
 
 .third {
   transform-origin: center right;
   animation: spin3 3s linear infinite;
-  animation-delay: .3s;
+  animation-delay: 0.3s;
 }
 
 .fourth {
   transform-origin: center right;
   animation: spin4 3s linear infinite;
-  animation-delay: .4s;
+  animation-delay: 0.4s;
 }
 
 @keyframes spin {
@@ -1572,4 +1573,120 @@ border: none;
   100% {
     transform: rotate(-360deg);
   }
+}
+
+/* ================== */
+@media (max-width: 1024px) {
+  header {
+    display: none;
+  }
+  .slider {
+    display: none;
+  }
+  .voboclogin {
+    display: none;
+  }
+  .overlay {
+    display: none;
+  }
+}
+
+/* Slide Swiper */
+.sile-carousel {
+  background: linear-gradient(
+    to bottom,
+    rgba(96, 114, 96, 0.8) 8%,
+    rgba(0, 0, 0, 0) 90%
+  );
+}
+.my-custom-swiper {
+  display: block;
+  overflow: visible;
+}
+@media (min-width: 1024px) {
+  .my-custom-swiper {
+    display: none;
+  }
+}
+.my-custom-swiper .swiper-slide {
+  transition: all 0.4s ease;
+  display: flex;
+}
+.my-custom-swiper .swiper-wrapper {
+  align-items: center;
+  padding: 20px 0;
+}
+.my-custom-swiper .swiper-slide:not(.swiper-slide-active) {
+  opacity: 0.7;
+  transform: scale(0.85) !important; /* Giảm kích thước */
+  opacity: 0.5;
+  padding: 20px 10px; /* Giảm khoảng cách giữa các slide */
+}
+.my-custom-swiper .swiper-slide-active {
+  z-index: 11;
+  transform: scale(1.1) !important; /* Phóng to slide active */
+}
+/* Đảm bảo transition mượt */
+.my-custom-swiper .swiper-slide-active div {
+  transition: all 0.4s ease;
+}
+
+/* select antd */
+.ant-select-selection-wrap {
+  display: flex !important;
+  align-items: center !important;
+  height: 100% !important;  
+}
+
+/* Placeholder căn giữa */
+.ant-select-selection-placeholder {
+  margin: 0 !important;
+  font-size: 14px !important;
+  display: flex !important;
+  align-items: center !important;
+  height: 100%;
+  padding-left: 4px;
+}
+
+/* Tag khi đã chọn */
+.custom-select-tag .ant-select-selection-item {
+  margin: 2px 2px !important;
+  font-size: 14px;
+  padding: 8px 10px;
+  height: auto;
+  display: flex;
+  align-items: center;
+  line-height: 1.2;
+  background-color: #f0f0f0;
+  border-radius: 4px;
+}
+
+/* Dấu X */
+.custom-select-tag .ant-select-selection-item-remove {
+  font-size: 18px;
+  line-height: 1;
+  margin-left: 4px;
+  display: flex;
+  align-items: center;
+}
+
+/* Select box tổng thể */
+.custom-select-tag .ant-select-selector {
+  min-height: 44px;
+  display: flex !important;
+  align-items: center !important;
+  flex-wrap: wrap;
+  padding: 2px 2px;
+}
+
+/* Input tìm kiếm căn giữa */
+.custom-select-tag .ant-select-selection-search {
+  display: flex;
+  align-items: center;
+  height: 100%;
+}
+.custom-select-tag .ant-select-selection-search-input {
+  margin: 0 !important;
+  padding: 6px 0 !important;
+  font-size: 14px;
 }

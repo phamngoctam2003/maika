@@ -12,18 +12,21 @@ export const AdminHeader = () => {
     const [hasNotifications, setHasNotifications] = useState(false);
     const [countOrder, setCountOrder] = useState(0);
     const [products, setProducts] = useState([]);
-    const { currentUser, setCurrentUser, setPermissions } = useAuth() || {};
+    const { currentUser, setCurrentUser, setPermissions, setRoles, setToken } = useAuth() || {};
 
     const handleLogout = async () => {
         try {
             await AuthService.logout();
-            setCurrentUser(null);
-            setPermissions([]);
-            navigate('/');
             message.success("Đăng xuất thành công");
+            navigate('/');
         } catch (error) {
             console.error("Lỗi khi đăng xuất:", error);
             message.error("Đăng xuất thất bại");
+        } finally {
+            setCurrentUser(null);
+            setPermissions([]);
+            setRoles([]);
+            setToken(null);
         }
     };
 

@@ -3,6 +3,9 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\AccountController;
+use App\Http\Controllers\BookController;
+use App\Http\Controllers\ChapterController;
 use App\Http\Controllers\RoleController;
 
 Route::get('test-api', function () {
@@ -16,6 +19,44 @@ Route::get('test-api', function () {
         'status' => 200,
     ]);
 });
+
+route::group(['prefix' => 'categories'], function () {
+    route::get('/', [CategoryController::class, 'index']);
+    route::get('/{id}', [CategoryController::class, 'show']);
+    route::post('create', [CategoryController::class, 'create']);
+    route::post('/update/{id}', [CategoryController::class, 'update']);
+});
+route::group(['prefix' => 'accounts'], function () {
+    route::get('/', [AccountController::class, 'index']);
+    route::get('getbyid/{id}', [AccountController::class, 'getAccountById']);
+    route::post('rolelevel/{id}', [AccountController::class, 'roleLevel']);
+    route::get('showroles', [AccountController::class, 'showRoles']);
+});
+
+// route::group(['prefix' => 'book-types'], function () {
+//     route::get('/', [BooktypeController::class, 'index']);
+//     route::post('create', [BooktypeController::class, 'create']);
+//     route::get('/{id}', [BooktypeController::class, 'show']);
+//     route::post('/update/{id}', [BooktypeController::class, 'update']);
+// });
+
+
+
+route::group(['prefix' => 'books'], function () {
+    route::get('formats', [BookController::class, 'getAllFormats']);
+    route::get('/', [BookController::class, 'index']);
+    route::post('create', [BookController::class, 'create']);
+    route::get('/{id}', [BookController::class, 'show']);
+    route::post('/update/{id}', [BookController::class, 'update']);
+});
+
+route::group(['prefix' => 'chapters'], function () {
+    route::get('/', [ChapterController::class, 'index']);
+    route::post('create', [ChapterController::class, 'create']);
+    route::get('/{id}', [ChapterController::class, 'show']);
+    route::post('/update/{id}', [ChapterController::class, 'update']);
+});
+
 Route::resource('roles', RoleController::class)->except(['create', 'show', 'destroy', 'update']);
 Route::group(['prefix' => 'roles'], function () {
     Route::get('permissions', [RoleController::class, 'showPermissions']);

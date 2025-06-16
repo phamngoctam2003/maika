@@ -1,56 +1,64 @@
-import axios from "../config/axios-customize";
-import Cookies from "js-cookie";
-const getHeaders = () => ({
-    'Content-Type': 'multipart/form-data',
-    Authorization: `Bearer ${Cookies.get("user-info")}`,
-});
+import axios from "../config/axios-customize.js";
 
 const apiPost = async (url, data) => {
-    try {
-        const response = await axios.post(url, data, {
-        headers: getHeaders(),
-        });
-        return response;
-    } catch (error) {
-        console.error("lỗi khi gọi api, file: api", error);
-        throw error;
-    }
+  const response = await axios.post(url, data);
+  return response;
 };
 
-const apiGet = async (url) => {
-    try {
-        const response = await axios.get(url, {
-        headers: getHeaders(),
-        });
-        return response;
-    } catch (error) {
-        console.error("lỗi khi gọi api, file: api", error);
-        throw error;
-    }
-};
+const apiDelete = async (url, data) => {
+  const response = await axios.delete(url, data);
+  return response;
+}
 
-export const callUsers = async () => {
-    return apiGet("/users");
+const apiGet = async (url, options = {}) => {
+  const response = await axios.get(url, {
+    ...options,
+  });
+  return response;
 };
-
-export const getAccount = async (data) => {
-    return apiPost("/getaccount", data);
+const UsersService = {
+  getAllUsers: async ({ page, per_page, sortorder, keyword }) => {
+    return apiGet("/accounts", {
+      params: { page, per_page, sortorder, keyword },
+    });
+  },
+  getUserLimit: async () => {
+    return apiGet("/accounts/getuserlimit");
+  },
+  getUserCount: async () => {
+    return apiGet("/accounts/get-user-count");
+  },
+  create: async (formData) => {
+    return apiPost("/accounts/create", formData);
+  },
+  upadteStatus: async (data) => {
+    return apiPost("/accounts/updatestatus", data);
+  },
+  roleLevel: async (formdata, id) => {
+    return apiPost(`/accounts/rolelevel/${id}`, formdata);
+  },
+  updateUser: async (formdata, id) => {
+    return apiPost(`/accounts/update/${id}`, formdata);
+  },
+  showRoles: async () => {
+    return apiGet("/accounts/showroles");
+  },
+  destroy: async (ids) => {
+    return apiPost('/accounts/destroy', { ids });
+  },
+  getUserById: async (id) => {
+    return apiGet(`/accounts/getbyid/${id}`);
+  },
+  userTrash: async ({ page, per_page, sortorder, keyword }) => {
+      return apiGet('accounts/trash', {
+          params: { page, per_page, sortorder, keyword},
+      });
+  },
+  restore: async (ids) => {
+      return apiPost("/accounts/restore", { ids });
+  },
+  forceDelete: async (id) => {
+      return apiDelete(`/accounts/force-delete/${id}`);
+  },
 };
-export const destroy = async (ids) => {
-    return apiPost("/users/delete", { ids });
-};
-
-export const updateStatus = async (data) => {
-    return apiPost("/users/updatestatus", data);
-};
-
-
-export const updateRole = async (data) => {
-    return apiPost("/users/updaterole", data);
-};
-export const updatePassword = async (data) => {
-    return apiPost("/changepassword", data);
-};
-export const updateAccount = async (formData) => {
-    return apiPost(`/updateaccount`, formData);
-};
+export { UsersService };

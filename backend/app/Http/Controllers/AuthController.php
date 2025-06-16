@@ -33,7 +33,7 @@ class AuthController extends Controller
                 'message' => 'Tài khoản của bạn đã bị khóa'
             ], 401);
         }
-        return $this->respondWithToken($token);
+        return $this->respondWithToken($token, $user);
     }
 
     public function loginGoogle(Request $request)
@@ -77,7 +77,7 @@ class AuthController extends Controller
         if ($user->status === 0) {
             return response()->json([
                 'status' => 403,
-                'message' => 'Tài khoản của bạn đã bị khóa'
+                'message' => 'Tài khoản của bạn đã bị khóa',
             ], 403);
         }
 
@@ -102,7 +102,7 @@ class AuthController extends Controller
         /** @var \Tymon\JWTAuth\JWTGuard $guard */
         $guard = auth('api');
         $token = $guard->login($user);
-        return $this->respondWithToken($token);
+        return $this->respondWithToken($token, $user);
     }
 
     public function register(Request $request)
@@ -110,7 +110,7 @@ class AuthController extends Controller
         $request->validate([
             'fullName' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
-            'phone' => 'required|string',
+            'phone' => 'string|size:10|nullable',
             'password' => 'required|string|min:6|confirmed',
         ]);
         try {
@@ -124,7 +124,7 @@ class AuthController extends Controller
             auth('api')->login($user);
             $credentials = $request->only('email', 'password');
             $token = auth('api')->attempt($credentials);
-            return $this->respondWithToken($token);
+            return $this->respondWithToken($token, $user);
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Đăng ký tài khoản thất bại!',
@@ -166,15 +166,13 @@ class AuthController extends Controller
         }
     }
 
-    public function respondWithToken($token)
+    public function respondWithToken($token, $user = null)
     {
         $expires_in = JWTAuth::factory()->getTTL() * 60;
-        $user = auth()->guard('api')->user();
-
         if (!$user) {
             return response()->json([
                 'status' => 401,
-                'message' => 'Chưa đăng nhập'
+                'message' => 'Không tìm thấy thông tin người dùng'
             ], 401);
         }
 
@@ -194,8 +192,8 @@ class AuthController extends Controller
                     'status' => $user->status,
                     'fullName' => $user->fullName,
                     'image' => $user->image,
-                    'roles' => $user->roles ? $user->roles->pluck('name') : null,
-                    'permissions' => $user->permissions ? $user->permissions->pluck('name') : null,
+                    'roles' => $user->getRoleNames(),
+                    'permissions' => $user->getAllPermissions()->pluck('name'),
                 ]
             ]);
         } catch (\Exception $e) {
@@ -218,7 +216,7 @@ class AuthController extends Controller
             $user = auth()->guard('api')->user();
             if (!$user) {
                 return response()->json([
-                    'message' => 'Unauthorized',
+                    'message' => 'Unauthorized access',
                     'user' => null
                 ], 200);
             }

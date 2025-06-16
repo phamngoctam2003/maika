@@ -1,5 +1,8 @@
 <?php
-
+/**
+ * @method \Illuminate\Support\Collection getRoleNames()
+ * @method \Illuminate\Support\Collection getAllPermissions()
+ */
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -8,17 +11,14 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 use Spatie\Permission\Traits\HasRoles;
-
+use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
 class User extends Authenticatable implements JWTSubject
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable, HasRoles;
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var list<string>
-     */
+    
+
     public $timestamps = false;
     public function getJWTIdentifier()
     {

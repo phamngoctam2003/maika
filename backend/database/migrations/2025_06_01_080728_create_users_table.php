@@ -18,6 +18,8 @@ return new class extends Migration {
             $table->integer('is_verify')->default(0);
             $table->tinyInteger('status')->default(1);
             $table->timestamps();
+            $table->softDeletes();
+            $table->string('address', 255)->nullable();
         });
     }
 

@@ -49,47 +49,47 @@ export const AdminSidebar = () => {
         },
         {
             id: "3",
-            name: "Sản phẩm",
-            link: "/admin/products",
+            name: "Sách",
+            link: "/admin/books",
             svg: <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24"><path fill="currentColor" d="M7 2H3a1 1 0 0 0-1 1v18a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1V3a1 1 0 0 0-1-1ZM5 21a2 2 0 1 1 2-2a2 2 0 0 1-2 2Zm2-9H3V3h4Zm-1 7a1 1 0 1 1-1-1a1 1 0 0 1 1 1Zm8-17h-4a1 1 0 0 0-1 1v18a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1V3a1 1 0 0 0-1-1Zm-2 19a2 2 0 1 1 2-2a2 2 0 0 1-2 2Zm2-9h-4V3h4Zm-1 7a1 1 0 1 1-1-1a1 1 0 0 1 1 1Zm8-17h-4a1 1 0 0 0-1 1v18a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1V3a1 1 0 0 0-1-1Zm-2 19a2 2 0 1 1 2-2a2 2 0 0 1-2 2Zm2-9h-4V3h4Zm-1 7a1 1 0 1 1-1-1a1 1 0 0 1 1 1Z" /></svg>,
             sub_menu: [
                 {
                     id: "3.1",
                     name: "Thêm",
-                    link: "/admin/products/create"
+                    link: "/admin/books/create"
                 },
                 {
                     id: "3.2",
                     name: "Danh sách",
-                    link: "/admin/products"
+                    link: "/admin/books"
                 },
                 {
-                    id: "3.4",
+                    id: "3.3",
                     name: "Danh sách đã xóa",
-                    link: "/admin/products/trash"
+                    link: "/admin/books/trash"
                 },
             ]
         },
         {
             id: "4",
-            name: "Đơn hàng",
-            link: "/admin/orders",
-            svg: <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5"><circle cx="9.549" cy="19.049" r="1.701" /><circle cx="16.96" cy="19.049" r="1.701" /><path d="m5.606 5.555l2.01 6.364c.309.978.463 1.467.76 1.829c.26.32.599.567.982.72c.435.173.947.173 1.973.173h3.855c1.026 0 1.538 0 1.972-.173c.384-.153.722-.4.983-.72c.296-.362.45-.851.76-1.829l.409-1.296l.24-.766l.331-1.05a2.5 2.5 0 0 0-2.384-3.252zm0 0l-.011-.037a7 7 0 0 0-.14-.42a2.92 2.92 0 0 0-2.512-1.84C2.84 3.25 2.727 3.25 2.5 3.25" /></g></svg>,
+            name: "Chương sách",
+            link: "/admin/chapters",
+            svg: <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 32 32"><g fill="currentColor"><path d="M9.5 12a.5.5 0 0 0 0 1h13a.5.5 0 0 0 0-1h-13Zm0 3a.5.5 0 0 0 0 1h13a.5.5 0 0 0 0-1h-13ZM9 18.5a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 0 1h-13a.5.5 0 0 1-.5-.5Zm.5 2.5a.5.5 0 0 0 0 1h8a.5.5 0 0 0 0-1h-8Z"/><path d="M4 4a3 3 0 0 1 3-3h13.05a1 1 0 0 1 .707.293l6.95 6.95A1 1 0 0 1 28 8.95V28a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3V4Zm3-1a1 1 0 0 0-1 1v24a1 1 0 0 0 1 1h18a1 1 0 0 0 1-1V9.364L25.636 9h-4.643A.997.997 0 0 1 20 8V3.364L19.636 3H7Z"/></g></svg>,
             sub_menu: [
                 {
                     id: "4.1",
                     name: "Thêm",
-                    link: "/admin/orders/create"
+                    link: "/admin/chapters/create"
                 },
                 {
                     id: "4.2",
                     name: "Danh sách",
-                    link: "/admin/orders"
+                    link: "/admin/chapters"
                 },
                 {
                     id: "4.3",
                     name: "Danh sách đã xóa",
-                    link: "/admin/orders/trash"
+                    link: "/admin/chapters/trash"
                 },
             ]
         },
