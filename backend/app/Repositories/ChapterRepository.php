@@ -40,6 +40,8 @@ class ChapterRepository implements ChapterRepositoryInterface
             throw new \Exception('User not authenticated');
         }
         $data['user_id'] = $user->id;
+        $path = $data['audio_path']->storePublicly('audio', 'public');
+        $data['audio_path'] = $path;
         return Chapter::create($data);
     }
 
@@ -53,13 +55,19 @@ class ChapterRepository implements ChapterRepositoryInterface
         return null;
     }
 
-    public function delete(int $ids): bool
+    public function delete(array $ids): ?bool
     {
-        $Books = $this->getById($ids);
-        if ($Books) {
-            return $Books->delete();
+        if (is_array($ids) && !empty($ids)) {
+            foreach ($ids as $id) {
+                $chapter = Chapter::find($id);
+                if ($chapter && $chapter->comment()->count() > 0) {
+                    return false; 
+                }
+            }
+            Chapter::whereIn('id', $ids)->delete();
+            return true;
         }
-        return false;
+        return false; 
     }
 
 

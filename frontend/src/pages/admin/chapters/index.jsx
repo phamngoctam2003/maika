@@ -9,6 +9,7 @@ import { Pagination } from 'antd';
 
 
 const Chapters = () => {
+    const URL_API = import.meta.env.VITE_URL_IMG;
     const [loading, setLoading] = useState(false);
     const [chapters, setChapters] = useState([]);
     const [selectedChapter, setSelectedchapter] = useState([]);
@@ -216,6 +217,12 @@ const Chapters = () => {
                             <th scope="col" className="px-6 py-3">
                                 Tên sách
                             </th>
+                            {
+                                chapters.some(chapter => chapter.audio_path) &&
+                                <th scope="col" className="px-6 py-3">
+                                    Audio
+                                </th>
+                            }
                             <th scope="col" className="px-6 py-3">
                                 Người tạo
                             </th>
@@ -264,15 +271,29 @@ const Chapters = () => {
                                         scope="row"
                                         className="flex items-center px-6 py-4 text-gray-900 whitespace-nowrap dark:text-slate-950"
                                     >
-                                        <div className="ps-3">
-                                            <div className="text-base font-semibold truncate">
-                                                {chapter.title}
-                                            </div>
+                                        <div className="text-base font-semibold truncate">
+                                            {chapter.title}
                                         </div>
                                     </th>
                                     <td className="px-6 py-4 text-gray-800 dark:text-slate-650 font-semibold truncate">
                                         {chapter.book ? chapter.book.title : "Không có sách"}
                                     </td>
+                                    {
+                                        chapter.audio_path && (
+                                            <td className="px-6 py-4 min-w-80 text-gray-800 dark:text-slate-650 font-semibold truncate">
+                                                {
+                                                    chapter.audio_path ? (
+                                                        <audio controls className="w-full">
+                                                            <source src={URL_API + chapter.audio_path} type="audio/mpeg" />
+                                                            Trình duyệt của bạn không hỗ trợ audio.
+                                                        </audio>) : (
+                                                        <span className="text-red-500">Không có audio</span>
+                                                    )
+                                                }
+                                            </td>
+                                        )
+                                    }
+
                                     <td className="px-6 py-4 text-gray-900 dark:text-slate-950 font-semibold truncate">
                                         {chapter?.user.fullName || "Không có người tạo"}
                                     </td>

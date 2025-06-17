@@ -11,7 +11,7 @@ interface BaseRepositoryInterface
     public function getById(int $id);
     public function create(array $data);
     public function update(int $id, array $data);
-    public function delete(int $ids): bool;
+    public function delete(array $ids);
     // public function getByIds(array $ids): Collection;
     public function search(string $query): LengthAwarePaginator;
 }

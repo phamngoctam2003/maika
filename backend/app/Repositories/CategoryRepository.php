@@ -48,13 +48,19 @@ class CategoryRepository implements CategoryRepositoryInterface
         return null;
     }
 
-    public function delete(int $ids): bool
+ public function delete(array $ids): ?bool
     {
-        $category = $this->getById($ids);
-        if ($category) {
-            return $category->delete();
+        if (is_array($ids) && !empty($ids)) {
+            foreach ($ids as $id) {
+                $books = Category::find($id);
+                if ($books && $books->comment()->count() > 0) {
+                    return false; 
+                }
+            }
+            Category::whereIn('id', $ids)->delete();
+            return true;
         }
-        return false;
+        return false; 
     }
 
     public function getParentId(int $parentId): Collection

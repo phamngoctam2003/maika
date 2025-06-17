@@ -32,7 +32,7 @@ class BookRepository implements BookRepositoryInterface
 
     public function getById(int $id): ?Books
     {
-        return Books::where('id', $id)->first();
+        return Books::with('formats')->where('id', $id)->first();
     }
 
     public function create(array $data): Books
@@ -58,13 +58,19 @@ class BookRepository implements BookRepositoryInterface
         return null;
     }
 
-    public function delete(int $ids): bool
+    public function delete(array $ids): ?bool
     {
-        $Books = $this->getById($ids);
-        if ($Books) {
-            return $Books->delete();
+        if (is_array($ids) && !empty($ids)) {
+            foreach ($ids as $id) {
+                $books = Books::find($id);
+                if ($books && $books->comment()->count() > 0) {
+                    return false; 
+                }
+            }
+            Books::whereIn('id', $ids)->delete();
+            return true;
         }
-        return false;
+        return false; 
     }
 
 

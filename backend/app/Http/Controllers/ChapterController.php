@@ -34,7 +34,7 @@ class ChapterController extends Controller
             'book_id' => 'required|exists:books,id',
             'title' => 'required|string|max:255',
             'content' => 'nullable|string',
-            'audio_path' => 'nullable|string',
+            'audio_path' => 'nullable|file',
             'chapter_order' => 'required|integer',
             'expected_chapters' => 'nullable|integer',
             'status' => 'integer',
