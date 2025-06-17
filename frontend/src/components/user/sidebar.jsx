@@ -133,7 +133,7 @@ const Logout = () => (
 
 const Sidebar = () => {
     const URL_IMG = import.meta.env.VITE_URL_IMG;
-    const { isAuthenticated, currentUser, setCurrentUser, setToken, setPermissions, setRoles } = useAuth();
+    const { setIsAuthenticated, isAuthenticated, currentUser, setCurrentUser, setToken, setPermissions, setRoles } = useAuth();
 
     const [isOpen, setIsOpen] = useState(false);
     const [isDanhMucOpen, setIsDanhMucOpen] = useState(true);
@@ -180,6 +180,7 @@ const Sidebar = () => {
             console.error('Lỗi khi đăng xuất', error);
         } finally {
             setCurrentUser(null);
+            setIsAuthenticated(false);
             setPermissions([]);
             setRoles([]);
             setToken(null);
