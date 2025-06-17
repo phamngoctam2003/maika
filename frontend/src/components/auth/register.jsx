@@ -17,7 +17,7 @@ export const RegisterModal = ({
     setShowConfirmPassword,
 }) => {
     const [loading, setLoading] = useState(false);
-    const { setCurrentUser, setToken, setPermissions } = useAuth();
+    const { setCurrentUser, setToken, setPermissions, setIsAuthenticated } = useAuth();
 
     const onSubmit = async (e) => {
         e.preventDefault();
@@ -57,6 +57,7 @@ export const RegisterModal = ({
         setCurrentUser(user);
         setPermissions(permissions);
         setToken(response.access_token);
+        setIsAuthenticated(true);
         closeAllModals();
         if (onLoginSuccess) onLoginSuccess();
         if (permissions && permissions.length > 0) {
@@ -100,7 +101,7 @@ export const RegisterModal = ({
                         </div>
                         <div>
                             <input
-                                type="tel"
+                                type="text"
                                 name="email"
                                 placeholder="Email"
                                 className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500"

@@ -25,7 +25,7 @@ export const UserHeader = () => {
     const iconcloseRef = useRef(null);
     const btnCuasoRef = useRef(null);
 
-    const { isAuthenticated, currentUser, setCurrentUser, roles, setRoles, permissions, token, setToken, setPermissions } = useAuth();
+    const { isAuthenticated, currentUser, setCurrentUser, roles, setRoles, permissions, token, setToken, setPermissions, setIsAuthenticated } = useAuth();
 
     const onFinish = async (e) => {
         e.preventDefault();
@@ -51,9 +51,6 @@ export const UserHeader = () => {
         }
     };
 
-    console.log('isAuthenticated', isAuthenticated);
-    console.log('currentUser', currentUser);
-
     const setLoginGoogle = (response) => {
         message.success("Đăng nhập thành công");
         const user = response.user;
@@ -63,6 +60,7 @@ export const UserHeader = () => {
         setPermissions(permissions);
         setRoles(roles);
         setIsPopupActive(false);
+        setIsAuthenticated(true);
         setToken(response.access_token);
         if (permissions && permissions.length > 0 && !roles.includes('user')) {
             return navigate('/admin');
@@ -132,6 +130,7 @@ export const UserHeader = () => {
             message.error("Đăng xuất thất bại");
         } finally {
             setLoggedIn(null);
+            setIsAuthenticated(false);
             setCurrentUser(null);
             setPermissions([]);
             setToken(null);
