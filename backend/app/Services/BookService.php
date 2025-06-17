@@ -4,15 +4,11 @@ namespace App\Services;
 
 use App\Contracts\BookRepositoryInterface;
 use App\Models\BookFormat;
-use App\Models\Role;
 use App\Models\Books;
-use App\Models\Category;
+use App\Models\Chapter;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
 
 class BookService
 {
@@ -45,5 +41,19 @@ class BookService
     public function getAllFormats(): Collection
     {
         return BookFormat::all();
+    }
+
+
+    public function deleteBooks(array $ids): bool
+    {
+        if (empty($ids)) return false;
+        $chapters = Chapter::whereIn('book_id', $ids)->get();   
+        foreach ($chapters as $chapter) {
+            if ($chapter->audio_path && Storage::disk('public')->exists($chapter->audio_path)) {
+                Storage::disk('public')->delete($chapter->audio_path);
+            }
+        }
+        Books::whereIn('id', $ids)->delete();
+        return true;
     }
 }

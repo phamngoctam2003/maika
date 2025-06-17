@@ -40,8 +40,8 @@ const BooksService = {
     return apiPost(`/books/update/${id}`, data);
   },
 
-  destroy: async (id) => {
-    return apiPost(`/books/${id}/delete`, {});
+  destroy: async (ids) => {
+    return apiPost('/books/destroy', {ids});
   },
 };
 export default BooksService;

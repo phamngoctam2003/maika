@@ -42,6 +42,17 @@ const AuthService = {
   Login_Google: async (accessToken) => {
     return apiPost("/auth/login-google", { access_token: accessToken });
   },
+  
+  isTokenExpired: () => {
+    const token = localStorage.getItem("token");
+    if (!token) return true;
+    try {
+      const payload = JSON.parse(atob(token.split(".")[1]));
+      return payload.exp * 1000 < Date.now();
+    } catch (e) {
+      return true;
+    }
+  },
 };
 
 export { AuthService };

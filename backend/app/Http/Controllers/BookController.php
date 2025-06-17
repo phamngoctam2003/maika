@@ -105,4 +105,28 @@ class BookController extends Controller
             ], 500);
         }
     }
+
+    public function delete(Request $request)
+    {
+        $ids = $request->ids;
+        try {
+            foreach ($ids as $id) {
+                $book = $this->bookService->getBookById($id);
+                if (!$book) {
+                    return response()->json(['message' => 'Sách không tồn tại.'], 404);
+                }
+            }
+            $result = $this->bookService->deleteBooks($ids);
+            if ($result) {
+                return response()->json(['message' => 'Xóa thành công', 'status' => 200]);
+            } else {
+                return response()->json(['message' => 'Xóa thất bại', 'status' => 'error'], 400);
+            }
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Có lỗi xảy ra khi xóa sách.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
 }

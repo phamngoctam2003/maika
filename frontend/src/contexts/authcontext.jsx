@@ -1,5 +1,6 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
 import { AuthService } from '../services/api-auth';
+import { AntNotification } from "@components/ui/notification";
 
 const AuthContext = createContext(null);
 
@@ -20,9 +21,21 @@ export const AuthProvider = ({ children }) => {
             setIsAuthenticated(!!(token && AuthService.isAuthenticated()));
         } else {
             localStorage.removeItem('token');
+            setIsAuthenticated(false);
         }
     }, [token]);
 
+    useEffect(() => {
+        if (AuthService.isTokenExpired() && token) {
+            // Không gọi API logout vì token đã hết hạn
+            setCurrentUser(null);
+            setPermissions([]);
+            setRoles([]);
+            setToken(null);
+            setIsAuthenticated(false);
+            AntNotification.showNotification("Phiên đăng nhập hết hạn", "Vui lòng đăng nhập lại", "error");
+        }
+    }, [token]);
 
     // Kiểm tra xem người dùng đã đăng nhập khi component mount
     useEffect(() => {
@@ -52,7 +65,7 @@ export const AuthProvider = ({ children }) => {
     const hasRole = (role) => {
         return roles.includes(role);
     };
-    console.log('authenticated', isAuthenticated, token, currentUser, permissions, roles);
+    // console.log('authenticated', isAuthenticated, token, currentUser, permissions, roles);
     const value = {
         currentUser,
         permissions,
