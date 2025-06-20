@@ -7,6 +7,7 @@ use App\Http\Controllers\AccountController;
 use App\Http\Controllers\BookController;
 use App\Http\Controllers\ChapterController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\Users\HomeController;
 
 Route::get('test-api', function () {
     return response()->json([
@@ -90,4 +91,10 @@ Route::group([
     //     Route::get('/reports', [ReportController::class, 'index']);
     //     // Các routes cho cả admin và manager
     // });
+});
+
+route::group(['prefix' => 'client'], function () {
+    route::group(['prefix' => 'home'], function () {
+        route::get('get-latest', [HomeController::class, 'getLatest']);
+    });
 });

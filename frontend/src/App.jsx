@@ -4,7 +4,8 @@ import { Slideshow } from "./pages/user/router";
 import { UserLayout } from "./components/layouts/user/userlayout";
 import { AdminLayout } from "./components/layouts/admin/adminlayout";
 import { ProtectedRoute } from "./services/ProtectedRoute";
-import { UserHome, UserSachnoi, UserSachdientu } from "./pages/user/router";
+import {UserSachnoi, UserSachdientu } from "./pages/user/router";
+import UserHome from "./pages/user/userhome";
 // router admin
 import { Home, User, Categories, Create_category, Roles, Update_Role, Create_role, Accounts, Set_Role_Account } from "./pages/admin/router";
 import { Notfound404 } from "./components/notfound404";
