@@ -60,7 +60,7 @@ class AccountController extends Controller
         ]);
         try {
             $user = $this->accountService->getAccountById($id);
-             if ($user) {
+            if ($user) {
                 if (isset($validatedData['roles']) && is_array($validatedData['roles'])) {
                     $roles = Role::whereIn('id', $validatedData['roles'])
                         ->where('guard_name', 'api')

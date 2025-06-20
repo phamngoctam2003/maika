@@ -681,41 +681,42 @@ header a:hover {
   display: none;
 }
 
-.div-112 {
+.classic-works-section {
   width: 100%;
   margin-top: 30px;
   padding: 0 0;
 }
-.div-112 .div-113 {
+.classic-works-section .classic-works-container {
   width: 100%;
   padding-left: 40px;
+  overflow: visible; /* Quan trọng */
 }
-.div-112 .div-113 .scrollbar {
-  -webkit-overflow-scrolling: touch; /* Cho phép cuộn mượt trên các thiết bị cảm ứng */
-  overflow-x: scroll;
+.classic-works-section .classic-works-container .books-scroll-container {
+    scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE 10+ */
   display: flex;
-  height: auto;
-  overflow-y: hidden;
+  overflow-x: auto;
 }
-.scrollbar::-webkit-scrollbar {
-  width: 0px;
+.books-scroll-container::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
 }
-.scrollbar .sach1 {
+.books-scroll-container .book-item {
   width: 224px;
-  height: auto;
-  margin: 40px 0;
+  min-width: 224px;
+  flex-shrink: 0;
   margin: 15px;
 }
-.sach1 img {
+.book-item .book-cover-wrapper .book-title-link img {
   border-radius: 10px;
-  width: auto;
+  width: 244px;
   height: 327px;
+  object-fit: cover;
 }
-.scrollbar .sach1 a {
+.books-scroll-container .book-item .book-cover-wrapper a {
   text-decoration: none;
 }
 
-.scrollbar .sach1 p {
+.books-scroll-container .book-item .book-cover-wrapper p {
   margin-top: 15px;
   font-size: 1em;
   color: #ffffff;
@@ -763,11 +764,13 @@ header a:hover {
   display: inline;
 }
 .bewen1 {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE 10+ */
   z-index: 0;
   padding: 0 50px;
 }
 .bewen1::-webkit-scrollbar {
-  width: 0;
+  display: none;
 }
 .box-name {
   display: flex;
@@ -1061,6 +1064,8 @@ textarea#nhanxet::placeholder {
   flex: 4;
 }
 .chuong-ppc {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE 10+ */
   width: 260px;
   height: 100vh;
   display: flex;
@@ -1088,7 +1093,7 @@ textarea#nhanxet::placeholder {
   color: #15b088;
 }
 .chuong-ppc::-webkit-scrollbar {
-  width: 0px;
+  display: none;
 }
 
 /* Qản lý khách hàng */
@@ -1635,7 +1640,7 @@ audio::-webkit-media-controls-seek-forward-button {
 .ant-select-selection-wrap {
   display: flex !important;
   align-items: center !important;
-  height: 100% !important;  
+  height: 100% !important;
 }
 
 /* Placeholder căn giữa */

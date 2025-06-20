@@ -51,12 +51,6 @@ class CategoryRepository implements CategoryRepositoryInterface
  public function delete(array $ids): ?bool
     {
         if (is_array($ids) && !empty($ids)) {
-            foreach ($ids as $id) {
-                $books = Category::find($id);
-                if ($books && $books->comment()->count() > 0) {
-                    return false; 
-                }
-            }
             Category::whereIn('id', $ids)->delete();
             return true;
         }

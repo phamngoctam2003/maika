@@ -54,14 +54,15 @@ class AccountRepository implements AccountRepositoryInterface
         return null;
     }
 
-    public function delete(int $ids): bool
+     public function delete(array $ids): ?bool
     {
-        $User = $this->getById($ids);
-        if ($User) {
-            return $User->delete();
+        if (is_array($ids) && !empty($ids)) {
+            User::whereIn('id', $ids)->delete();
+            return true;
         }
-        return false;
+        return false; 
     }
+
 
     public function getParentId(int $parentId): Collection
     {
