@@ -18,7 +18,7 @@ const images = [
 
 const SlideCarousel = () => {
     return (
-        <div className="w-full h-auto max-w-6xl mx-auto py-6 lg:hidden cursor-pointer overflow-hidden pt-24 sile-carousel">
+        <div className="w-full h-auto max-w-6xl mx-auto py-2 lg:py-6 lg:hidden cursor-pointer overflow-hidden pt-24 sile-carousel">
             <Swiper
                 modules={[Navigation, Pagination]}
                 slidesPerView={1.6}
