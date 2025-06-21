@@ -7,6 +7,10 @@
   }
 }
 
+.text-maika-500 {
+  color: #15A781;
+}
+
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
 }

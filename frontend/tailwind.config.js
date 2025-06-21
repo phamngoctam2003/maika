@@ -9,6 +9,9 @@ export default {
       screens: {
         'xs': '0px',
       },
+      colors: {
+        'maika-500': '#15A781',
+      },
     },
   },
   plugins: [],
