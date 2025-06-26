@@ -1,6 +1,6 @@
 import { useNavigate, useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { AntNotification } from "@components/ui/notification";
+import { AntNotification } from "@components/global/notification";
 import CategoriesService from "@/services/api-categories";
 import Breadcrumb from "@components/admin/breadcrumb";
 import { Loading } from "../../../components/loading/loading";

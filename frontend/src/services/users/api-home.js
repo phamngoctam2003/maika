@@ -14,7 +14,9 @@ const apiGet = async (url, options = {}) => {
 
 const HomeService = {
   getLatets: async () => {
-    return apiGet("/client/home/get-latest");
+    return apiGet("/users/home/get-latest");
   },
+
+
 };
 export default HomeService;

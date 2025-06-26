@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { UsersService } from "@/services/api-user";
-import { AntNotification } from "@components/ui/notification";
+import { AntNotification } from "@components/global/notification";
 import ImageModal from "@components/admin/image_modal";
 import DeleteConfirmationModal from "@components/admin/delete_comfirm";
 import Breadcrumb from "@components/admin/breadcrumb";

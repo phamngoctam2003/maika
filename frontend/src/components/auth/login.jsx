@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Loading } from '@components/loading/loading';
 import { LoginGoogle } from '@components/LoginGoogle/LoginGoogle';
-import { AntNotification } from "@components/ui/notification";
+import { AntNotification } from "@components/global/notification";
 import { message } from 'antd';
 import { AuthService } from '@/services/api-auth';
 import { useAuth } from '@/contexts/authcontext';

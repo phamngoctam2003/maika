@@ -27,8 +27,8 @@ class RepositoryServiceProvider extends ServiceProvider
             \App\Repositories\ChapterRepository::class
         );
         $this->app->bind(
-            \App\Contracts\ClientRepositoryInterface::class,
-            \App\Repositories\ClientRepository::class
+            \App\Contracts\UserRepositoryInterface::class,
+            \App\Repositories\UserRepository::class
         );
     }
 

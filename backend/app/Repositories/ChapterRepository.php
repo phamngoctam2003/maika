@@ -40,8 +40,16 @@ class ChapterRepository implements ChapterRepositoryInterface
             throw new \Exception('User not authenticated');
         }
         $data['user_id'] = $user->id;
-        $path = $data['audio_path']->storePublicly('audio', 'public');
-        $data['audio_path'] = $path;
+        
+        // Chỉ xử lý audio_path nếu nó tồn tại và là file upload
+        if (isset($data['audio_path']) && $data['audio_path'] && is_object($data['audio_path'])) {
+            $path = $data['audio_path']->storePublicly('audio', 'public');
+            $data['audio_path'] = $path;
+        } else {
+            // Nếu không có file hoặc file rỗng, set null
+            $data['audio_path'] = null;
+        }
+        
         return Chapter::create($data);
     }
 

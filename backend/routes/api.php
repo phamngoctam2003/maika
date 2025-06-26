@@ -7,11 +7,12 @@ use App\Http\Controllers\AccountController;
 use App\Http\Controllers\BookController;
 use App\Http\Controllers\ChapterController;
 use App\Http\Controllers\RoleController;
-use App\Http\Controllers\Users\HomeController;
+use App\Http\Controllers\User\HomeController;
+use App\Http\Controllers\User\BookDetaiController;
 
 Route::get('test-api', function () {
     return response()->json([
-        'message' => 'Api đã hoạt động rồi nhá!',
+        'message' => 'Api đã hoạt động!',
         'data' => [
             'name' => 'Laravel API',
             'version' => '1.0.0',
@@ -45,6 +46,7 @@ route::group(['prefix' => 'accounts'], function () {
 
 route::group(['prefix' => 'books'], function () {
     route::get('formats', [BookController::class, 'getAllFormats']);
+    route::get('authors', [BookController::class, 'getAuthors']);
     route::get('/', [BookController::class, 'index']);
     route::post('create', [BookController::class, 'create']);
     route::get('/{id}', [BookController::class, 'show']);
@@ -93,8 +95,13 @@ Route::group([
     // });
 });
 
-route::group(['prefix' => 'client'], function () {
+route::group(['prefix' => 'users'], function () {
     route::group(['prefix' => 'home'], function () {
         route::get('get-latest', [HomeController::class, 'getLatest']);
+    });
+
+    route::group(['prefix' => 'detail'], function () {
+        route::get('get-ebook-reader/{slug}', [BookDetaiController::class, 'getEbookReader']);
+        route::get('get-ebook/{slug}', [BookDetaiController::class, 'getEbook']);
     });
 });

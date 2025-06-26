@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import ChapterService from "@/services/api-chapters";
-import { AntNotification } from "@components/ui/notification";
+import { AntNotification } from "@components/global/notification";
 import { Link, useParams } from "react-router-dom";
 import DeleteConfirmationModal from "@components/admin/delete_comfirm";
 import Breadcrumb from "@components/admin/breadcrumb";

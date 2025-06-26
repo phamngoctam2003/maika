@@ -1,6 +1,6 @@
 import { useNavigate, Link } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { AntNotification } from "@components/ui/notification";
+import { AntNotification } from "@components/global/notification";
 import { RolesService } from "@/services/api-roles";
 export const Create_role = () => {
     const [permissions, setPermissions] = useState([]);
