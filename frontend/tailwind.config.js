@@ -12,6 +12,9 @@ export default {
       colors: {
         'maika-500': '#15A781',
       },
+      backgroundColor:  {
+        'maika-500': '#15A781',
+      },
     },
   },
   plugins: [],

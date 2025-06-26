@@ -1,23 +1,23 @@
 <?php
 
-namespace App\Http\Controllers\Users;
+namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
-use App\Services\ClientService;
+use App\Services\UserService;
 use Illuminate\Http\Request;
 
 class HomeController extends Controller
 {
     //
-    protected ClientService $clientService;
-    public function __construct(ClientService $clientService)
+    protected UserService $userService;
+    public function __construct(UserService $userService)
     {
-        $this->clientService = $clientService;
+        $this->userService = $userService;
     }
     public function getLatest ()
     {
         try {
-            $users = $this->clientService->getLatest();
+            $users = $this->userService->getLatest();
             if ($users->isEmpty()) {
                 return response()->json(['message' => 'Không có người dùng nào.'], 404);
             }
@@ -29,4 +29,5 @@ class HomeController extends Controller
             ], 500);
         }
     }
+    
 }

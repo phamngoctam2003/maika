@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Navigate } from 'react-router-dom';
 import { Loading } from '@components/loading/loading';
-import { AntNotification } from "@components/ui/notification";
+import { AntNotification } from "@components/global/notification";
 import { message } from 'antd';
 import { AuthService } from '@/services/api-auth';
 import { useAuth } from '@/contexts/authcontext';

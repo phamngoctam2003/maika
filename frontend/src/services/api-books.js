@@ -28,6 +28,10 @@ const BooksService = {
     return apiGet("/books/formats");
   },
 
+  bookAuthor: async () => {
+    return apiGet("/books/authors");
+  },
+
   getById: async (id) => {
     return apiGet(`/books/${id}`);
   },

@@ -1,7 +1,7 @@
 import SlideCarousel from "../../components/ui/slide_swiper";
 import { useEffect, useState, useRef } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import HomeService from "../../services/client/api-home";
+import HomeService from "../../services/users/api-home";
 
 const UserHome = () => {
   const URL_IMG = import.meta.env.VITE_URL_IMG;
@@ -123,7 +123,10 @@ const UserHome = () => {
                   key={book.id}
                 >
                   <div className="">
-                    <a href="#" className="block h-auto">
+                    <Link
+                      // to={"ebook/" + book.slug}
+                      to={`/ebook/${book.slug}`}
+                      className="block h-auto">
                       <div className="relative w-full mb-2 rounded-md lg:rounded-xl shadow-md overflow-hidden">
                         <img
                           className="w-full h-auto object-cover"
@@ -138,7 +141,7 @@ const UserHome = () => {
                       >
                         {book?.title}
                       </p>
-                    </a>
+                    </Link>
                   </div>
                 </div>
               ))}

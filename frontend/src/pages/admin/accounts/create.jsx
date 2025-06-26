@@ -1,4 +1,4 @@
-import { AntNotification } from '@components/ui/notification';
+import { AntNotification } from '@components/global/notification';
 import { useNavigate, Link } from 'react-router-dom';
 import { useState } from 'react';
 import { UsersService } from '@/services/api-user';

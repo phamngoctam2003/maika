@@ -1,6 +1,6 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
 import { AuthService } from '../services/api-auth';
-import { AntNotification } from "@components/ui/notification";
+import { AntNotification } from "@components/global/notification";
 
 const AuthContext = createContext(null);
 

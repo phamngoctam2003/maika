@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { message, notification as Notification } from 'antd';
 import { AuthService } from '@/services/api-auth';
-import { AntNotification } from "@components/ui/notification";
+import { AntNotification } from "@components/global/notification";
 import { useAuth } from '@/contexts/authcontext';
 import { Loading } from '@components/loading/loading';
 import { LoginGoogle } from '@components/LoginGoogle/LoginGoogle';
@@ -140,7 +140,7 @@ export const UserHeader = () => {
     if (isLoading) return null;
     return (
         <>
-            <header className=''>
+            <header className='px-12'>
                 <Link to="/">
                     <h2 className="logomaika">MAIKA</h2 >
                 </Link >

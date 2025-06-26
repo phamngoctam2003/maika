@@ -26,7 +26,7 @@ class ChapterService
         return $this->chapterRepository->getById($id);
     }
 
-    public function createBook(array $data): Chapter
+    public function createChapterBook(array $data): Chapter
     {
         return $this->chapterRepository->create($data);
     }

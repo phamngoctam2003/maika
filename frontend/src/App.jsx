@@ -8,11 +8,10 @@ import {UserSachnoi, UserSachdientu } from "./pages/user/router";
 import UserHome from "./pages/user/userhome";
 // router admin
 import { Home, User, Categories, Create_category, Roles, Update_Role, Create_role, Accounts, Set_Role_Account } from "./pages/admin/router";
-import { Notfound404 } from "./components/notfound404";
+import { Notfound404 } from "./components/global/notfound404";
+import BookDetail from "./pages/user/book_detail/book_detail";
 
-import Book_Types from "./pages/admin/book_types";
-import Create_booktype from "./pages/admin/book_types/create";
-import Update_Booktype from "./pages/admin/book_types/update";
+import BookReader from "./pages/user/book_reader";
 
 import Books from "./pages/admin/books";
 import Create_Book from "./pages/admin/books/create";
@@ -34,10 +33,6 @@ function App() {
     { path: 'categories/create', element: < Create_category /> },
     { path: 'categories/update/:id', element: < Update_Category /> },
 
-    { path: 'book-types', element: < Book_Types /> },
-    { path: 'book-types/create', element: < Create_booktype /> },
-    { path: 'book-types/update/:bookTypeId', element: < Update_Booktype /> },
-
     { path: 'books', element: < Books /> },
     { path: 'books/create', element: < Create_Book /> },
 
@@ -51,8 +46,10 @@ function App() {
   ];
 
   const userRoutes = [
+    { path: "ebook/:slug", element: <BookDetail /> },
     { path: "sachdientu", element: <UserSachdientu /> },
     { path: "sachnoi", element: <UserSachnoi /> },
+    { path: "reader/:slug", element: <BookReader /> },
   ];
   const router = createBrowserRouter([
     {

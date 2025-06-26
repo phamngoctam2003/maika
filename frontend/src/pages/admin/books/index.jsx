@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import BooksService from "@/services/api-books";
-import { AntNotification } from "@components/ui/notification";
+import { AntNotification } from "@components/global/notification";
 import ImageModal from "@components/admin/image_modal";
 import { Link } from "react-router-dom";
 import DeleteConfirmationModal from "@components/admin/delete_comfirm";

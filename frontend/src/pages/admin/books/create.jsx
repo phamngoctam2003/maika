@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { AntNotification } from "@components/ui/notification";
+import { AntNotification } from "@components/global/notification";
 import BooksService from "@/services/api-books";
 import CategoriesService from "@/services/api-categories";
 import Breadcrumb from "@components/admin/breadcrumb";
@@ -11,7 +11,9 @@ const Create_Book = () => {
     const [formatId, setFormatId] = useState([]);
     const [categoryOptions, setCategoryOptions] = useState([]);
     const [formatOptions, setFormatOptions] = useState([]);
+    const [authorOptions, setAuthorOptions] = useState([]);
     const [imageFile, setImageFile] = useState(null);
+    const [author, setAuthor] = useState([]);
     // Breadcrumb items
 
     const breadcrumbItems = [
@@ -33,6 +35,9 @@ const Create_Book = () => {
         if (imageFile) {
             data.append("file_path", imageFile);
         }
+        author.forEach((id) => {
+            data.append("author[]", id);
+        });
         data.forEach((value, key) => {
             console.log(`${key}: ${value}`);
         });
@@ -93,6 +98,30 @@ const Create_Book = () => {
 
         fetchFormat();
     }, []);
+
+    useEffect(() => {
+        const fetchAuthor = async () => {
+            try {
+                const res = await BooksService.bookAuthor();
+                if (res) {
+                    const options = res.map((author) => ({
+                        value: String(author.id),
+                        label: author.name,
+                    }));
+                    setAuthorOptions(options);
+
+                } else {
+                    AntNotification.showNotification("Có lỗi xảy ra", "Không thể tải dữ liệu" || res.message, "error");
+                }
+            } catch (error) {
+                console.error("Lỗi khi fetch dữ liệu:", error);
+                AntNotification.handleError(error);
+            }
+        };
+
+        fetchAuthor();
+    }, []);
+
     const uploadProps = {
         multiple: false,
         listType: "picture",
@@ -108,6 +137,8 @@ const Create_Book = () => {
     const onChangeFormat = e => {
         setFormatId(e);
     };
+
+    console.log("Author", author);
     return (
         <div className="pt-16 px-4 lg:ml-64">
             <Breadcrumb items={breadcrumbItems} />
@@ -124,15 +155,6 @@ const Create_Book = () => {
                             name="title"
                             style={{ borderRadius: '4px', padding: '11px' }}
                             placeholder="Nhập tiêu đề sách"
-                            className="shadow-sm border border-gray-300 text-gray-900 text-sm focus:ring-blue-500 focus:border-blue-500 w-full"
-                        />
-                    </div>
-                    <div className="mb-5">
-                        <label htmlFor="author" className="block mb-2 text-sm font-medium text-gray-900 dark:text-black">Tác giả</label>
-                        <input type="text"
-                            name="author"
-                            style={{ borderRadius: '4px', padding: '11px' }}
-                            placeholder="Nhập tên tác giả"
                             className="shadow-sm border border-gray-300 text-gray-900 text-sm focus:ring-blue-500 focus:border-blue-500 w-full"
                         />
                     </div>
@@ -163,6 +185,23 @@ const Create_Book = () => {
                         />
                     </div>
                     <div className="mb-5">
+                        <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-black">Tác giả</label>
+                        <Select
+                            mode="tags"
+                            showSearch
+                            style={{
+                                height: '44px',
+                                minHeight: '44px',
+                            }}
+                            className="w-full custom-select-tag"
+                            placeholder="Tùy chọn tác giả"
+                            optionFilterProp="label"
+                            options={authorOptions}
+                            value={author}
+                            onChange={setAuthor}
+                        />
+                    </div>
+                    <div className="mb-5">
                         <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-black">Thể loại</label>
                         {
                             formatOptions.length === 0 ? (
@@ -178,7 +217,7 @@ const Create_Book = () => {
 
                         />
                     </div>
-                
+
                     <div className="mb-5">
                         <Upload
                             className="custom-upload"

@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { RolesService } from "@/services/api-roles";
-import { AntNotification } from "@components/ui/notification";
+import { AntNotification } from "@components/global/notification";
 import { Link } from "react-router-dom";
 // import DeleteConfirmationModal from "@components/delete_confirm";
 import { Loading } from "@components/loading/loading";

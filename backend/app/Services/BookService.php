@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Contracts\BookRepositoryInterface;
 use App\Models\BookFormat;
+use App\Models\Author;
 use App\Models\Books;
 use App\Models\Chapter;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
@@ -41,6 +42,11 @@ class BookService
     public function getAllFormats(): Collection
     {
         return BookFormat::all();
+    }
+
+    public function getAuthors(): Collection
+    {
+        return Author::all();
     }
 
 

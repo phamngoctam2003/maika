@@ -1,6 +1,6 @@
 import { useNavigate, useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { AntNotification } from "@components/ui/notification";
+import { AntNotification } from "@components/global/notification";
 import { QuillEditor } from "@components/editor/quilleditor";
 import ChapterService from "@/services/api-chapters";
 import BooksService from "@/services/api-books";

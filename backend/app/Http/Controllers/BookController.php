@@ -32,7 +32,7 @@ class BookController extends Controller
     {
         $validatedData = $request->validate([
             'title' => 'required|string|max:255',
-            'author' => 'required|string|max:255',
+            'author' => 'required|array|max:255',
             'description' => 'nullable|string',
             'publication_year' => 'required|integer|min:1900|max:' . date('Y'),
             'file_path' => 'required|file',
@@ -101,6 +101,18 @@ class BookController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Có lỗi xảy ra khi lấy danh sách định dạng sách.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+    public function getAuthors()
+    {
+        try {
+            $authors = $this->bookService->getAuthors();
+            return response()->json($authors);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Có lỗi xảy ra khi lấy danh sách tác giả.',
                 'error' => $e->getMessage()
             ], 500);
         }
