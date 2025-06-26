@@ -12,7 +12,7 @@ use App\Http\Controllers\User\BookDetaiController;
 
 Route::get('test-api', function () {
     return response()->json([
-        'message' => 'Api đã hoạt động!',
+        'message' => 'Api đang hoạt động!',
         'data' => [
             'name' => 'Laravel API',
             'version' => '1.0.0',
