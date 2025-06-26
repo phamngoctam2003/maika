@@ -15,7 +15,7 @@ Route::get('test-api', function () {
         'message' => 'Api đang hoạt động!',
         'data' => [
             'name' => 'Laravel API',
-            'version' => '1.0.0',
+            'version' => '12.0.0',
         ],
         'timestamp' => now()->toDateTimeString(),
         'status' => 200,
