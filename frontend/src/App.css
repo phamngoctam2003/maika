@@ -782,7 +782,6 @@ header a:hover {
   justify-content: center;
   text-align: center;
   color: #fff;
-  font-size: 1em;
   font-weight: 500;
   background-color: #15b088;
   float: right;
@@ -790,11 +789,7 @@ header a:hover {
   border-radius: 40px;
   height: 48px;
 }
-.btn113 ion-icon {
-  font-weight: 600;
-  margin-right: 5px;
-  font-size: 1.5em;
-}
+
 .chonnoidung .loaisach {
   margin: 5px 0;
 }
