@@ -89,7 +89,7 @@ const CommentSection = ({
         <div className="danhgia-button">
           <button
             onClick={handleOpenCommentForm}
-            className={`btn113 gap-2 ${!isAuthenticated ? 'opacity-75 hover:opacity-100' : ''}`}
+            className={`btn113 w-52 gap-2 ${!isAuthenticated ? 'opacity-75 hover:opacity-100' : ''}`}
             title={!isAuthenticated ? 'Vui lòng đăng nhập để viết đánh giá' : ''}
           >
             <svg 

@@ -31,14 +31,14 @@ const BookDetail = () => {
         ...commentData,
         book_id: book?.id
       });
-      
+
       // Handle both new comment and updated comment
       const commentToAdd = response.comment || response;
       const isUpdate = response.isUpdate || false;
-      
+
       if (isUpdate) {
         // Update existing comment in the list
-        setComments(prev => prev.map(comment => 
+        setComments(prev => prev.map(comment =>
           comment.id === commentToAdd.id ? commentToAdd : comment
         ));
       } else {
@@ -51,13 +51,13 @@ const BookDetail = () => {
       // Handle specific authentication errors
       if (error?.response?.status === 401) {
         AntNotification.showNotification(
-          "Chưa đăng nhập", 
-          "Vui lòng đăng nhập để viết đánh giá", 
+          "Chưa đăng nhập",
+          "Vui lòng đăng nhập để viết đánh giá",
           "error"
         );
       } else {
         AntNotification.handleError(
-          "Thêm bình luận không thành công", 
+          "Thêm bình luận không thành công",
           error.message || "Đã có lỗi xảy ra khi thêm bình luận"
         );
       }
@@ -91,11 +91,10 @@ const BookDetail = () => {
   useEffect(() => {
     const fecthDataComment = async () => {
       if (!book?.id) return;
-      
+
       setCommentsLoading(true);
       try {
         const response = await DetailtService.getComments(book.id, currentPage);
-        
         if (currentPage === 1) {
           // First load - replace all comments
           setComments(response?.data || []);
@@ -103,11 +102,11 @@ const BookDetail = () => {
           // Load more - append to existing comments
           setComments(prev => [...prev, ...(response?.data || [])]);
         }
-        
+
         // Update pagination info
         setTotalComments(response?.total || 0);
         setHasMoreComments(response?.current_page < response?.last_page);
-        
+
       } catch (error) {
         console.error("Error fetching comments:", error);
       } finally {
@@ -127,11 +126,97 @@ const BookDetail = () => {
     label: <Link to={`/author/${element.slug}`}>{element?.name}</Link>,
   })) || [];
 
+  console.log('category:', book?.categories
+  );
   return (
-    <div className="px-12 w-full bg-color-detail">
+    <div className="lg:px-12 w-full bg-color-detail">
       <UserBreadcrumb items={breadcrumbItems} />
-      <div className="w-full flex gap-12">
-        <div className="sticky top-[10%] w-[400px] z-[50] h-full mr-15">
+      <div className="relative overflow-hidden block lg:hidden">
+        {/* Background image - same as book cover but blurred */}
+        <div className="absolute inset-0">
+          <img
+            src={URL_IMG + book?.file_path}
+            alt="Background"
+            className="w-full h-full object-cover"
+          />
+          {/* Blur and dark overlay */}
+          <div className="absolute inset-0 backdrop-blur-0 bg-black/70"></div>
+        </div>
+
+        {/* Background decorative elements */}
+        <div className="absolute top-20 right-10 w-32 h-32 bg-white/10 rounded-full blur-xl"></div>
+        <div className="absolute bottom-20 left-10 w-24 h-24 bg-white/5 rounded-full blur-lg"></div>
+        <div className="absolute top-40 left-20 w-16 h-16 bg-orange-300/20 rounded-full blur-md"></div>
+
+        {/* Header */}
+        <div className="relative z-10 flex items-center justify-between p-4 pt-12">
+          <button className="p-2 text-white hover:bg-white/20 rounded-full transition-colors">
+          </button>
+          <div className="flex gap-3">
+            <button className="p-2 text-white hover:bg-white/20 rounded-full transition-colors">
+            </button>
+            <button className="p-2 text-white hover:bg-white/20 rounded-full transition-colors">
+            </button>
+          </div>
+        </div>
+
+        {/* Main content */}
+        <div className="relative z-5 flex flex-col items-center px-6 mt-8">
+          {/* Member badge */}
+          {/* <div className="bg-orange-500 text-white px-3 py-1 rounded-full text-sm font-medium mb-4 flex items-center gap-1">
+            <span className="w-2 h-2 bg-white rounded-full"></span>
+            HỘI VIÊN
+          </div> */}
+
+          {/* Book cover */}
+          <div className="relative mb-6">
+            <img
+              src={URL_IMG + book?.file_path}
+              alt="Gió xuân rực lửa"
+              className="w-64 h-auto object-cover rounded-lg shadow-2xl relative"
+            />
+            {/* Book shadow */}
+            <div className="absolute -bottom-2 left-2 right-2 h-4 bg-black/30 rounded-full blur-md"></div>
+          </div>
+
+          {/* Book title and author */}
+          <h1 className="text-white text-2xl font-bold text-center mb-2">Gió xuân rực lửa</h1>
+          <p className="text-white/80 text-center mb-1">
+            <span className="text-sm">Tác giả: </span>
+            <span className="text-orange-200 font-medium">
+              {book?.authors?.map(author => (
+                <span key={author.id}>
+                  <Link to={`/author/${author.slug}`} className="hover:underline">
+                    {author.name}
+                  </Link>
+                  {book.authors.indexOf(author) < book.authors.length - 1 ? ', ' : ''}
+                </span>
+              ))}
+            </span>
+          </p>
+
+          {/* Ranking badge */}
+          <div className="bg-pink-500 text-white px-4 py-2 rounded-full text-sm font-medium mb-8 flex items-center gap-2">
+            <span className="font-bold">#30</span>
+            <span>trong Top xu hướng Sách nói</span>
+            <span>›</span>
+          </div>
+
+          {/* Action buttons */}
+          <div className="flex gap-4 w-full max-w-sm mb-8 z-[7]">
+            <button className="flex-1 bg-white/20 text-white border border-white/30 py-3 rounded-full font-medium hover:bg-white/30 transition-colors">
+              NGHE THỬ
+            </button>
+            <button className="flex-1 bg-green-500 text-white py-3 rounded-full font-medium hover:bg-green-600 transition-colors">
+              NÂNG CẤP
+            </button>
+          </div>
+        </div>
+          <div
+          className="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-b to-[#121214] from-transparent pointer-events-none" />
+      </div>
+      <div className="w-full flex gap-12 lg:px-0 px-4">
+        <div className="sticky top-[10%] w-[400px] z-[50] h-full mr-15 lg:block hidden">
           <div className="relative w-full">
             <div className=" relative rounded-xl overflow-hidden mb-10">
               <img alt={book?.title}
@@ -140,51 +225,55 @@ const BookDetail = () => {
             </div>
             <div className="book-border w-full top-0 left-0 absolute h-full">
             </div>
-            <div className="type-sale top-0 right-0 absolute w-30 h-7 pl-3">
-              {/* <p className="font-medium font-medium text-white-default uppercase py-1"> */}
-              {/* Hội viên */}
-              {/* </p> <img src="https://waka.vn/svgs/icon-sale.svg" alt="icon-sale" className="cursor-pointer absolute top-0 right-0" /> */}
-            </div>
+            {/* <div className="type-sale top-0 right-0 absolute w-30 h-7 pl-3">
+              <p className="font-medium font-medium text-white-default uppercase py-1">
+              Hội viên
+              </p> <img src="https://waka.vn/svgs/icon-sale.svg" alt="icon-sale" className="cursor-pointer absolute top-0 right-0" />
+            </div> */}
           </div>
         </div>
-        <div className="w-[54%] z-[8] between-content mr-15">
+        <div className="lg:w-[54%] w-full z-[8] between-content mr-15">
+
           <div className="pb-4 border-b border-white-overlay">
-            <h1 className="text-3xl font-bold">{book?.title}</h1>
-            <div className="flex mt-4">
-              <div className="flex items-center mr-6">
-                <span className="text-white-50 block mr-1">4.2</span>
-                <div className="flex items-center justify-center">
-                  <img
-                    src="https://waka.vn/svgs/icon-star.svg"
-                    alt="icon-star"
-                    className="cursor-pointer w-4 h-6"
-                  />
-                  <img
-                    src="https://waka.vn/svgs/icon-star.svg"
-                    alt="icon-star"
-                    className="cursor-pointer w-4 h-6"
-                  />
-                  <img
-                    src="https://waka.vn/svgs/icon-star.svg"
-                    alt="icon-star"
-                    className="cursor-pointer w-4 h-6"
-                  />
-                  <img
-                    src="https://waka.vn/svgs/icon-star.svg"
-                    alt="icon-star"
-                    className="cursor-pointer w-4 h-6"
-                  />
-                  <img
-                    src="https://waka.vn/svgs/icon-star-empty.svg"
-                    alt="icon-star-empty"
-                    className="cursor-pointer w-4 h-6"
-                  />
+            <div className="">
+              <h1 className="lg:text-3xl font-bold text-xl lg:block hidden">{book?.title}</h1>
+              <div className="flex mt-4">
+                <div className="flex items-center mr-6">
+                  <span className="text-white-50 block mr-1">4.2</span>
+                  <div className="flex items-center justify-center">
+                    <img
+                      src="https://waka.vn/svgs/icon-star.svg"
+                      alt="icon-star"
+                      className="cursor-pointer w-4 h-6"
+                    />
+                    <img
+                      src="https://waka.vn/svgs/icon-star.svg"
+                      alt="icon-star"
+                      className="cursor-pointer w-4 h-6"
+                    />
+                    <img
+                      src="https://waka.vn/svgs/icon-star.svg"
+                      alt="icon-star"
+                      className="cursor-pointer w-4 h-6"
+                    />
+                    <img
+                      src="https://waka.vn/svgs/icon-star.svg"
+                      alt="icon-star"
+                      className="cursor-pointer w-4 h-6"
+                    />
+                    <img
+                      src="https://waka.vn/svgs/icon-star-empty.svg"
+                      alt="icon-star-empty"
+                      className="cursor-pointer w-4 h-6"
+                    />
+                  </div>
                 </div>
+                <p className="text-white-50">
+                  <span className="text-gray-400">・</span>{totalComments} đánh giá
+                </p>
               </div>
-              <p className="text-white-50">
-                <span className="text-gray-400">・</span>5 đánh giá
-              </p>
             </div>
+
             <div>
               <a
                 href="/bang-xep-hang?rank_type=week&content_type=book_all"
@@ -204,7 +293,7 @@ const BookDetail = () => {
               </a>
             </div>
             <div className="mt-4 grid z-30 relative cus-grid gap-2 sm:grid-cols-2 xl:grid-cols-4 ">
-              <div className="col-span-1 cus-col-span ">
+              <div className="col-span-1 cus-col-span lg:block hidden">
                 <p className="text-gray-400 font-medium">Tác giả</p>
                 {book?.authors.length > 1 ? (
                   <Dropdown menu={{ items: itemAuthors }} placement="bottom" trigger={['click']}>
@@ -270,47 +359,24 @@ const BookDetail = () => {
           </div>
           <div className="mt-7-5 mt-4">
             <div className="flex items-center">
-              <div className="pr-3 flex items-center cursor-pointer">
-                <span className="text-white-400 text-16-16 mb-1">Chọn loại sách</span>
+              <div className="flex items-center cursor-pointer">
+                <span className="text-white-400 text-16-16 mb-1 hidden lg:block">Chọn loại sách</span>
               </div>{" "}
-              <div className="px-3 flex items-center cursor-pointer mr-3 justify-center">
-                <div className="relative w-[310px] h-[36px] text-white-400 text-16-16 bg-bt-cate-book rounded-lg flex items-center justify-center z-30">
-                  <div className="category-book-active w-[234px] h-[32px] cursor-pointer rounded-lg inline-flex items-center justify-center text-center">
-                    <span className="text-14-14 inline-flex items-center justify-center text-center">
-                      Sách điện tử
-                    </span>
-                  </div>{" "}
-                  <div className="w-[234px] h-[32px] cursor-pointer rounded-lg inline-flex items-center justify-center text-center">
-                    <span className="text-14-14 inline-flex items-center justify-center text-center">
-                      Sách nói
-                    </span>
-                  </div>{" "}
-                  <div className="w-[234px] h-[32px] cursor-pointer rounded-lg inline-flex items-center justify-center text-center">
-                    <span className="text-14-14 inline-flex items-center justify-center text-center">
-                      Sách giấy
-                    </span>
-                  </div>{" "}
-                  {/**/}
+              <div className="lg:px-3 w-full flex items-center cursor-pointer justify-center">
+                <div className="flex lg:gap-4 gap-2 w-full">
+                  <button className="flex-1 bg-white/10 border border-white/30 text-white py-3 rounded-lg flex items-center justify-center gap-2 hover:bg-white/20 transition-colors">
+                    <div className="text-left">
+                      <div className="text-sm font-medium">Sách điện tử</div>
+                      <div className="text-xs text-white/60">Hội viên</div>
+                    </div>
+                  </button>
+                  <button className="flex-1 bg-green-500/80 text-white py-3 rounded-lg flex items-center justify-center gap-2 hover:bg-green-500 transition-colors border-2 border-green-400">
+                    <div className="text-left">
+                      <div className="text-sm font-medium">Sách nói</div>
+                      <div className="text-xs text-green-100">Hội viên</div>
+                    </div>
+                  </button>
                 </div>
-              </div>
-            </div>{" "}
-            <div className="flex items-center">
-              <div className="pr-3 flex items-center cursor-pointer">
-                <span className="text-white-400 text-16-16 mb-1">Chọn nội dung</span>
-              </div>{" "}
-              <div className="px-3 flex items-center cursor-pointer mr-3 justify-center">
-                <div className="w-[236px] h-[36px] text-white-400 text-16-16 bg-bt-cate-book rounded-lg flex items-center justify-center z-30">
-                  <div className="w-[234px] h-[32px] cursor-pointer rounded-lg inline-flex items-center justify-center text-center brief-active">
-                    <span className="text-14-14 inline-flex items-center justify-center text-center">
-                      Đầy đủ
-                    </span>
-                  </div>{" "}
-                  <div className="w-[234px] h-[32px] cursor-pointer rounded-lg inline-flex items-center justify-center text-center brief-active-not">
-                    <span className="text-14-14 inline-flex items-center justify-center text-center">
-                      Tóm tắt
-                    </span>
-                  </div>
-                </div>{" "}
                 {/**/}
               </div>
             </div>{" "}
