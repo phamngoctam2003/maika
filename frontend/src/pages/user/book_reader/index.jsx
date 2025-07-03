@@ -7,6 +7,7 @@ import BookProgress from './book_progress';
 import BookControls from './book_controls';
 import DetailtService from "@/services/users/api-detail";
 import SidebarChapter from './sidebar_chapter';
+import { trackBookView, saveReadingProgress, restoreReadingPosition } from '@/services/users/book-tracking';
 
 
 const rawBookContent = [
@@ -28,7 +29,6 @@ const BookReader = () => {
   const [book, setBook] = useState(null);
   const contentRef = useRef(null);
   const [bookContent, setBookContent] = useState([]);
-
 
   useEffect(() => {
     const fecthData = async () => {
@@ -94,13 +94,9 @@ const BookReader = () => {
       for (let i = 0; i < paragraphs.length; i++) {
         let testBuffer = buffer ? buffer + '\n' + paragraphs[i] : paragraphs[i];
         tempDiv.innerHTML = testBuffer; // Sử dụng innerHTML thay vì innerText để render HTML
-        
-        console.log(`Paragraph ${i}, scrollHeight: ${tempDiv.scrollHeight}, buffer length: ${buffer.length}`); // Debug log
-        
         if (tempDiv.scrollHeight > 700 && buffer) {
           pages.push(buffer.trim());
           buffer = paragraphs[i];
-          console.log(`Page created, total pages so far: ${pages.length}`); // Debug log
         } else {
           buffer = testBuffer;
         }
@@ -108,13 +104,10 @@ const BookReader = () => {
         if (i === paragraphs.length - 1 && buffer) {
           tempDiv.innerHTML = buffer; // Sử dụng innerHTML
           pages.push(buffer.trim());
-          console.log(`Final page added, total pages: ${pages.length}`); // Debug log
         }
       }
 
       document.body.removeChild(tempDiv);
-
-      console.log(`Chapter "${chapter.title || 'No title'}" has ${pages.length} pages`); // Debug log
 
       return {
         ...chapter,
@@ -133,7 +126,6 @@ const BookReader = () => {
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
 
   const getTotalPages = () => bookContent.reduce((t, ch) => t + ch.pages.length, 0);
-
   const getCurrentAbsolutePage = () => {
     let page = 0;
     for (let i = 0; i < currentChapter; i++) page += bookContent[i].pages.length;
@@ -178,6 +170,48 @@ const BookReader = () => {
 
   const isFirstPage = () => currentChapter === 0 && currentPage === 0;
   const isLastPage = () => currentChapter === bookContent.length - 1 && currentPage === bookContent[currentChapter].pages.length - 1;
+
+  // Track book view khi user đọc
+  useEffect(() => {
+    // Chỉ track khi đã có dữ liệu book và bookContent đầy đủ
+    if (book?.slug && bookContent.length > 0 && getTotalPages() > 0) {
+      // Debounce 2 giây để tránh spam khi user chuyển trang nhanh
+      const timer = setTimeout(() => {
+        trackBookView(book.slug, getTotalPages, getCurrentAbsolutePage);
+        // Chỉ lưu progress, không lưu quá thường xuyên
+        saveReadingProgress(book.slug, currentChapter, currentPage, bookContent);
+      }, 2000); // Tăng từ 100ms lên 2000ms
+      
+      return () => clearTimeout(timer);
+    }
+  }, [currentPage, currentChapter, book?.slug, bookContent]); // Track mỗi khi chuyển trang hoặc chương
+
+  // Khôi phục vị trí đọc khi load sách
+  useEffect(() => {
+    const restorePosition = async () => {
+      if (book?.slug && bookContent.length > 0) {
+        try {
+          // Fix: Truyền đủ 2 parameters
+          const position = await restoreReadingPosition(book.slug, bookContent);
+          console.log('📚 Position nhận được:', position);
+          
+          // Fix: Sử dụng đúng property names và phục hồi cả chapter + page
+          if (position && (position.chapterIndex !== currentChapter || position.pageIndex !== currentPage)) {
+            console.log(`📚 Khôi phục từ chương ${currentChapter + 1} trang ${currentPage + 1} → chương ${position.chapterIndex + 1} trang ${position.pageIndex + 1}`);
+            
+            setCurrentChapter(position.chapterIndex);
+            setCurrentPage(position.pageIndex);
+          } else {
+            console.log('📚 Vị trí hiện tại đã đúng hoặc không có lịch sử');
+          }
+        } catch (error) {
+          console.error('📚 Lỗi khôi phục vị trí:', error);
+        }
+      }
+    };
+    
+    restorePosition();
+  }, [book?.slug, bookContent]); // Chỉ chạy khi book và content đã sẵn sàng
 
   // Loading screen
   if (isLoading || !book || bookContent.length === 0) {

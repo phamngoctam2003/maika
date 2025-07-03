@@ -1,29 +1,121 @@
 import UserBreadcrumb from "@components/user/breadcrumb";
+import CommentSection from "@components/user/CommentSection";
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
+import { AntNotification } from "@components/global/notification";
 import DetailtService from "@/services/users/api-detail";
 import { Button, Dropdown } from "antd";
+
 const BookDetail = () => {
   const URL_IMG = import.meta.env.VITE_URL_IMG;
   const navigate = useNavigate();
   const { slug } = useParams();
   const [book, setBook] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [comments, setComments] = useState([]);
+  const [commentsLoading, setCommentsLoading] = useState(false);
+  const [hasMoreComments, setHasMoreComments] = useState(true);
+  const [totalComments, setTotalComments] = useState(0);
+
   const breadcrumbItems = [
     { label: "Trang chủ", path: "/" },
     { label: `${book?.title}`, path: null },
   ];
+
+
+
+  const handleAddComment = async (commentData) => {
+    try {
+      // Call API to add comment
+      const response = await DetailtService.create({
+        ...commentData,
+        book_id: book?.id
+      });
+      
+      // Handle both new comment and updated comment
+      const commentToAdd = response.comment || response;
+      const isUpdate = response.isUpdate || false;
+      
+      if (isUpdate) {
+        // Update existing comment in the list
+        setComments(prev => prev.map(comment => 
+          comment.id === commentToAdd.id ? commentToAdd : comment
+        ));
+      } else {
+        // Add new comment to the list
+        setComments(prev => [commentToAdd, ...prev]);
+        setTotalComments(prev => prev + 1);
+      }
+      return response;
+    } catch (error) {
+      // Handle specific authentication errors
+      if (error?.response?.status === 401) {
+        AntNotification.showNotification(
+          "Chưa đăng nhập", 
+          "Vui lòng đăng nhập để viết đánh giá", 
+          "error"
+        );
+      } else {
+        AntNotification.handleError(
+          "Thêm bình luận không thành công", 
+          error.message || "Đã có lỗi xảy ra khi thêm bình luận"
+        );
+      }
+      throw error;
+    }
+  };
+
+  const handleLoadMoreComments = () => {
+    if (hasMoreComments && !commentsLoading) {
+      setCurrentPage(prev => prev + 1);
+    }
+  };
 
   useEffect(() => {
     const fecthData = async () => {
       try {
         const response = await DetailtService.getEbook(slug);
         setBook(response);
+        // Reset pagination when book changes
+        setCurrentPage(1);
+        setComments([]);
+        setHasMoreComments(true);
+        setTotalComments(0);
       } catch (error) {
         console.error("Error fetching latest products:", error);
       }
     };
     fecthData();
   }, [slug]);
+
+  useEffect(() => {
+    const fecthDataComment = async () => {
+      if (!book?.id) return;
+      
+      setCommentsLoading(true);
+      try {
+        const response = await DetailtService.getComments(book.id, currentPage);
+        
+        if (currentPage === 1) {
+          // First load - replace all comments
+          setComments(response?.data || []);
+        } else {
+          // Load more - append to existing comments
+          setComments(prev => [...prev, ...(response?.data || [])]);
+        }
+        
+        // Update pagination info
+        setTotalComments(response?.total || 0);
+        setHasMoreComments(response?.current_page < response?.last_page);
+        
+      } catch (error) {
+        console.error("Error fetching comments:", error);
+      } finally {
+        setCommentsLoading(false);
+      }
+    };
+    fecthDataComment();
+  }, [book?.id, currentPage]);
 
   const itemAuthors = book?.authors?.map(element => ({
     key: element?.id,
@@ -224,7 +316,7 @@ const BookDetail = () => {
             </div>{" "}
             <div className="flex items-center relative z-30">
               <Link
-              to={`/reader/${book?.slug}`}
+                to={`/reader/${book?.slug}`}
                 className="flex items-center justify-center my-4 py-3 rounded-full cursor-pointer text-white-default text-16-16 whitespace-nowrap w-[233px] px-4 button-col bg-maika-500"
               >
                 <img
@@ -280,40 +372,19 @@ const BookDetail = () => {
               Độc giả nói gì về “Huấn luyện não bộ (Chìa khóa thành công của những đào tạo
               chuyên nghiệp)”
             </div>
-            <div>
-              <div>
-                <div className="flex gap-6 py-3 tabs border-white-overlay pb-4 border-b border-white-overlay">
-                  <div className="cursor-pointer flex items-center">
-                    <p className="font-medium text-[19px] text-waka-500 ">
-                      Bình luận (0)
-                    </p>
-                  </div>
-                  <div className="cursor-pointer flex items-center">
-                    <p className="leading-5 font-normal text-white-300 ">
-                      Đánh giá &amp; nhận xét (1)
-                    </p>
-                  </div>
-                </div>
-                <div className="mt-5">
-                  <div>
-                    <div className="flex items-center justify-center flex-col">
-                      <img
-                        src="/images/png/comment-empty.png"
-                        alt="maika"
-                        className="cursor-pointer"
-                      />
-                      <p className="text-16-16 text-white-400">Chưa có bình luận nào</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div>
-              </div>
-            </div>
+            <CommentSection
+              comments={comments}
+              onAddComment={handleAddComment}
+              loading={commentsLoading}
+              bookId={book?.id}
+              hasMoreComments={hasMoreComments}
+              onLoadMore={handleLoadMoreComments}
+              totalComments={totalComments}
+            />
           </div>
         </div>
       </div>
-    </div >
+    </div>
   );
 }
 

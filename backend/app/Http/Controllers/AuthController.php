@@ -98,7 +98,6 @@ class AuthController extends Controller
             $user->image = $namefile;
             $user->save();
         }
-        // Tạo JWT token (dùng tymon/jwt-auth)
         /** @var \Tymon\JWTAuth\JWTGuard $guard */
         $guard = auth('api');
         $token = $guard->login($user);

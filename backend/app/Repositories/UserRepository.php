@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Hash;
 
 class UserRepository implements UserRepositoryInterface
 {
-    public function getLatest ()
+    public function getLatest()
     {
         return Books::latest()->take(12)->get();
     }
@@ -27,10 +27,17 @@ class UserRepository implements UserRepositoryInterface
     public function getEbook(string $slug): ?Books
     {
         return Books::with('categories', 'formats', 'authors')
-        ->where('slug', $slug)->first();
+            ->where('slug', $slug)->first();
     }
     public function getEbookReader(string $slug): ?Books
     {
         return Books::with('chapters', 'authors')->where('slug', $slug)->first();
+    }
+
+    public function increaseView($slug)
+    {
+        $book = Books::where('slug', $slug)->firstOrFail();
+        $book->increment('views');
+        return response()->json(['success' => true]);
     }
 }

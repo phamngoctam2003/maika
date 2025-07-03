@@ -5,7 +5,7 @@ const BookHeader = ({ toggleSidebar, sidebarOpen, chapters }) => (
     <div className="flex items-center justify-between p-4 border-b border-gray-700 fixed top-0 left-0 right-0 bg-gray-800 z-50">
         <div className="flex items-center gap-4">
             <Link to={`/ebook/${chapters.slug}`} className='py-1 px-4'>
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 12 24"><path fill="currentColor" filRrule="evenodd" d="M10 19.438L8.955 20.5l-7.666-7.79a1.02 1.02 0 0 1 0-1.42L8.955 3.5L10 4.563L2.682 12z"/></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 12 24"><path fill="currentColor" fillRule="evenodd" d="M10 19.438L8.955 20.5l-7.666-7.79a1.02 1.02 0 0 1 0-1.42L8.955 3.5L10 4.563L2.682 12z"/></svg>
             </Link>
         </div>
         <h1 className="text-xl font-semibold truncate">{chapters.title}</h1>
