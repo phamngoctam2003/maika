@@ -780,7 +780,7 @@ header a:hover {
   background-color: #15b088;
   float: right;
   border: none;
-  width: 40%;
+  width: 30%;
   border-radius: 40px;
   height: 48px;
 }
@@ -819,66 +819,49 @@ header a:hover {
   min-height: 48px;
 }
 /* Bình luận ==============*/
-.star_wrap {
-  display: flex;
-  flex-direction: row-reverse;
-}
-input[type="radio"] {
-  padding-bottom: 5px;
-  appearance: none;
-}
-input[type="radio"]::before {
-  content: "\2605";
-  color: #ccc;
-  font-size: 2rem;
-  cursor: pointer;
-}
-input[type="radio"]:checked::before,
-input[type="radio"]:checked ~ input[type="radio"]::before {
-  color: #ffb800;
-}
+/* Legacy star rating - replaced by modern rating system */
 .danhgia {
   padding: 30px;
   position: fixed;
-  z-index: 20;
+  z-index: 40;
   width: 450px;
   height: 400px;
-  background: transparent;
-  border: 1px solid rgba(162, 162, 162, 0.5);
+  background: rgba(18, 18, 20, 0.95);
+  border: 1px solid rgba(21, 176, 136, 0.3);
   border-radius: 20px;
   backdrop-filter: blur(30px);
-  box-shadow: 100px 100px 100px 100px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(21, 176, 136, 0.1);
   overflow: hidden;
-  top: 20%;
-  left: 30%;
-  transform: translate(-50%, -50%);
-  transform: scale(0);
-  transition: transform 0.4s ease, height 0.2s ease;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  opacity: 0;
 }
+
+.danhgia.activebtn {
+  transform: translate(-50%, -50%) scale(1);
+  opacity: 1;
+}
+
 .danhgia h2 {
   margin-top: 5px;
   text-align: center;
   color: #ffffff;
   font-size: 1.5em;
-  font-weight: 400;
-}
-.activebtn {
-  transform: scale(1);
-}
-
-.danhgia.activebtn.xoahet1 {
-  display: none;
+  font-weight: 500;
+  margin-bottom: 20px;
 }
 
 .danhgia .icon-close1 {
   margin: 5px;
   position: absolute;
-  top: 0;
-  right: 0;
-  width: 30px;
-  height: 30px;
-  background: #878787;
-  font-size: 1.5em;
+  top: 10px;
+  right: 10px;
+  width: 35px;
+  height: 35px;
+  background: rgba(135, 135, 135, 0.8);
+  font-size: 1.3em;
   color: #ffffff;
   display: flex;
   justify-content: center;
@@ -886,6 +869,12 @@ input[type="radio"]:checked ~ input[type="radio"]::before {
   border-radius: 50%;
   cursor: pointer;
   z-index: 1;
+  transition: all 0.2s ease;
+}
+
+.danhgia .icon-close1:hover {
+  background: rgba(220, 53, 69, 0.8);
+  transform: scale(1.1);
 }
 .danhgia .row-radio {
   margin-top: 15px;
@@ -894,58 +883,80 @@ input[type="radio"]:checked ~ input[type="radio"]::before {
   width: 100%;
   display: flex;
 }
+
 .danhgia .row-radio label {
   text-align: center;
   margin-right: 14px;
+  color: #ffffff;
+  font-weight: 500;
 }
+
 .danhgia .row-nhanxet label {
   text-align: start;
+  color: #ffffff;
+  font-weight: 500;
 }
+
 .danhgia .row-nhanxet {
-  margin-top: 15px;
+  margin-top: 20px;
   justify-content: start;
   width: 100%;
   display: flex;
   flex-direction: column;
 }
+
 .danhgia .row-nhanxet #nhanxet {
   color: #fff;
-  font-size: 1em;
+  font-size: 0.95em;
   line-height: 1.5;
-  padding: 10px;
-  border: 1px solid #fff;
+  padding: 12px;
+  border: 1px solid rgba(21, 176, 136, 0.4);
   margin-top: 10px;
   height: 120px;
   border-radius: 10px;
-  background: none;
+  background: rgba(255, 255, 255, 0.05);
+  transition: all 0.2s ease;
+  resize: none;
 }
+
 .danhgia .row-nhanxet #nhanxet:focus {
   outline: none;
+  border-color: #15b088;
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 0 0 2px rgba(21, 176, 136, 0.2);
 }
 
 textarea#nhanxet::placeholder {
-  color: #b8b8b8;
+  color: #9ca3af;
 }
+
 .btn-sub {
   cursor: pointer;
   width: 100%;
-  margin: 40px 0 10px 0;
+  margin: 25px 0 10px 0;
   height: 45px;
-  border-radius: 20px;
+  border-radius: 25px;
   border: none;
-  background-color: #313131;
+  background: linear-gradient(135deg, #15b088, #0d8f6f);
   font-size: 1em;
-  font-weight: bolder;
+  font-weight: 600;
   color: #fff;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px rgba(21, 176, 136, 0.3);
+}
+
+.btn-sub:hover {
+  background: linear-gradient(135deg, #0d8f6f, #15b088);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(21, 176, 136, 0.4);
 }
 /* ============ */
 .form-danhgia {
   height: auto;
-  margin: 8px 0;
   border-radius: 10px;
   background-color: #202020;
   width: 100%;
-  padding: 25px 25px 10px 25px;
+  padding: 20px 20px 10px 20px;
 }
 .img-name {
   display: flex;
@@ -956,9 +967,7 @@ textarea#nhanxet::placeholder {
   align-items: center;
   display: flex;
 }
-.img-name .flex-pp p {
-  margin-left: 15px;
-}
+
 .form-danhgia .img-name .flex-pp img {
   border-radius: 50%;
   width: 40px;
@@ -1784,4 +1793,45 @@ audio::-webkit-media-controls-seek-forward-button {
     transform: rotate(calc(var(--rotation) * 1deg))
       translate(0, calc(var(--translation) * 1.5%));
   }
+}
+
+/* Modern Star Rating */
+.rating {
+  display: flex;
+  flex-direction: row-reverse;
+  gap: 4px;
+  justify-content: flex-end;
+  margin: 10px 0;
+}
+
+.rating input {
+  display: none;
+}
+
+.rating label {
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.rating .star-solid {
+  width: 1.5em;
+  height: 1.5em;
+  fill: #4b5563;
+  transition: all 0.2s ease;
+}
+
+.rating label:hover .star-solid,
+.rating label:hover ~ label .star-solid {
+  fill: #fbbf24;
+  transform: scale(1.05);
+}
+
+.rating input:checked ~ label .star-solid {
+  fill: #f59e0b;
+  filter: drop-shadow(0 0 4px rgba(245, 158, 11, 0.6));
+}
+
+.rating input:checked + label .star-solid {
+  fill: #f59e0b;
+  filter: drop-shadow(0 0 4px rgba(245, 158, 11, 0.6));
 }

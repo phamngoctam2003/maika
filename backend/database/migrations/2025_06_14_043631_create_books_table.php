@@ -18,6 +18,7 @@ return new class extends Migration
             $table->integer('publication_year')->nullable();
             $table->string('file_path')->nullable();
             $table->enum('access_type', ['free', 'membership'])->default('free');
+            $table->unsignedInteger('views')->default(0);
             $table->timestamps();
             $table->softDeletes();
         });

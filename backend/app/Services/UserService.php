@@ -24,4 +24,7 @@ class UserService {
     public function getEbookReader (string $slug): ?Books {
         return $this->userRepository->getEbookReader ($slug);
     }
+    public function increaseView($slug) {
+        return $this->userRepository->increaseView($slug);
+    }
 }

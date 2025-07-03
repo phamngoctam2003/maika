@@ -9,6 +9,8 @@ use App\Http\Controllers\ChapterController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\User\HomeController;
 use App\Http\Controllers\User\BookDetaiController;
+use App\Http\Controllers\User\ReadingHistoryController;
+use App\Http\Controllers\User\BookCommentController;
 
 Route::get('test-api', function () {
     return response()->json([
@@ -96,6 +98,7 @@ Route::group([
 });
 
 route::group(['prefix' => 'users'], function () {
+    route::post('{slug}/increase-view', [HomeController::class, 'increaseView']);
     route::group(['prefix' => 'home'], function () {
         route::get('get-latest', [HomeController::class, 'getLatest']);
     });
@@ -103,5 +106,20 @@ route::group(['prefix' => 'users'], function () {
     route::group(['prefix' => 'detail'], function () {
         route::get('get-ebook-reader/{slug}', [BookDetaiController::class, 'getEbookReader']);
         route::get('get-ebook/{slug}', [BookDetaiController::class, 'getEbook']);
+    });
+
+    Route::group(['prefix' => 'reading-history'], function () {
+        Route::post('/save', [ReadingHistoryController::class, 'save']);
+        Route::get('/{slug}', [ReadingHistoryController::class, 'getProgress']);
+        Route::get('/', [ReadingHistoryController::class, 'recentlyRead']);
+    });
+
+    route::group(['prefix' => 'book-comments'], function () {
+        Route::get('/', [BookCommentController::class, 'index']);
+        Route::post('/create', [BookCommentController::class, 'create']);
+        Route::post('/check-user-comment', [BookCommentController::class, 'checkUserComment']);
+        // Route::post('create', [\App\Http\Controllers\User\BookCommentController::class, 'create']);
+        // Route::get('/{id}', [\App\Http\Controllers\User\BookCommentController::class, 'show']);
+        // Route::post('/update/{id}', [\App\Http\Controllers\User\BookCommentController::class, 'update']);
     });
 });
