@@ -180,7 +180,7 @@ const BookDetail = () => {
           </div>
 
           {/* Book title and author */}
-          <h1 className="text-white text-2xl font-bold text-center mb-2">Gió xuân rực lửa</h1>
+          <h1 className="text-white text-2xl font-bold text-center">Gió xuân rực lửa</h1>
           <p className="text-white/80 text-center mb-1">
             <span className="text-sm">Tác giả: </span>
             <span className="text-orange-200 font-medium">
@@ -196,10 +196,23 @@ const BookDetail = () => {
           </p>
 
           {/* Ranking badge */}
-          <div className="bg-pink-500 text-white px-4 py-2 rounded-full text-sm font-medium mb-8 flex items-center gap-2">
-            <span className="font-bold">#30</span>
-            <span>trong Top xu hướng Sách nói</span>
-            <span>›</span>
+          <div className=" rounded-full text-sm font-medium mb-2 items-center gap-2 lg:hidden block">
+              <a
+                href="/bang-xep-hang?rank_type=week&content_type=book_all"
+                className="bg-pink-950 flex items-center max-w-fit p-2 rounded-full mt-2 mb-2"
+              >
+                <div className="w-12 h-7-5 bg-pink-500 rounded-full flex items-center justify-center mr-1">
+                  <p className=" font-medium text-white-50">#49</p>
+                </div>
+                <p className="text-pink-500 mx-1-5">
+                  trong Top xu hướng Sách điện tử
+                </p>
+                <img
+                  src="https://waka.vn/svgs/icon-right-pink.svg"
+                  alt="icon-right-pink"
+                  className="cursor-pointer w-4 h-4"
+                />
+              </a>
           </div>
 
           {/* Action buttons */}
@@ -212,7 +225,7 @@ const BookDetail = () => {
             </button>
           </div>
         </div>
-          <div
+        <div
           className="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-b to-[#121214] from-transparent pointer-events-none" />
       </div>
       <div className="w-full flex gap-12 lg:px-0 px-4">
@@ -274,12 +287,12 @@ const BookDetail = () => {
               </div>
             </div>
 
-            <div>
+            <div className="hidden lg:block">
               <a
                 href="/bang-xep-hang?rank_type=week&content_type=book_all"
                 className="bg-pink-950 flex items-center max-w-fit p-2 rounded-full mt-4 mb-2"
               >
-                <div className="w-12 h-7-5 bg-pink-500 rounded-full flex items-center justify-center">
+                <div className="w-12 h-7-5 bg-pink-500 rounded-full flex items-center justify-center mr-1">
                   <p className="text-14-14 font-medium text-white-50">#49</p>
                 </div>
                 <p className="text-pink-500 mx-1-5 text-14-14">
