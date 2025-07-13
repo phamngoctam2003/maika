@@ -30,4 +30,21 @@ class CategoryService {
     public function updateCategory(int $id, array $data): ?Category {
         return $this->categoryRepository->update($id, $data);
     }
+    public function getAllCategoriesWithFormats(): Collection {
+        return $this->categoryRepository->getAllWithBooksAndFormats();
+    }
+
+    /**
+     * Lấy categories cho sách điện tử
+     */
+    public function getEbookCategories(): Collection {
+        return $this->categoryRepository->getCategoriesByFormat(['Sách điện tử']);
+    }
+
+    /**
+     * Lấy categories cho sách nói
+     */
+    public function getAudiobookCategories(): Collection {
+        return $this->categoryRepository->getCategoriesByFormat(['Sách nói']);
+    }
 }

@@ -87,4 +87,52 @@ class CategoryController extends Controller
             ], 500);
         }
     }
+
+    /**
+     * Lấy categories với formats tối ưu
+     */
+    public function getCategoriesWithFormats()
+    {
+        try {
+            $categories = $this->categoryService->getAllCategoriesWithFormats();
+            return response()->json($categories);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Có lỗi xảy ra khi lấy danh sách danh mục.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Lấy categories cho sách điện tử
+     */
+    public function getEbookCategories()
+    {
+        try {
+            $categories = $this->categoryService->getEbookCategories();
+            return response()->json($categories);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Có lỗi xảy ra khi lấy danh sách danh mục sách điện tử.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Lấy categories cho sách nói
+     */
+    public function getAudiobookCategories()
+    {
+        try {
+            $categories = $this->categoryService->getAudiobookCategories();
+            return response()->json($categories);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Có lỗi xảy ra khi lấy danh sách danh mục sách nói.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
 }

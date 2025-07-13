@@ -7,6 +7,7 @@ import { useAuth } from '@/contexts/authcontext';
 import { Loading } from '@components/loading/loading';
 import { LoginGoogle } from '@components/LoginGoogle/LoginGoogle';
 import Sidebar from '../../user/sidebar';
+import HomeService from '@/services/users/api-home';
 export const UserHeader = () => {
     const URL_IMG = import.meta.env.VITE_URL_IMG;
     const logoGoogle = (<svg className="hover:scale-125 transition-transform duration-300" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 128 128"><path fill="#fff" d="M44.59 4.21a63.28 63.28 0 0 0 4.33 120.9a67.6 67.6 0 0 0 32.36.35a57.13 57.13 0 0 0 25.9-13.46a57.44 57.44 0 0 0 16-26.26a74.33 74.33 0 0 0 1.61-33.58H65.27v24.69h34.47a29.72 29.72 0 0 1-12.66 19.52a36.16 36.16 0 0 1-13.93 5.5a41.29 41.29 0 0 1-15.1 0A37.16 37.16 0 0 1 44 95.74a39.3 39.3 0 0 1-14.5-19.42a38.31 38.31 0 0 1 0-24.63a39.25 39.25 0 0 1 9.18-14.91A37.17 37.17 0 0 1 76.13 27a34.28 34.28 0 0 1 13.64 8q5.83-5.8 11.64-11.63c2-2.09 4.18-4.08 6.15-6.22A61.22 61.22 0 0 0 87.2 4.59a64 64 0 0 0-42.61-.38z" /><path fill="#e33629" d="M44.59 4.21a64 64 0 0 1 42.61.37a61.22 61.22 0 0 1 20.35 12.62c-2 2.14-4.11 4.14-6.15 6.22Q95.58 29.23 89.77 35a34.28 34.28 0 0 0-13.64-8a37.17 37.17 0 0 0-37.46 9.74a39.25 39.25 0 0 0-9.18 14.91L8.76 35.6A63.53 63.53 0 0 1 44.59 4.21z" /><path fill="#f8bd00" d="M3.26 51.5a62.93 62.93 0 0 1 5.5-15.9l20.73 16.09a38.31 38.31 0 0 0 0 24.63q-10.36 8-20.73 16.08a63.33 63.33 0 0 1-5.5-40.9z" /><path fill="#587dbd" d="M65.27 52.15h59.52a74.33 74.33 0 0 1-1.61 33.58a57.44 57.44 0 0 1-16 26.26c-6.69-5.22-13.41-10.4-20.1-15.62a29.72 29.72 0 0 0 12.66-19.54H65.27c-.01-8.22 0-16.45 0-24.68z" /><path fill="#319f43" d="M8.75 92.4q10.37-8 20.73-16.08A39.3 39.3 0 0 0 44 95.74a37.16 37.16 0 0 0 14.08 6.08a41.29 41.29 0 0 0 15.1 0a36.16 36.16 0 0 0 13.93-5.5c6.69 5.22 13.41 10.4 20.1 15.62a57.13 57.13 0 0 1-25.9 13.47a67.6 67.6 0 0 1-32.36-.35a63 63 0 0 1-23-11.59A63.73 63.73 0 0 1 8.75 92.4z" /></svg>);
@@ -14,6 +15,9 @@ export const UserHeader = () => {
     const [loading, setLoading] = useState(false);
     const [showSearchBar, setShowSearchBar] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
+    const [categories, setCategories] = useState([]);
+    const [ebookCategories, setEbookCategories] = useState([]);
+    const [audiobookCategories, setAudiobookCategories] = useState([]);
 
     const [loggedIn, setLoggedIn] = useState(null); // Thay đổi trạng thái đăng nhập
     const [isPopupActive, setIsPopupActive] = useState(false);
@@ -64,8 +68,6 @@ export const UserHeader = () => {
         setToken(response.access_token);
         if (permissions && permissions.length > 0 && !roles.includes('user')) {
             return navigate('/admin');
-        } else {
-            return navigate('/');
         }
     }
     const handleLogin = async (formData) => {
@@ -111,11 +113,13 @@ export const UserHeader = () => {
                 } else {
                     setIsLoading(true);
                     setLoggedIn(true);
+                    setIsPopupActive(false);
                 }
             } catch (error) {
                 console.error('Lỗi khi lấy thông tin người dùng', error);
             } finally {
                 setIsLoading(false);
+
             }
         })();
     }, [token]);
@@ -137,6 +141,55 @@ export const UserHeader = () => {
             setRoles([]);
         }
     }
+
+    useEffect(() => {
+        const fetchCategories = async () => {
+            try {
+                // Gọi 2 API riêng biệt để lấy categories theo format
+                // Tối ưu hơn vì backend đã filter sẵn, không cần xử lý ở frontend
+                const [ebookResponse, audiobookResponse] = await Promise.all([
+                    HomeService.getEbookCategories(),
+                    HomeService.getAudiobookCategories()
+                ]);
+
+                // Cập nhật state với data đã được filter từ backend
+                const ebookCats = ebookResponse || [];
+                const audiobookCats = audiobookResponse || [];
+
+                // Combine để có danh sách tổng (loại bỏ duplicate nếu có)
+                const allCategoriesMap = new Map();
+                [...ebookCats, ...audiobookCats].forEach(cat => allCategoriesMap.set(cat.id, cat));
+                const allCategories = Array.from(allCategoriesMap.values());
+
+                setCategories(allCategories);
+                setEbookCategories(ebookCats);
+                setAudiobookCategories(audiobookCats);
+            } catch (error) {
+                console.error('❌ Lỗi khi lấy categories:', error);
+
+                // Fallback: Nếu API riêng lỗi, dùng API chung
+                try {
+                    const fallbackResponse = await HomeService.getCategories();
+                    const fallbackCategories = fallbackResponse?.data || [];
+
+                    setCategories(fallbackCategories);
+                    setEbookCategories(fallbackCategories);
+                    setAudiobookCategories(fallbackCategories);
+
+                    console.log('🔄 Fallback categories loaded:', fallbackCategories.length);
+                } catch (fallbackError) {
+                    console.error('❌ Fallback cũng lỗi:', fallbackError);
+                    setCategories([]);
+                    setEbookCategories([]);
+                    setAudiobookCategories([]);
+                }
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchCategories();
+    }, []);
     if (isLoading) return null;
     return (
         <>
@@ -144,16 +197,110 @@ export const UserHeader = () => {
                 <Link to="/">
                     <h2 className="logomaika">MAIKA</h2 >
                 </Link >
-                <div id="countdown"></div>
                 <div className="maka1">
                     <nav className="navigation">
-                        <Link to="sachdientu.php" className="pgp">Sách điện tử</Link>
-                        <Link to="sachnoi.php" id="About" className="pgp">Sách nói</Link>
-                        <Link to="sachhieusoi.php" className="pgp">Sách hiệu sồi</Link>
-                        <Link to="sachdientu.phpc" className="pgp">Sách tóm tắt</Link>
+                        <div className="nav-item-dropdown">
+                            <Link to="sachdientu.php" className="dropdown-trigger">
+                                Sách điện tử
+                                <svg className="dropdown-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M12 16L6 10H18L12 16Z" />
+                                </svg>
+                            </Link>
+                            <div className="dropdown-menu">
+                                <div className="dropdown-grid">
+                                    {ebookCategories.length > 0 ? (
+                                        ebookCategories.map((category) => (
+                                            <Link
+                                                key={`ebook-${category.id}`}
+                                                to={`/category/${category.slug}`}
+                                                className="dropdown-item"
+                                                title={category.description || category.name}
+                                            >
+                                                {category.name}
+                                            </Link>
+                                        ))
+                                    ) : (
+                                        <div className="dropdown-item text-gray-500">
+                                            📚 Đang tải danh mục sách điện tử...
+                                        </div>
+                                    )}
+                                </div>
+
+                                <div className="explore-section">
+                                    <h3 className="explore-title">Khám phá ngay</h3>
+                                    <div className="explore-grid">
+                                        <Link to="sach-moi-nhat" className="explore-item">
+                                            <svg className="explore-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                                                <path d="M12 2L13.09 8.26L20 9L13.09 9.74L12 16L10.91 9.74L4 9L10.91 8.26L12 2Z" />
+                                            </svg>
+                                            Sách mới nhất
+                                        </Link>
+                                        <Link to="sach-yeu-thich" className="explore-item">
+                                            <svg className="explore-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                                                <path d="M12 21.35L10.55 20.03C5.4 15.36 2 12.28 2 8.5C2 5.42 4.42 3 7.5 3C9.24 3 10.91 3.81 12 5.09C13.09 3.81 14.76 3 16.5 3C19.58 3 22 5.42 22 8.5C22 12.28 18.6 15.36 13.45 20.04L12 21.35Z" />
+                                            </svg>
+                                            Sách yêu thích
+                                        </Link>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <Link to="sachhieusoi.php" className="dropdown-trigger">Sách hội viên</Link>
+
+                        <div className="nav-item-dropdown">
+                            <Link to="sachnoi.php" className="dropdown-trigger">
+                                Sách nói
+                                <svg className="dropdown-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M12 16L6 10H18L12 16Z" />
+                                </svg>
+                            </Link>
+                            <div className="dropdown-menu">
+                                <div className="dropdown-grid">
+                                    {audiobookCategories.length > 0 ? (
+                                        audiobookCategories.map((category) => (
+                                            <Link
+                                                key={`audiobook-${category.id}`}
+                                                to={`/audiobook/${category.slug}`}
+                                                className="dropdown-item"
+                                                title={category.description || category.name}
+                                            >
+                                                {category.name}
+                                            </Link>
+                                        ))
+                                    ) : (
+                                        <div className="dropdown-item text-gray-500">
+                                            🎧 Đang tải danh mục sách nói...
+                                        </div>
+                                    )}
+                                </div>
+
+                                <div className="explore-section">
+                                    <h3 className="explore-title">Nghe ngay</h3>
+                                    <div className="explore-grid">
+                                        <Link to="sach-noi-moi" className="explore-item">
+                                            <svg className="explore-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                                                <path d="M8 5.14V19.14L19 12.14L8 5.14Z" />
+                                            </svg>
+                                            Sách nói mới
+                                        </Link>
+                                        <Link to="sach-noi-hay" className="explore-item">
+                                            <svg className="explore-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                                                <path d="M3 9V15H7L12 20V4L7 9H3Z" />
+                                            </svg>
+                                            Sách nói hay
+                                        </Link>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <Link to="sachdientu.phpc" className="dropdown-trigger">Sách miễn phí</Link>
                     </nav>
                 </div>
-                <div className="nav1-c">
+                <div id="countdown"></div>
+
+                <div className="nav1-c flex justify-between items-center gap-2">
                     <div className="form-search">
                         <form>
                             <div className="box">
@@ -165,9 +312,19 @@ export const UserHeader = () => {
                         </form>
                     </div>
 
-                    <div className="goicuoc">
-                        <Link to="#"><button>Gói Cước</button></Link>
-                    </div>
+                    <Link to="package-plan" aria-current="page" className="nuxt-link-exact-active nuxt-link-active flex items-center justify-center">
+                        <div className="cursor-pointer bg-package border border-[#FC0] rounded-2xl px-2.5 py-[5.25px] bg-[rgba(255,204,0,0.16)] min-w-[92px] flex items-center">
+                            <div className="w-4 h-4">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                    <path d="M11.0912 6.78786C11.2433 7.00395 11.5374 7.06431 11.7623 6.92565L14.3148 5.35251C14.3598 5.33578 14.4107 5.34331 14.4486 5.37254C14.4898 5.4043 14.5075 5.45516 14.497 5.50302L14.497 5.503L14.4953 5.51114L12.9055 13.3979C12.8917 13.4554 12.8385 13.5 12.7727 13.5H3.22729C3.16153 13.5 3.10829 13.4554 3.09446 13.3979L1.50469 5.51114L1.50476 5.51112L1.50298 5.50301C1.4925 5.45516 1.51022 5.4043 1.55138 5.37254C1.58926 5.34331 1.64024 5.33578 1.68523 5.35251L4.23766 6.92565C4.46264 7.06431 4.75668 7.00395 4.90882 6.78786L7.889 2.55533C7.91407 2.52132 7.95505 2.5 8 2.5C8.04495 2.5 8.08593 2.52132 8.111 2.55533L11.0912 6.78786Z" stroke="#FFCC00" strokeLinejoin="round" />
+                                    <circle cx="8" cy="9" r="1.5" stroke="#FFCC00" />
+                                </svg>
+                            </div>
+                            <p className="text-[13px] text-[#fc0] pl-[3px] whitespace-nowrap ">
+                                Gói cước
+                            </p>
+                        </div>
+                    </Link>
                     <div className="form-submit">
                         {loggedIn ? (
                             <Link to="#">
@@ -242,8 +399,6 @@ export const UserHeader = () => {
                     </div>
                     <div className="w-full px-4 select-none">
                         <nav className="overflow-x-auto whitespace-nowrap scrollbar-hide gap-6 flex font-semibold">
-                            <Link to="sachdientu.php" className="pgp inline-block">Sách điện tử</Link>
-                            <Link to="sachnoi.php" id="About" className="pgp inline-block">Sách nói</Link>
                             <Link to="sachhieusoi.php" className="pgp inline-block">Sách hiệu sồi</Link>
                             <Link to="sachdientu.phpc" className="pgp inline-block">Sách tóm tắt</Link>
                             <Link to="sachdientu.php" className="pgp inline-block">Sách điện tử</Link>

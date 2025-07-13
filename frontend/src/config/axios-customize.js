@@ -44,6 +44,30 @@ instance.interceptors.response.use(
     
     // Xử lý 401/403
     if (status === 401 || status === 403) {
+      // Kiểm tra xem có phải lỗi về quyền truy cập sách không
+      const errorCode = error.response?.data?.error_code;
+      
+      // Debug logging
+      console.log('Axios interceptor - 401/403 error:', {
+        status,
+        errorCode,
+        url: originalRequest.url,
+        data: error.response?.data
+      });
+      
+      // Nếu là lỗi quyền truy cập sách, không cần refresh token
+      if (errorCode === 'MEMBERSHIP_REQUIRED' || errorCode === 'LOGIN_REQUIRED') {
+        console.log('Axios interceptor - Book access error, skip refresh token');
+        return Promise.reject(error);
+      }
+      
+      // Nếu đã thử refresh rồi, không thử lại
+      if (originalRequest._retry) {
+        console.log('Axios interceptor - Already retried, reject');
+        return Promise.reject(error);
+      }
+      
+      console.log('Axios interceptor - Attempting token refresh');
       originalRequest._retry = true;
       
       try {

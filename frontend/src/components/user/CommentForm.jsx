@@ -54,7 +54,7 @@ const CommentForm = ({ isOpen, onClose, onSubmit, existingComment = null, isUpda
       ></div>
 
       {/* Comment Modal */}
-      <div className={`danhgia ${isOpen ? 'activebtn' : ''}`}>
+      <div className={`danhgia z-50 ${isOpen ? 'activebtn' : ''}`}>
         <form onSubmit={handleSubmit}>
           <h2>{isUpdate ? 'Chỉnh sửa đánh giá & nhận xét' : 'Đánh giá & Nhận xét'}</h2>
           <span

@@ -11,6 +11,9 @@ use App\Http\Controllers\User\HomeController;
 use App\Http\Controllers\User\BookDetaiController;
 use App\Http\Controllers\User\ReadingHistoryController;
 use App\Http\Controllers\User\BookCommentController;
+use App\Http\Controllers\PackageController;
+use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\Api\VnpayController;
 
 Route::get('test-api', function () {
     return response()->json([
@@ -26,6 +29,9 @@ Route::get('test-api', function () {
 
 route::group(['prefix' => 'categories'], function () {
     route::get('/', [CategoryController::class, 'index']);
+    route::get('/with-formats', [CategoryController::class, 'getCategoriesWithFormats']);
+    route::get('/ebook', [CategoryController::class, 'getEbookCategories']);
+    route::get('/audiobook', [CategoryController::class, 'getAudiobookCategories']);
     route::get('/{id}', [CategoryController::class, 'show']);
     route::post('create', [CategoryController::class, 'create']);
     route::post('/update/{id}', [CategoryController::class, 'update']);
@@ -99,8 +105,11 @@ Route::group([
 
 route::group(['prefix' => 'users'], function () {
     route::post('{slug}/increase-view', [HomeController::class, 'increaseView']);
-    route::group(['prefix' => 'home'], function () {
+    route::group(['prefix' => 'home', 'middleware' => 'throttle:home'], function () {
         route::get('get-latest', [HomeController::class, 'getLatest']);
+        route::get('get-ranking', [HomeController::class, 'getRanking']);
+        route::get('get-proposed', [HomeController::class, 'getProposed']);
+        route::get('get-books-by-category/{categorySlug}', [HomeController::class, 'getBooksByCategory']);
     });
 
     route::group(['prefix' => 'detail'], function () {
@@ -122,4 +131,34 @@ route::group(['prefix' => 'users'], function () {
         // Route::get('/{id}', [\App\Http\Controllers\User\BookCommentController::class, 'show']);
         // Route::post('/update/{id}', [\App\Http\Controllers\User\BookCommentController::class, 'update']);
     });
+
+    route::group(['prefix' => 'package'], function () {
+        route::get('/', [PackageController::class, 'getPackagesWithUser']);
+        route::post('/purchase', [PackageController::class, 'setUserPackage'])
+             ->middleware('throttle:5,1'); // Limit 5 requests per minute
+    });
+});
+
+// VNPay Payment routes - Improved implementation
+Route::group(['prefix' => 'vnpay'], function () {
+    Route::post('/create-payment', [VnpayController::class, 'createPayment'])
+        ->middleware('auth:api');
+    Route::post('/return', [VnpayController::class, 'handleReturn']);
+    Route::get('/check-config', [VnpayController::class, 'checkConfig']);
+    Route::post('/debug-hash', [VnpayController::class, 'debugHash'])
+        ->middleware('auth:api');
+    Route::any('/debug-callback', [VnpayController::class, 'debugCallback']);
+    Route::get('/test-complete-callback', [VnpayController::class, 'testCompleteCallback']);
+    Route::any('/debug-real-callback', [VnpayController::class, 'debugRealCallback']);
+    Route::get('/test-simple-callback', [VnpayController::class, 'testSimpleCallback']);
+});
+
+// Legacy payment routes (for other payment methods if needed)
+Route::group(['prefix' => 'payment'], function () {
+    Route::get('/status', [PaymentController::class, 'checkPaymentStatus'])
+        ->middleware('auth:api');
+    Route::post('/cancel', [PaymentController::class, 'cancelPayment'])
+        ->middleware('auth:api');
+    Route::post('/cleanup', [PaymentController::class, 'cleanupPendingPayments'])
+        ->middleware('auth:api');
 });

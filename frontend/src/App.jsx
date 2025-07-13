@@ -20,6 +20,10 @@ import Chapters from "./pages/admin/chapters";
 import Create_Chapter from "./pages/admin/chapters/create";
 
 import Update_Category from "./pages/admin/categories/update";
+
+import LazyLoadDemo from "@components/demo/LazyLoadDemo";
+
+import PackagePlan from "./pages/user/package_plan/package_plan";
 // -------------------------------
 function App() {
 
@@ -50,6 +54,8 @@ function App() {
     { path: "sachdientu", element: <UserSachdientu /> },
     { path: "sachnoi", element: <UserSachnoi /> },
     { path: "reader/:slug", element: <BookReader /> },
+    { path: "package-plan", element: <PackagePlan /> },
+    // { path: "lazyload", element: <LazyLoadDemo /> },
   ];
   const router = createBrowserRouter([
     {

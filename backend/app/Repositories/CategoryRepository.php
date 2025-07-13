@@ -83,4 +83,23 @@ class CategoryRepository implements CategoryRepositoryInterface
     {
         return Category::whereIn('id', $ids)->get();
     }
+
+    public function getAllWithBooksAndFormats(): Collection
+    {
+        return Category::with(['books:id' => function($query) {
+            $query->select('id')->with(['formats:id,name']);
+        }])->get();
+    }
+
+    /**
+     * Lấy categories theo format cụ thể - tối ưu hơn
+     * @param array $formatNames - Mảng tên formats cần lọc
+     * @return Collection
+     */
+    public function getCategoriesByFormat(array $formatNames): Collection
+    {
+        return Category::whereHas('books.formats', function($query) use ($formatNames) {
+            $query->whereIn('name', $formatNames);
+        })->get();
+    }
 }

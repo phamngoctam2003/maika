@@ -219,6 +219,23 @@ const Create_Book = () => {
                     </div>
 
                     <div className="mb-5">
+                        <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-black">
+                            Quyền truy cập
+                        </label>
+                        <Radio.Group
+                            name="access_type"
+                            className="flex flex-wrap gap-4"
+                            defaultValue="free"
+                            style={{ width: '100%' }}
+                            options={[
+                                { value: 'free', label: 'Miễn phí' },
+                                { value: 'member', label: 'Hội viên' }
+                            ]}
+                            onChange={(e) => console.log("Giá trị được chọn:", e.target.value)}
+                        />
+                    </div>
+
+                    <div className="mb-5">
                         <Upload
                             className="custom-upload"
                             name="file_path"

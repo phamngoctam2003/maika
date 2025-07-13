@@ -27,4 +27,15 @@ class UserService {
     public function increaseView($slug) {
         return $this->userRepository->increaseView($slug);
     }
+
+    public function getRanking() {
+        return $this->userRepository->getRanking();
+    }
+
+    public function getProposed() {
+        return $this->userRepository->getProposed();
+    }
+    public function getBooksByCategory(string $categorySlug, int $limit = 12) {
+        return $this->userRepository->getBooksByCategory($categorySlug, $limit);
+    }
 }
