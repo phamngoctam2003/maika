@@ -153,14 +153,7 @@ const CommentSection = ({
         )}
 
         {/* Comments List */}
-        {loading ? (
-          <div className="flex justify-center items-center py-8">
-            <div className="spinner">
-              <div></div><div></div><div></div><div></div><div></div>
-              <div></div><div></div><div></div><div></div><div></div>
-            </div>
-          </div>
-        ) : comments.length > 0 ? (
+        { comments.length > 0 ? (
           <div className="space-y-2 my-2">
             {comments.map((comment, index) => (
               <CommentItem key={comment.id || index} comment={comment} />

@@ -24,7 +24,12 @@ class AppServiceProvider extends ServiceProvider
     {
         // Cấu hình middleware cho nhóm api route
         RateLimiter::for('api', function ($request) {
-            return Limit::perMinute(60)->by(optional($request->user())->id ?: $request->ip());
+            return Limit::perMinute(120)->by(optional($request->user())->id ?: $request->ip());
+        });
+
+        // Rate limit riêng cho home routes (ít nghiêm ngặt hơn)
+        RateLimiter::for('home', function ($request) {
+            return Limit::perMinute(30)->by($request->ip());
         });
     }
 }

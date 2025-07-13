@@ -1,6 +1,6 @@
 <?php 
 namespace App\Services;
-use App\Models\User\BookComment; 
+use App\Models\BookComment; 
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
 

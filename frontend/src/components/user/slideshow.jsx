@@ -33,7 +33,7 @@ export const Slideshow = () => {
         }, 5000);
     };
     return (
-        <div className="slider">
+        <div className="slider mb-4">
             <div className="list" style={{ transform: `translateX(-${currentIndex * 100}%)`, transition: "transform 1s ease" }}>
                 {items.map((src, index) => (
                     <div className="item" key={index}>

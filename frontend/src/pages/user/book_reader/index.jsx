@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import BookSidebar from './book_sidebar';
 import BookHeader from './book_header';
 import BookContent from './book_content';
@@ -8,6 +8,8 @@ import BookControls from './book_controls';
 import DetailtService from "@/services/users/api-detail";
 import SidebarChapter from './sidebar_chapter';
 import { trackBookView, saveReadingProgress, restoreReadingPosition } from '@/services/users/book-tracking';
+import { useAuth } from '@/contexts/authcontext';
+import { AntNotification } from "@components/global/notification";
 
 
 const rawBookContent = [
@@ -20,6 +22,16 @@ const rawBookContent = [
 
 const BookReader = () => {
   const { slug } = useParams();
+  const navigate = useNavigate();
+  
+  // Lấy thông tin user từ AuthContext để kiểm tra quyền truy cập
+  const { 
+    currentUser, 
+    isAuthenticated, 
+    hasMembership, 
+    getMembershipInfo 
+  } = useAuth();
+  
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [currentChapter, setCurrentChapter] = useState(0);
   const [currentPage, setCurrentPage] = useState(0);
@@ -37,7 +49,55 @@ const BookReader = () => {
         const response = await DetailtService.getEbookReader(slug);
         setBook(response);
       } catch (error) {
-        console.error("Error fetching latest products:", error);
+        console.error("Error fetching book data:", error);
+        
+        // Xử lý lỗi quyền truy cập từ backend
+        if (error?.response?.status === 401) {
+          // Chưa đăng nhập
+          AntNotification.showNotification(
+            "Cần đăng nhập",
+            error?.response?.data?.message || "Sách này dành cho hội viên. Vui lòng đăng nhập để tiếp tục.",
+            "warning"
+          );
+          navigate('/login', { replace: true });
+          return;
+        } else if (error?.response?.status === 403) {
+          // Không có quyền truy cập (thiếu hội viên)
+          const errorData = error?.response?.data;
+          AntNotification.showNotification(
+            "Yêu cầu hội viên",
+            errorData?.message || "Sách này dành cho hội viên. Vui lòng nâng cấp tài khoản để đọc.",
+            "warning"
+          );
+          
+          // Log thông tin chi tiết để debug
+          console.log('BookReader - Access denied:', {
+            book_slug: slug,
+            error_code: errorData?.error_code,
+            access_type: errorData?.access_type,
+            user_membership: errorData?.user_membership
+          });
+          
+          navigate(`/book-detail/${slug}`, { replace: true });
+          return;
+        } else if (error?.response?.status === 404) {
+          // Sách không tồn tại
+          AntNotification.showNotification(
+            "Không tìm thấy",
+            "Sách không tồn tại hoặc đã bị xóa.",
+            "error"
+          );
+          navigate('/', { replace: true });
+          return;
+        }
+        
+        // Lỗi khác
+        AntNotification.showNotification(
+          "Lỗi hệ thống", 
+          "Có lỗi xảy ra khi tải sách. Vui lòng thử lại sau.",
+          "error"
+        );
+        console.error("Lỗi hệ thống:", error);
       } finally {
         setIsLoading(false);
       }
@@ -213,11 +273,108 @@ const BookReader = () => {
     restorePosition();
   }, [book?.slug, bookContent]); // Chỉ chạy khi book và content đã sẵn sàng
 
+  /**
+   * Kiểm tra xem người dùng có quyền đọc sách hội viên hay không
+   * @returns {boolean} - true nếu có quyền, false nếu không có quyền
+   */
+  const canReadMemberBook = () => {
+    // Kiểm tra xem người dùng đã đăng nhập chưa
+    if (!isAuthenticated || !currentUser) {
+      console.log('BookReader - canReadMemberBook: User not authenticated');
+      return false;
+    }
+
+    // Sử dụng function hasMembership từ AuthContext
+    // Function này đã kiểm tra gói có active và chưa hết hạn
+    const hasActiveMembership = hasMembership();
+    console.log('BookReader - canReadMemberBook:', {
+      isAuthenticated,
+      currentUser: !!currentUser,
+      hasActiveMembership,
+      slug
+    });
+    
+    return hasActiveMembership;
+  };
+
+  /**
+   * Kiểm tra xem cuốn sách có yêu cầu hội viên hay không
+   * @returns {boolean} - true nếu sách yêu cầu hội viên, false nếu miễn phí
+   */
+  const isBookRequireMembership = () => {
+    // Chỉ có 2 loại: 'member' (sách hội viên) và 'free' (sách miễn phí)
+    const accessType = book?.access_type?.toLowerCase();
+    
+    // Sách member yêu cầu hội viên, còn lại là free
+    const requireMembership = accessType === 'member';
+    
+    console.log('BookReader - isBookRequireMembership:', {
+      book_id: book?.id,
+      book_slug: book?.slug,
+      access_type: accessType,
+      requireMembership
+    });
+    
+    return requireMembership;
+  };
+
+  /**
+   * Kiểm tra quyền truy cập và chuyển hướng nếu không có quyền
+   */
+  const checkAccessPermission = () => {
+    if (!book) return; // Chưa load được book data
+    
+    const requireMembership = isBookRequireMembership();
+    const canRead = canReadMemberBook();
+    
+    console.log('BookReader - checkAccessPermission:', {
+      book_slug: book?.slug,
+      requireMembership,
+      canRead,
+      isAuthenticated
+    });
+    
+    // Nếu sách yêu cầu hội viên nhưng user không có quyền
+    if (requireMembership && !canRead) {
+      // Nếu chưa đăng nhập
+      if (!isAuthenticated) {
+        AntNotification.showNotification(
+          "Cần đăng nhập",
+          "Sách này dành cho hội viên. Vui lòng đăng nhập để tiếp tục.",
+          "warning"
+        );
+        // Chuyển về trang chi tiết sách
+        navigate(`/ebook/${book?.slug}`, { replace: true });
+        return;
+      }
+      
+      // Nếu đã đăng nhập nhưng không có hội viên hoặc hết hạn
+      AntNotification.showNotification(
+        "Yêu cầu hội viên",
+        "Sách này dành cho hội viên. Vui lòng nâng cấp tài khoản để đọc.",
+        "warning"
+      );
+      // Chuyển về trang chi tiết sách
+      navigate(`/package-plan`, { replace: true });
+      return;
+    }
+    
+    console.log('BookReader - Access granted for book:', book?.slug);
+  };
+
+  // Effect để kiểm tra quyền truy cập khi book data đã load
+  useEffect(() => {
+    if (book && !isLoading) {
+      checkAccessPermission();
+    }
+  }, [book, isLoading, isAuthenticated, currentUser]);
+
   // Loading screen
   if (isLoading || !book || bookContent.length === 0) {
     return (
       <div className="fixed inset-0 bg-gray-900 flex items-center justify-center z-50">
         <div className="spinner">
+          <div></div>
           <div></div>
           <div></div>
           <div></div>
@@ -253,7 +410,7 @@ const BookReader = () => {
             fontSize={fontSize}
             brightness={brightness}
           />
-          <div className="flex flex-col justify-center gap-4 p-4">
+          <div className="lg:px-6 my-2 flex justify-between absolute bottom-0 left-0 right-0">
             <button onClick={prevPage} disabled={isFirstPage()} className="p-3 hover:bg-gray-700 rounded-lg disabled:opacity-50">
               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 15 15"><path fill="currentColor" fillRule="evenodd" d="M8.842 3.135a.5.5 0 0 1 .023.707L5.435 7.5l3.43 3.658a.5.5 0 0 1-.73.684l-3.75-4a.5.5 0 0 1 0-.684l3.75-4a.5.5 0 0 1 .707-.023Z" clipRule="evenodd" /></svg>
             </button>

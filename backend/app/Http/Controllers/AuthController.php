@@ -151,16 +151,68 @@ class AuthController extends Controller
         }
 
         try {
+            // Load thông tin packages cùng với pivot data
+            $user->load(['packages' => function($query) {
+                $query->withPivot([
+                    'id',
+                    'starts_at', 
+                    'ends_at', 
+                    'status', 
+                    'payment_method', 
+                    'payment_status',
+                    'amount',
+                    'created_at',
+                    'updated_at'
+                ]);
+            }]);
+
+            // Lấy gói active đầu tiên (nếu có)
+            $activePackage = $user->getActivePackage();
+            
+            // Format thông tin gói hội viên để gửi về frontend
+            $membershipInfo = null;
+            if ($activePackage) {
+                $membershipInfo = [
+                    'package_id' => $activePackage->id,
+                    'package_name' => $activePackage->name,
+                    'starts_at' => $activePackage->pivot->starts_at,
+                    'ends_at' => $activePackage->pivot->ends_at,
+                    'status' => $activePackage->pivot->status,
+                    'payment_method' => $activePackage->pivot->payment_method,
+                    'amount' => $activePackage->pivot->amount,
+                    'is_expiring_soon' => $user->isMembershipExpiringSoon(),
+                    'has_membership' => true
+                ];
+            }
+
             return response()->json([
                 'status' => true,
                 'user' => $user,
                 'permissions' => $user->getAllPermissions()->pluck('name'),
                 'roles' => $user->getRoleNames(),
+                // Thông tin gói hội viên
+                'membership' => $membershipInfo,
+                'has_membership' => $user->hasMembership(),
+                // Tất cả packages của user (để debug hoặc hiển thị lịch sử)
+                'user_packages' => $user->packages->map(function($package) {
+                    return [
+                        'id' => $package->pivot->id,
+                        'package_id' => $package->id,
+                        'package_name' => $package->name,
+                        'starts_at' => $package->pivot->starts_at,
+                        'ends_at' => $package->pivot->ends_at,
+                        'status' => $package->pivot->status,
+                        'payment_method' => $package->pivot->payment_method,
+                        'amount' => $package->pivot->amount,
+                        'created_at' => $package->pivot->created_at,
+                    ];
+                })
             ]);
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 500,
-                'message' => 'Lỗi khi xử lý dữ liệu người dùng'
+                'message' => 'Lỗi khi xử lý dữ liệu người dùng',
+                'error' => $e->getMessage()
             ], 500);
         }
     }

@@ -30,6 +30,10 @@ class RepositoryServiceProvider extends ServiceProvider
             \App\Contracts\UserRepositoryInterface::class,
             \App\Repositories\UserRepository::class
         );
+        $this->app->bind(
+            \App\Contracts\PackageRepositoryInterface::class,
+            \App\Repositories\PackageRepository::class
+        );
     }
 
     /**

@@ -40,4 +40,28 @@ class UserRepository implements UserRepositoryInterface
         $book->increment('views');
         return response()->json(['success' => true]);
     }
+
+    // Lấy sách theo ranking (sắp xếp theo views)
+    public function getRanking()
+    {
+        return Books::orderBy('views', 'desc')->take(10)->get();
+    }
+
+    // Lấy sách đề xuất (có thể random hoặc theo thuật toán)
+    public function getProposed()
+    {
+        return Books::inRandomOrder()->take(12)->get();
+    }
+
+    // Lấy sách theo danh mục
+    public function getBooksByCategory(string $categorySlug, int $limit = 12)
+    {
+        return Books::with('categories', 'formats', 'authors')
+            ->whereHas('categories', function ($query) use ($categorySlug) {
+                $query->where('slug', $categorySlug);
+            })
+            ->latest()
+            ->take($limit)
+            ->get();
+    }
 }
