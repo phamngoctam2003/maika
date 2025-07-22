@@ -19,7 +19,10 @@ class UserService {
         return $this->userRepository->getLatest ();
     }
     public function getEbook (string $slug): ?Books {
-        return $this->userRepository->getEbook ($slug);
+        return $this->userRepository->getBookSlug ($slug);
+    }
+    public function getAudiobook (string $slug): ?Books {
+        return $this->userRepository->getBookSlug ($slug);
     }
     public function getEbookReader (string $slug): ?Books {
         return $this->userRepository->getEbookReader ($slug);
@@ -37,5 +40,43 @@ class UserService {
     }
     public function getBooksByCategory(string $categorySlug, int $limit = 12) {
         return $this->userRepository->getBooksByCategory($categorySlug, $limit);
+    }
+
+    /**
+     * Get latest books filtered by format
+     * @param string $format - Book format ("Sách điện tử" or "Sách nói")
+     * @return mixed
+     */
+    public function getLatestByFormat(string $format) {
+        return $this->userRepository->getLatestByFormat($format);
+    }
+
+    /**
+     * Get ranking books filtered by format
+     * @param string $format - Book format ("Sách điện tử" or "Sách nói")
+     * @return mixed
+     */
+    public function getRankingByFormat(string $format) {
+        return $this->userRepository->getRankingByFormat($format);
+    }
+
+    /**
+     * Get proposed books filtered by format
+     * @param string $format - Book format ("Sách điện tử" or "Sách nói")
+     * @return mixed
+     */
+    public function getProposedByFormat(string $format) {
+        return $this->userRepository->getProposedByFormat($format);
+    }
+
+    /**
+     * Get books by category and format
+     * @param string $categorySlug - Category slug
+     * @param string $format - Book format ("Sách điện tử" or "Sách nói")
+     * @param int $limit - Number of books to return
+     * @return mixed
+     */
+    public function getBooksByCategoryAndFormat(string $categorySlug, string $format, int $limit = 12) {
+        return $this->userRepository->getBooksByCategoryAndFormat($categorySlug, $format, $limit);
     }
 }

@@ -7,7 +7,7 @@ import DetailtService from "@/services/users/api-detail";
 import { Button, Dropdown } from "antd";
 import { useAuth } from "@/contexts/authcontext";
 
-const BookDetail = () => {
+const EbookDetail = () => {
   const URL_IMG = import.meta.env.VITE_URL_IMG;
   const navigate = useNavigate();
   const { slug } = useParams();
@@ -29,8 +29,7 @@ const BookDetail = () => {
   const [hasMoreComments, setHasMoreComments] = useState(true);
   const [totalComments, setTotalComments] = useState(0);
 
-  // State để track loại sách hiện tại (ebook hoặc audio)
-  const [currentFormat, setCurrentFormat] = useState('ebook'); // default là ebook
+  const [currentFormat, setCurrentFormat] = useState('Sách điện tử'); 
 
   const breadcrumbItems = [
     { label: "Trang chủ", path: "/" },
@@ -46,9 +45,9 @@ const BookDetail = () => {
   useEffect(() => {
     const pathname = window.location.pathname;
     if (pathname.includes('/ebook/')) {
-      setCurrentFormat('ebook');
-    } else if (pathname.includes('/audio/')) {
-      setCurrentFormat('audio');
+      setCurrentFormat('Sách điện tử');
+    } else if (pathname.includes('/sach-noi/')) {
+      setCurrentFormat('Sách nói');
     }
   }, [slug]);
 
@@ -114,27 +113,21 @@ const BookDetail = () => {
             "Vui lòng đăng nhập để đọc sách hội viên",
             "warning"
           );
-          // Có thể redirect đến trang đăng nhập
           return;
         }
 
-        // Nếu đã đăng nhập nhưng không có hội viên hoặc hết hạn
         AntNotification.showNotification(
           "Yêu cầu hội viên",
           "Sách này dành cho hội viên. Vui lòng nâng cấp tài khoản để đọc",
           "warning"
         );
-        // Có thể redirect đến trang nâng cấp
         navigate('/package-plan', { replace: true });
         return;
       }
     }
 
-    // Nếu đã qua tất cả kiểm tra, cho phép đọc sách
-    console.log('BookDetail - Allow reading book:', book?.slug);
-
     // Chuyển đến trang phù hợp với format hiện tại
-    if (currentFormat === 'audio') {
+    if (currentFormat === 'Sách nói') {
       navigate(`/audio-reader/${book?.slug}`);
     } else {
       navigate(`/reader/${book?.slug}`);
@@ -252,14 +245,14 @@ const BookDetail = () => {
 
     return {
       hasEbook: formats.some(format => format.name === 'Sách điện tử'),
-      hasAudio: formats.some(format => format.name === 'Sách nói' || format.name === 'Audio'),
+      hasAudio: formats.some(format => format.name === 'Sách nói'),
       formats: formats
     };
   };
 
   /**
    * Xử lý chuyển đổi format sách
-   * @param {string} formatType - 'ebook' hoặc 'audio'
+   * @param {string} formatType - 'Sách điện tử' hoặc 'Sách nói'
    */
   const handleFormatChange = (formatType) => {
     if (formatType === currentFormat) return; // Đã ở format hiện tại
@@ -267,7 +260,7 @@ const BookDetail = () => {
     const { hasEbook, hasAudio } = getSupportedFormats();
 
     // Kiểm tra format có được hỗ trợ không
-    if (formatType === 'ebook' && !hasEbook) {
+    if (formatType === 'Sách điện tử' && !hasEbook) {
       AntNotification.showNotification(
         "Không hỗ trợ",
         "Sách này không hỗ trợ định dạng điện tử",
@@ -276,7 +269,7 @@ const BookDetail = () => {
       return;
     }
 
-    if (formatType === 'audio' && !hasAudio) {
+    if (formatType === 'Sách nói' && !hasAudio) {
       AntNotification.showNotification(
         "Không hỗ trợ",
         "Sách này không hỗ trợ định dạng audio",
@@ -286,28 +279,12 @@ const BookDetail = () => {
     }
 
     // Chuyển đến trang tương ứng
-    const newPath = formatType === 'ebook'
+    const newPath = formatType === 'Sách điện tử'
       ? `/ebook/${book?.slug}`
-      : `/audio/${book?.slug}`;
+      : `/sach-noi/${book?.slug}`;
 
     navigate(newPath);
   };
-
-  console.log('Book info:', {
-    book,
-    accessType: book?.access_type,
-    isBookRequireMembership: isBookRequireMembership(),
-    formats: book?.formats,
-    currentFormat: currentFormat,
-    supportedFormats: book ? getSupportedFormats() : null
-  });
-  console.log('User packages:', {
-    currentUser,
-    activePackage,
-    hasMembership: hasMembership(),
-    membershipInfo: getMembershipInfo(),
-    isExpiringSoon: isMembershipExpiringSoon()
-  });
 
   /**
    * Component hiển thị badge trạng thái sách (free/member)
@@ -408,7 +385,7 @@ const BookDetail = () => {
           </div>
 
           {/* Book title and author */}
-          <h1 className="text-white text-2xl font-bold text-center">Gió xuân rực lửa</h1>
+          <h1 className="text-white text-2xl font-bold text-center">{book?.title}</h1>
           <p className="text-white/80 text-center mb-1">
             <span className="text-sm">Tác giả: </span>
             <span className="text-orange-200 font-medium">
@@ -448,7 +425,6 @@ const BookDetail = () => {
             <button className="flex-1 bg-white/20 text-white border border-white/30 py-3 rounded-full font-medium hover:bg-white/30 transition-colors">
               NGHE THỬ
             </button>
-            {/* Button nâng cấp - chỉ hiển thị khi cần hội viên và user chưa có quyền */}
             <button
               className={`flex-1 py-3 rounded-full font-medium transition-colors ${isBookRequireMembership() && !canReadMemberBook()
                   ? 'bg-orange-500 text-white hover:bg-orange-600' // Cần nâng cấp
@@ -456,10 +432,8 @@ const BookDetail = () => {
                 }`}
               onClick={() => {
                 if (isBookRequireMembership() && !canReadMemberBook()) {
-                  // Redirect đến trang nâng cấp
                   navigate('/package-plan', { replace: true });
                 } else {
-                  // Có thể thực hiện action khác
                   handleReadBook();
                 }
               }}
@@ -635,12 +609,12 @@ const BookDetail = () => {
                         <button 
                           onClick={() => {
                             if (hasEbook) {
-                              handleFormatChange('ebook');
+                              handleFormatChange('Sách điện tử');
                             }
                             // Nếu không có ebook thì không làm gì cả
                           }}
                           className={`flex-1 border py-3 rounded-lg flex items-center justify-center gap-2 transition-colors ${
-                            currentFormat === 'ebook'
+                            currentFormat === 'Sách điện tử'
                               ? (book?.access_type?.toLowerCase() === 'member'
                                   ? (canReadMemberBook() 
                                       ? 'bg-green-500/20 border-green-400 text-green-200' // Có quyền truy cập
@@ -656,7 +630,7 @@ const BookDetail = () => {
                             <div className="text-xs">
                               {!hasEbook 
                                 ? "Không có sẵn"
-                                : (currentFormat === 'ebook' 
+                                : (currentFormat === 'Sách điện tử'
                                     ? (book?.access_type?.toLowerCase() === 'member'
                                         ? (canReadMemberBook() ? "Có thể đọc" : "Yêu cầu hội viên")
                                         : "Miễn phí"
@@ -672,12 +646,12 @@ const BookDetail = () => {
                         <button 
                           onClick={() => {
                             if (hasAudio) {
-                              handleFormatChange('audio');
+                              handleFormatChange('Sách nói');
                             }
                             // Nếu không có audio thì không làm gì cả
                           }}
                           className={`flex-1 py-3 rounded-lg flex items-center justify-center gap-2 transition-colors border-2 ${
-                            currentFormat === 'audio'
+                            currentFormat === 'Sách nói'
                               ? (book?.access_type?.toLowerCase() === 'member'
                                   ? (canReadMemberBook()
                                       ? 'bg-green-500/80 border-green-400 text-white hover:bg-green-500' // Có quyền
@@ -693,12 +667,12 @@ const BookDetail = () => {
                             <div className="text-xs">
                               {!hasAudio 
                                 ? "Không có sẵn"
-                                : (currentFormat === 'audio'
+                                : (currentFormat === 'Sách nói'
                                     ? (book?.access_type?.toLowerCase() === 'member'
                                         ? (canReadMemberBook() ? "Có thể nghe" : "Yêu cầu hội viên")
                                         : "Miễn phí"
                                       )
-                                    : "Chuyển sang audio"
+                                    : "Chuyển sang sách nói"
                                   )
                               }
                             </div>
@@ -726,8 +700,8 @@ const BookDetail = () => {
                 <span data-v-5b161707="">
                   {/* Hiển thị text khác nhau tùy theo trạng thái quyền truy cập và format */}
                   {isBookRequireMembership() && !canReadMemberBook()
-                    ? (isAuthenticated ? "Đọc sách" : "Đăng nhập để đọc")
-                    : (currentFormat === 'audio' ? "Nghe sách" : "Đọc sách")
+                    ? (isAuthenticated ? "Nâng cấp để đọc sách" : "Đăng nhập để đọc sách")
+                    : (currentFormat === 'Sách nói' ? "Nghe sách" : "Đọc sách")
                   }
                 </span>
               </button>
@@ -850,4 +824,4 @@ const BookDetail = () => {
   );
 }
 
-export default BookDetail;
+export default EbookDetail;

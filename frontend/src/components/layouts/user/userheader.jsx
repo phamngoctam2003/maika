@@ -153,8 +153,8 @@ export const UserHeader = () => {
                 ]);
 
                 // Cập nhật state với data đã được filter từ backend
-                const ebookCats = ebookResponse || [];
-                const audiobookCats = audiobookResponse || [];
+                const ebookCats = ebookResponse.data || [];
+                const audiobookCats = audiobookResponse.data || [];
 
                 // Combine để có danh sách tổng (loại bỏ duplicate nếu có)
                 const allCategoriesMap = new Map();
@@ -166,7 +166,6 @@ export const UserHeader = () => {
                 setAudiobookCategories(audiobookCats);
             } catch (error) {
                 console.error('❌ Lỗi khi lấy categories:', error);
-
                 // Fallback: Nếu API riêng lỗi, dùng API chung
                 try {
                     const fallbackResponse = await HomeService.getCategories();
@@ -175,10 +174,7 @@ export const UserHeader = () => {
                     setCategories(fallbackCategories);
                     setEbookCategories(fallbackCategories);
                     setAudiobookCategories(fallbackCategories);
-
-                    console.log('🔄 Fallback categories loaded:', fallbackCategories.length);
                 } catch (fallbackError) {
-                    console.error('❌ Fallback cũng lỗi:', fallbackError);
                     setCategories([]);
                     setEbookCategories([]);
                     setAudiobookCategories([]);
@@ -200,7 +196,7 @@ export const UserHeader = () => {
                 <div className="maka1">
                     <nav className="navigation">
                         <div className="nav-item-dropdown">
-                            <Link to="sachdientu.php" className="dropdown-trigger">
+                            <Link to="ebook" className="dropdown-trigger">
                                 Sách điện tử
                                 <svg className="dropdown-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
                                     <path d="M12 16L6 10H18L12 16Z" />
@@ -212,9 +208,9 @@ export const UserHeader = () => {
                                         ebookCategories.map((category) => (
                                             <Link
                                                 key={`ebook-${category.id}`}
-                                                to={`/category/${category.slug}`}
+                                                to={`/ebook/category/${category.slug}`}
                                                 className="dropdown-item"
-                                                title={category.description || category.name}
+                                                title={category.name}
                                             >
                                                 {category.name}
                                             </Link>
@@ -249,7 +245,7 @@ export const UserHeader = () => {
                         <Link to="sachhieusoi.php" className="dropdown-trigger">Sách hội viên</Link>
 
                         <div className="nav-item-dropdown">
-                            <Link to="sachnoi.php" className="dropdown-trigger">
+                            <Link to="sach-noi" className="dropdown-trigger">
                                 Sách nói
                                 <svg className="dropdown-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
                                     <path d="M12 16L6 10H18L12 16Z" />
@@ -260,8 +256,8 @@ export const UserHeader = () => {
                                     {audiobookCategories.length > 0 ? (
                                         audiobookCategories.map((category) => (
                                             <Link
-                                                key={`audiobook-${category.id}`}
-                                                to={`/audiobook/${category.slug}`}
+                                                key={`sach-noi-${category.id}`}
+                                                to={`/sach-noi/category/${category.slug}`}
                                                 className="dropdown-item"
                                                 title={category.description || category.name}
                                             >
@@ -399,7 +395,7 @@ export const UserHeader = () => {
                     </div>
                     <div className="w-full px-4 select-none">
                         <nav className="overflow-x-auto whitespace-nowrap scrollbar-hide gap-6 flex font-semibold">
-                            <Link to="sachhieusoi.php" className="pgp inline-block">Sách hiệu sồi</Link>
+                            <Link to="ebook" className="pgp inline-block">Sách hiệu sồi</Link>
                             <Link to="sachdientu.phpc" className="pgp inline-block">Sách tóm tắt</Link>
                             <Link to="sachdientu.php" className="pgp inline-block">Sách điện tử</Link>
                             <Link to="sachnoi.php" id="About" className="pgp inline-block">Sách nói</Link>

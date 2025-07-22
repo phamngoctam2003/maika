@@ -4,12 +4,17 @@ import { Slideshow } from "./pages/user/router";
 import { UserLayout } from "./components/layouts/user/userlayout";
 import { AdminLayout } from "./components/layouts/admin/adminlayout";
 import { ProtectedRoute } from "./services/ProtectedRoute";
-import {UserSachnoi, UserSachdientu } from "./pages/user/router";
+import { UserSachnoi } from "./pages/user/router";
+import SachNoi from "./pages/user/sach_noi/sach_noi";
+import Ebook from "./pages/user/ebook/ebook";
+import EbookCategory from "./pages/user/ebook/category";
+import AudioCategory from "./pages/user/sach_noi/category";
 import UserHome from "./pages/user/userhome";
 // router admin
 import { Home, User, Categories, Create_category, Roles, Update_Role, Create_role, Accounts, Set_Role_Account } from "./pages/admin/router";
 import { Notfound404 } from "./components/global/notfound404";
-import BookDetail from "./pages/user/book_detail/book_detail";
+import EbookDetail from "./pages/user/book_detail/ebook";
+import SachNoiDetail from "./pages/user/book_detail/sach_noi";
 
 import BookReader from "./pages/user/book_reader";
 
@@ -20,8 +25,6 @@ import Chapters from "./pages/admin/chapters";
 import Create_Chapter from "./pages/admin/chapters/create";
 
 import Update_Category from "./pages/admin/categories/update";
-
-import LazyLoadDemo from "@components/demo/LazyLoadDemo";
 
 import PackagePlan from "./pages/user/package_plan/package_plan";
 // -------------------------------
@@ -50,8 +53,12 @@ function App() {
   ];
 
   const userRoutes = [
-    { path: "ebook/:slug", element: <BookDetail /> },
-    { path: "sachdientu", element: <UserSachdientu /> },
+    { path: "ebook/:slug", element: <EbookDetail /> },
+    { path: "sach-noi/:slug", element: <SachNoiDetail /> },
+    { path: "ebook", element: <Ebook /> },
+    { path: "sach-noi", element: <SachNoi /> },
+    { path: "sach-noi/category/:slug", element: <AudioCategory /> },
+    { path: "ebook/category/:slug", element: <EbookCategory /> },
     { path: "sachnoi", element: <UserSachnoi /> },
     { path: "reader/:slug", element: <BookReader /> },
     { path: "package-plan", element: <PackagePlan /> },

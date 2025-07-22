@@ -12,41 +12,42 @@ const apiGet = async (url, options = {}) => {
   return response;
 };
 
-const HomeService = {
+const AudioBookService = {
   getLatets: async () => {
-    const response = await apiGet("/users/home/get-latest");
-    return response; // Trả về data thay vì toàn bộ response
+    const response = await apiGet("/users/audiobook/get-latest");
+    return response; 
   },
 
   // API cho book ranking
   getRankingBooks: async () => {
-    const response = await apiGet("/users/home/get-ranking");
+    const response = await apiGet("/users/audiobook/get-ranking");
     return response;
   },
 
   // API cho proposed books  
   getProposedBooks: async () => {
-    const response = await apiGet("/users/home/get-proposed");
+    const response = await apiGet("/users/audiobook/get-proposed");
     return response;
   },
 
   // API lấy sách theo danh mục
-  getBooksByCategory: async (categorySlug, limit = 12) => {
-    const response = await apiGet(`/users/home/get-books-by-category/${categorySlug}?limit=${limit}`);
+  getAudioByCategory: async (categorySlug, limit = 12) => {
+    const response = await apiGet(`/users/audiobook/get-audiobooks-by-category/${categorySlug}?limit=${limit}`);
     return response;
   },
 
-  // API lấy danh sách categories cho sách điện tử
-  getEbookCategories: async () => {
-    const response = await apiGet("/users/ebook/get-all-ebook-category");
+  // API lấy sách theo danh mục với pagination
+  getAudioByCategoryPaginated: async (categorySlug, page = 1, limit = 24) => {
+    const response = await apiGet(`/users/audiobook/getcategory/${categorySlug}?page=${page}&limit=${limit}`);
     return response;
   },
 
   // API lấy danh sách categories cho sách nói
-  getAudiobookCategories: async () => {
-    const response = await apiGet("/users/audiobook/get-all-audiobook-category");
+  getAudioCategories: async (page = 1, limit = 5) => {
+    const response = await apiGet(`/users/audiobook?page=${page}&limit=${limit}`);
     return response;
   },
+
 
   // API lấy danh sách tất cả categories (fallback)
   getCategories: async () => {
@@ -54,5 +55,6 @@ const HomeService = {
     return response;
   },
 
+
 };
-export default HomeService;
+export default AudioBookService;
