@@ -8,6 +8,8 @@ use App\Http\Controllers\BookController;
 use App\Http\Controllers\ChapterController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\User\HomeController;
+use App\Http\Controllers\User\EbookController;
+use App\Http\Controllers\User\AudiobookController;
 use App\Http\Controllers\User\BookDetaiController;
 use App\Http\Controllers\User\ReadingHistoryController;
 use App\Http\Controllers\User\BookCommentController;
@@ -30,8 +32,6 @@ Route::get('test-api', function () {
 route::group(['prefix' => 'categories'], function () {
     route::get('/', [CategoryController::class, 'index']);
     route::get('/with-formats', [CategoryController::class, 'getCategoriesWithFormats']);
-    route::get('/ebook', [CategoryController::class, 'getEbookCategories']);
-    route::get('/audiobook', [CategoryController::class, 'getAudiobookCategories']);
     route::get('/{id}', [CategoryController::class, 'show']);
     route::post('create', [CategoryController::class, 'create']);
     route::post('/update/{id}', [CategoryController::class, 'update']);
@@ -112,6 +112,25 @@ route::group(['prefix' => 'users'], function () {
         route::get('get-books-by-category/{categorySlug}', [HomeController::class, 'getBooksByCategory']);
     });
 
+    route::group(['prefix' => 'ebook'], function () {
+        route::get('get-latest', [EbookController::class, 'getLatest']);
+        route::get('/', [CategoryController::class, 'getEbookCategories']);
+        route::get('/getcategory/{slug}', [EbookController::class, 'getEbooksCategorySlug']);
+        route::get('/get-all-ebook-category', [CategoryController::class, 'getAllEbookCategories']);
+        route::get('get-ranking', [EbookController::class, 'getRanking']);
+        route::get('get-proposed', [EbookController::class, 'getProposed']);
+        route::get('get-ebooks-by-category/{categorySlug}', [EbookController::class, 'getBooksByCategory']);
+    });
+    route::group(['prefix' => 'audiobook'], function () {
+        route::get('/', [CategoryController::class, 'getAudiobookCategories']);
+        route::get('/getcategory/{slug}', [AudioBookController::class, 'getAudiobooksCategorySlug']);
+        route::get('get-latest', [AudioBookController::class, 'getLatest']);
+        route::get('get-all-audiobook-category', [CategoryController::class, 'getAllAudiobookCategories']);
+        route::get('get-ranking', [AudioBookController::class, 'getRanking']);
+        route::get('get-proposed', [AudioBookController::class, 'getProposed']);
+        route::get('get-audiobooks-by-category/{categorySlug}', [AudioBookController::class, 'getBooksByCategory']);
+    });
+
     route::group(['prefix' => 'detail'], function () {
         route::get('get-ebook-reader/{slug}', [BookDetaiController::class, 'getEbookReader']);
         route::get('get-ebook/{slug}', [BookDetaiController::class, 'getEbook']);
@@ -135,7 +154,7 @@ route::group(['prefix' => 'users'], function () {
     route::group(['prefix' => 'package'], function () {
         route::get('/', [PackageController::class, 'getPackagesWithUser']);
         route::post('/purchase', [PackageController::class, 'setUserPackage'])
-             ->middleware('throttle:5,1'); // Limit 5 requests per minute
+            ->middleware('throttle:5,1'); // Limit 5 requests per minute
     });
 });
 

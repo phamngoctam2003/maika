@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Services\CategoryService;
+use Google\Service\AnalyticsReporting\ReportRequest;
 use Illuminate\Http\Request;
 use App\Models\Category;
 
@@ -105,13 +106,22 @@ class CategoryController extends Controller
     }
 
     /**
-     * Lấy categories cho sách điện tử
+     * Lấy categories cho sách điện tử với limit
      */
-    public function getEbookCategories()
+    public function getEbookCategories(Request $request)
     {
         try {
+            $limit = $request->get('limit', 1);
+
             $categories = $this->categoryService->getEbookCategories();
-            return response()->json($categories);
+            $limitedCategories = $categories->take($limit);
+
+            return response()->json([
+                'data' => $limitedCategories->values(),
+                'total' => $categories->count(),
+                'limit' => $limit,
+                'has_more' => $categories->count() > $limit
+            ]);
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Có lỗi xảy ra khi lấy danh sách danh mục sách điện tử.',
@@ -120,14 +130,48 @@ class CategoryController extends Controller
         }
     }
 
-    /**
-     * Lấy categories cho sách nói
-     */
-    public function getAudiobookCategories()
+
+
+    public function getAllEbookCategories()
+    {
+        try {
+            $categories = $this->categoryService->getEbookCategories();
+            return response()->json(['data' => $categories]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Có lỗi xảy ra khi lấy danh sách danh mục sách điện tử.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+    public function getAllAudiobookCategories()
     {
         try {
             $categories = $this->categoryService->getAudiobookCategories();
-            return response()->json($categories);
+            return response()->json(['data' => $categories]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Có lỗi xảy ra khi lấy danh sách danh mục sách nói.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+    /**
+     * Lấy categories cho sách nói
+     */
+    public function getAudiobookCategories(Request $request)
+    {
+        try {
+            $limit = $request->get('limit', 1);
+            $categories = $this->categoryService->getAudiobookCategories();
+            $limitedCategories = $categories->take($limit);
+
+            return response()->json([
+                'data' => $limitedCategories->values(),
+                'total' => $categories->count(),
+                'limit' => $limit,
+                'has_more' => $categories->count() > $limit
+            ]);
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Có lỗi xảy ra khi lấy danh sách danh mục sách nói.',

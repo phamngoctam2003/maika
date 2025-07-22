@@ -40,7 +40,7 @@ export const DynamicCategoryBooks = () => {
             <div className="lg:px-12 px-4 mb-12">
                 <div className="animate-pulse">
                     <div className="h-8 bg-gray-300 rounded w-64 mb-6"></div>
-                    <div className="flex gap-4">
+                    <div className="flex gap-2 md:gap-4 xl:gap-6">
                         {Array.from({ length: 6 }).map((_, index) => (
                             <div key={index} className="flex-none w-[180px]">
                                 <div className="h-64 bg-gray-300 rounded mb-2"></div>

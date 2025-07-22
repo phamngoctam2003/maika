@@ -121,7 +121,7 @@ export const CategoryBooks = ({
 
                         <div
                             ref={scrollRef}
-                            className="flex overflow-x-auto gap-4 scrollbar-hide [overflow-scrolling:touch] pr-4 lg:pr-12"
+                            className="flex overflow-x-auto gap-2 md:gap-4 xl:gap-6 scrollbar-hide [overflow-scrolling:touch] pr-4 lg:pr-12"
                             onScroll={checkScrollability}
                         >
                             {books.map((book, idx) => (

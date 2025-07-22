@@ -115,12 +115,12 @@ export const LatestBooks = () => {
                         )}
                         <div
                             ref={scrollRef}
-                            className="flex overflow-x-auto gap-4 scrollbar-hide [overflow-scrolling:touch] pr-4 lg:pr-12"
+                            className="flex overflow-x-auto gap-2 md:gap-4 xl:gap-6 scrollbar-hide [overflow-scrolling:touch] pr-4 lg:pr-12"
                         >
                             {latestBooks?.map((book, idx) => (
                                 <div
                                     ref={idx === 0 ? itemRef : null}
-                                    className="flex-none w-[120px] md:w-[120px] lg:w-[150px] xl:w-[180px] 2xl:w-[244px] cursor-pointer"
+                                    className="aspect-[3/4] flex-none w-[120px] md:w-[120px] lg:w-[150px] xl:w-[180px] 2xl:w-[244px] cursor-pointer"
                                     key={book.id}
                                 >
 
