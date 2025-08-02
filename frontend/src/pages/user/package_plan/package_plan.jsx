@@ -6,7 +6,6 @@ import { AntNotification } from '@/components/global/notification';
 import { useAuth } from '@/contexts/authcontext';
 import PaymentLoading from '@/components/payment/PaymentLoading';
 import VnpayService from '@/services/vnpay/vnpay-service';
-import axios from 'axios';
 
 const PackagePlan = () => {
     const [packages, setPackages] = useState([]);
@@ -44,14 +43,18 @@ const PackagePlan = () => {
                     fetchPackages();
                     setPaymentData(res.data);
                     setIsOpenModalPayment(true);
+                    setShowPaymentLoading(false); 
                 })
                 .catch((err) => {
                     console.error("VNPay return error:", err);
+                    setShowPaymentLoading(false); 
                 });
 
             // ✅ Xóa các query params khỏi URL để tránh gọi lại khi reload
             const cleanUrl = window.location.origin + window.location.pathname;
             window.history.replaceState({}, document.title, cleanUrl);
+        } else {
+            setShowPaymentLoading(false);
         }
     }, []);
 
