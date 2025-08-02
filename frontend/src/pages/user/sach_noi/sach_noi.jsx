@@ -1,56 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import BookSlider from '@/components/user/book_slider';
+import BookSlider from '@/components/user/sliderShow/book_slider';
 import HomeService from '@/services/users/api-home';
+import AudioBookService from '@/services/users/api-audiobook';
 import { DynamicCategoryAudio } from '@/components/user/sach_noi/DynamicCategoryAudio';
-const books = [
-    {
-        id: 1,
-        title: "Tôi ổn – Bạn ổn",
-        author: "Thomas A. Harris",
-        file_path: "/images/image1.png",
-        description:
-            "Gỡ bỏ gánh nặng “Tôi không ổn” từ tuổi thơ để sống hạnh phúc. Cuốn sách tâm lý học kinh điển giúp hàng triệu người chưa bao giờ thấy mình ổn trở nên ổn hơn...",
-    },
-    {
-        id: 2,
-        title: "1, 2, 3... yêu rồi!",
-        author: "Phan Thị Hồ Điệp",
-        file_path: "/images/image2.png",
-        description:
-            "Những câu chuyện nhẹ nhàng trong đời sống thường nhật truyền cảm hứng tích cực Những câu chuyện nhẹ nhàng trong đời sống thường nhật truyền cảm hứng tích cực Những câu chuyện nhẹ nhàng trong đời sống thường nhật truyền cảm hứng tích cực Những câu chuyện nhẹ nhàng trong đời sống thường nhật truyền cảm hứng tích cực Những câu chuyện nhẹ nhàng trong đời sống thường nhật truyền cảm hứng tích cực Những câu chuyện nhẹ nhàng trong đời sống thường nhật truyền cảm hứng tích cựcNhững câu chuyện nhẹ nhàng trong đời sống thường nhật truyền cảm hứng tích cực Những câu chuyện nhẹ nhàng trong đời sống thường nhật truyền cảm hứng tích cực Những câu chuyện nhẹ nhàng trong đời sống thường nhật truyền cảm hứng tích cực Những câu chuyện nhẹ nhàng trong đời sống thường nhật truyền cảm hứng tích cực.",
-    },
-    {
-        id: 3,
-        title: "Nhiều kiếp nhân sinh",
-        author: "Nguyên Phong",
-        file_path: "/images/image3.png",
-        description:
-            "Một hành trình tâm linh sâu sắc giúp người đọc hiểu về nghiệp, luân hồi và giác ngộ.",
-    },
-    {
-        id: 4,
-        title: "Nhiều kiếp nhân sinh",
-        author: "Nguyên Phong",
-        file_path: "/images/image1.png",
-        description:
-            "Một hành trình tâm linh sâu sắc giúp người đọc hiểu về nghiệp, luân hồi và giác ngộ.",
-    },
-    {
-        id: 5,
-        title: "Nhiều kiếp nhân sinh",
-        author: "Nguyên Phong",
-        file_path: "/images/image3.png",
-        description:
-            "Một hành trình tâm linh sâu sắc giúp người đọc hiểu về nghiệp, luân hồi và giác ngộ.",
-    },
-];
+// Lấy dữ liệu sách nói thật từ API
 const SachNoi = () => {
     const [categoryOptions, setCategoryOptions] = useState([]);
+    const [books, setBooks] = useState([]);
     useEffect(() => {
         const fetchCategories = async () => {
             try {
                 const res = await HomeService.getAudiobookCategories();
-                console.log("Fetched audiobook categories:", res);
                 if (res) {
                     const options = res.data.map((category) => ({
                         value: category.id,
@@ -58,7 +18,6 @@ const SachNoi = () => {
                         link: `/sach-noi/category/${category.slug}`,
                     }));
                     setCategoryOptions(options);
-                    // setCategoryId(options[0]?.value || '');
                 } else {
                     console.error("No categories found in response");
                 }
@@ -67,6 +26,25 @@ const SachNoi = () => {
             }
         };
         fetchCategories();
+    }, []);
+
+    useEffect(() => {
+        // Lấy danh sách sách nói mới nhất (hoặc bạn có thể lấy theo category tuỳ ý)
+        const fetchBooks = async () => {
+            try {
+                const res = await AudioBookService.getProposedBooks();
+                console.log("Fetched audiobooks:", res);
+                if (res) {
+                    setBooks(res);
+                } else {
+                    setBooks([]);
+                }
+            } catch (error) {
+                console.error("Error fetching audiobooks:", error);
+                setBooks([]);
+            }
+        };
+        fetchBooks();
     }, []);
     return (
         <>

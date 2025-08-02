@@ -18,6 +18,11 @@ const PackageService = {
     const response = await apiGet("/users/package");
     return response;
   },
+  // Lấy lịch sử giao dịch
+  getTransactionHistories: async () => {
+    const response = await apiGet("/transaction-histories");
+    return response;
+  },
 
   // Phương thức cũ - mua gói trực tiếp (không qua VNPay)
   setUserPackage: async (packageId) => {

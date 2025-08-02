@@ -1,10 +1,9 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import './App.css'
-import { Slideshow } from "./pages/user/router";
+import { SlideShow } from "@components/user/sliderShow/sliderShow";
 import { UserLayout } from "./components/layouts/user/userlayout";
 import { AdminLayout } from "./components/layouts/admin/adminlayout";
 import { ProtectedRoute } from "./services/ProtectedRoute";
-import { UserSachnoi } from "./pages/user/router";
 import SachNoi from "./pages/user/sach_noi/sach_noi";
 import Ebook from "./pages/user/ebook/ebook";
 import EbookCategory from "./pages/user/ebook/category";
@@ -23,10 +22,17 @@ import Create_Book from "./pages/admin/books/create";
 
 import Chapters from "./pages/admin/chapters";
 import Create_Chapter from "./pages/admin/chapters/create";
-
 import Update_Category from "./pages/admin/categories/update";
 
+import BookFree from "./pages/user/book_free/index";
+import BookMember from "./pages/user/book_member/index";
 import PackagePlan from "./pages/user/package_plan/package_plan";
+
+import ProfileManagement from "@/pages/user/profile/ProfileManagement";
+import BookCase from "@/pages/user/profile/book_case";
+import TransactionHistories from "@/pages/user/profile/transaction-histories";
+
+import AudioPlayer from "./pages/test/test_audio";
 // -------------------------------
 function App() {
 
@@ -59,10 +65,16 @@ function App() {
     { path: "sach-noi", element: <SachNoi /> },
     { path: "sach-noi/category/:slug", element: <AudioCategory /> },
     { path: "ebook/category/:slug", element: <EbookCategory /> },
-    { path: "sachnoi", element: <UserSachnoi /> },
+    { path: "book-free", element: <BookFree /> },
+    { path: "book-member", element: <BookMember /> },
+
     { path: "reader/:slug", element: <BookReader /> },
     { path: "package-plan", element: <PackagePlan /> },
     // { path: "lazyload", element: <LazyLoadDemo /> },
+
+    { path: "profile", element: <ProfileManagement /> },
+    { path: "profile/book-case", element: <BookCase /> },
+    { path: "profile/transaction-histories", element: <TransactionHistories /> },
   ];
   const router = createBrowserRouter([
     {
@@ -82,6 +94,8 @@ function App() {
         ...adminRoutes,
       ]
     },
+    { path: "test-audio", element: <AudioPlayer /> },
+
     {
       path: "/",
       element: (
@@ -92,7 +106,7 @@ function App() {
         {
           index: true, element:
             <>
-              <Slideshow />
+              <SlideShow />
               <UserHome />
             </>
         },

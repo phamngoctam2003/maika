@@ -48,13 +48,13 @@ class CategoryRepository implements CategoryRepositoryInterface
         return null;
     }
 
- public function delete(array $ids): ?bool
+    public function delete(array $ids): ?bool
     {
         if (is_array($ids) && !empty($ids)) {
             Category::whereIn('id', $ids)->delete();
             return true;
         }
-        return false; 
+        return false;
     }
 
     public function getParentId(int $parentId): Collection
@@ -86,7 +86,7 @@ class CategoryRepository implements CategoryRepositoryInterface
 
     public function getAllWithBooksAndFormats(): Collection
     {
-        return Category::with(['books:id' => function($query) {
+        return Category::with(['books:id' => function ($query) {
             $query->select('id')->with(['formats:id,name']);
         }])->get();
     }
@@ -98,7 +98,7 @@ class CategoryRepository implements CategoryRepositoryInterface
      */
     public function getCategoriesByFormat(array $formatNames): Collection
     {
-        return Category::whereHas('books.formats', function($query) use ($formatNames) {
+        return Category::whereHas('books.formats', function ($query) use ($formatNames) {
             $query->whereIn('name', $formatNames);
         })->get();
     }

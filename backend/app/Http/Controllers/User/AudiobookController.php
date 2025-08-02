@@ -53,4 +53,52 @@ class AudiobookController extends BaseBookController
             ], 500);
         }
     }
+
+        public function stream(Request $request, $path)
+    {
+        $fullPath = storage_path('app/public/' . $path);
+
+        if (!file_exists($fullPath)) {
+            abort(401);
+        }
+
+        $size = filesize($fullPath);
+        $file = fopen($fullPath, 'rb');
+        $start = 0;
+        $end = $size - 1;
+
+        if ($request->headers->has('Range')) {
+            preg_match('/bytes=(\d+)-(\d+)?/', $request->header('Range'), $matches);
+            $start = intval($matches[1]);
+            if (isset($matches[2])) {
+                $end = intval($matches[2]);
+            }
+            fseek($file, $start);
+            $status = 206;
+        } else {
+            $status = 200;
+        }
+
+        $length = $end - $start + 1;
+
+        $headers = [
+            'Content-Type' => mime_content_type($fullPath),
+            'Accept-Ranges' => 'bytes',
+            'Content-Range' => "bytes $start-$end/$size",
+            'Content-Length' => $length,
+            'Content-Disposition' => 'inline; filename="' . basename($fullPath) . '"',
+        ];
+
+        return response()->stream(function () use ($file, $length) {
+            $buffer = 1024 * 8;
+            while (!feof($file) && $length > 0) {
+                echo fread($file, min($buffer, $length));
+                $length -= $buffer;
+                ob_flush();
+                flush();
+            }
+            fclose($file);
+        }, $status, $headers);
+    }
+
 }

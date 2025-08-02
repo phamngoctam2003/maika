@@ -22,6 +22,19 @@ class BookDetaiController extends Controller
             if (!$ebook) {
                 return response()->json(['message' => 'Ebook không tồn tại.'], 404);
             }
+
+            // Mặc định sách chưa được lưu
+            $ebook->is_saved_in_bookcase = false;
+
+            /** @var \App\Models\User|null $user */
+            $user = auth('api')->user();
+
+            // Nếu người dùng đã đăng nhập, kiểm tra xem sách đã có trong tủ sách chưa
+            if ($user) {
+                $isSaved = $user->bookCase()->where('book_id', $ebook->id)->exists();
+                $ebook->is_saved_in_bookcase = $isSaved;
+            }
+
             return response()->json($ebook, 200);
         } catch (\Exception $e) {
             return response()->json([

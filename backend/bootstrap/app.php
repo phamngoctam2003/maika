@@ -5,6 +5,7 @@ use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Tymon\JWTAuth\Exceptions\TokenInvalidException;
 use Tymon\JWTAuth\Exceptions\TokenExpiredException;
+use Illuminate\Console\Scheduling\Schedule;
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
         web: __DIR__ . '/../routes/web.php',
@@ -44,4 +45,8 @@ return Application::configure(basePath: dirname(__DIR__))
         $exceptions->render(function (TokenExpiredException $e, $request) {
             return response()->json(['error' => 'Phiên đăng nhập đã hết hạn, vui lòng đăng nhập lại!'], 401);
         });
-    })->create();
+    })
+    ->withSchedule(function (Schedule $schedule) {
+        $schedule->command('subscriptions:update-expired')->dailyAt('00:15' );
+    })
+    ->create();

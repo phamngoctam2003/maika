@@ -33,7 +33,19 @@ class User extends Authenticatable implements JWTSubject
             'role' => $this->role
         ];
     }
-    protected $fillable = ['fullName', 'email', 'phone', 'password',];
+    protected $fillable = [
+        'fullName',
+        'email',
+        'phone',
+        'password',
+        'status',
+        'is_verify',
+        'google_id',
+        'image',
+        'gender',
+        'birthDay',
+        'address'
+    ];
 
     /**
      * The attributes that should be hidden for serialization.
@@ -62,10 +74,10 @@ class User extends Authenticatable implements JWTSubject
         return $this->belongsToMany(Package::class, 'user_packages')
             ->withPivot([
                 'id',
-                'starts_at', 
-                'ends_at', 
-                'status', 
-                'payment_method', 
+                'starts_at',
+                'ends_at',
+                'status',
+                'payment_method',
                 'payment_status',
                 'transaction_id',
                 'order_id',
@@ -86,10 +98,10 @@ class User extends Authenticatable implements JWTSubject
         return $this->belongsToMany(Package::class, 'user_packages')
             ->withPivot([
                 'id',
-                'starts_at', 
-                'ends_at', 
-                'status', 
-                'payment_method', 
+                'starts_at',
+                'ends_at',
+                'status',
+                'payment_method',
                 'payment_status',
                 'amount'
             ])
@@ -98,6 +110,11 @@ class User extends Authenticatable implements JWTSubject
             ->wherePivot('ends_at', '>', now())
             ->withTimestamps();
     }
+    public function bookCase()
+    {
+        return $this->belongsToMany(\App\Models\Books::class, 'user_book_case', 'user_id', 'book_id')->withTimestamps();
+    }
+
 
     /**
      * Kiểm tra user có gói hội viên active không
@@ -125,7 +142,7 @@ class User extends Authenticatable implements JWTSubject
 
         $endsAt = \Carbon\Carbon::parse($activePackage->pivot->ends_at);
         $daysRemaining = $endsAt->diffInDays(now());
-        
+
         return $daysRemaining <= 7 && $endsAt->isFuture();
     }
 }

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef  } from 'react';
 
-export const Slideshow = () => {
+export const SlideShow = () => {
     const [currentIndex, setCurrentIndex] = useState(0);
     const timeoutRef = useRef(null);
     const items = [

@@ -156,6 +156,28 @@ class CategoryController extends Controller
             ], 500);
         }
     }
+
+      public function getBookCategories(Request $request)
+    {
+        try {
+            $limit = $request->get('limit', 1);
+            $categories = $this->categoryService->getBookCategories();
+            $limitedCategories = $categories->take($limit);
+
+            return response()->json([
+                'data' => $limitedCategories->values(),
+                'total' => $categories->count(),
+                'limit' => $limit,
+                'has_more' => $categories->count() > $limit,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Có lỗi xảy ra khi lấy danh sách danh mục sách nói.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
     /**
      * Lấy categories cho sách nói
      */
@@ -170,7 +192,7 @@ class CategoryController extends Controller
                 'data' => $limitedCategories->values(),
                 'total' => $categories->count(),
                 'limit' => $limit,
-                'has_more' => $categories->count() > $limit
+                'has_more' => $categories->count() > $limit,
             ]);
         } catch (\Exception $e) {
             return response()->json([

@@ -32,7 +32,7 @@ const EbookService = {
 
   // API lấy sách theo danh mục
   getEbooksByCategory: async (categorySlug, limit = 12) => {
-    const response = await apiGet(`/users/ebook/get-ebooks-by-category/${categorySlug}?limit=${limit}`);
+    const response = await apiGet(`/users/home/get-books-by-category/${categorySlug}?limit=${limit}`);
     return response;
   },
 
@@ -43,17 +43,17 @@ const EbookService = {
   },
 
   // API lấy danh sách categories cho sách điện tử
-  getEbookCategories: async (page = 1, limit = 5) => {
-    const response = await apiGet(`/users/ebook?page=${page}&limit=${limit}`);
+  getEbookCategories: async (limit = 5) => {
+    const response = await apiGet(`/users/ebook?limit=${limit}`);
     return response;
   },
-
 
   // API lấy danh sách tất cả categories (fallback)
   getCategories: async () => {
     const response = await apiGet("/categories");
     return response;
   },
+
 
 };
 export default EbookService;

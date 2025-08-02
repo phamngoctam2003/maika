@@ -24,7 +24,7 @@ const HomeService = {
     return response;
   },
 
-  // API cho proposed books  
+  // API cho proposed books
   getProposedBooks: async () => {
     const response = await apiGet("/users/home/get-proposed");
     return response;
@@ -32,7 +32,16 @@ const HomeService = {
 
   // API lấy sách theo danh mục
   getBooksByCategory: async (categorySlug, limit = 12) => {
-    const response = await apiGet(`/users/home/get-books-by-category/${categorySlug}?limit=${limit}`);
+    const response = await apiGet(
+      `/users/home/get-books-by-category/${categorySlug}?limit=${limit}`
+    );
+    return response;
+  },
+
+  getBooksCategory: async (limit = 5) => {
+    const response = await apiGet(
+      `/users/home/get-category-book?limit=${limit}`
+    );
     return response;
   },
 
@@ -44,7 +53,9 @@ const HomeService = {
 
   // API lấy danh sách categories cho sách nói
   getAudiobookCategories: async () => {
-    const response = await apiGet("/users/audiobook/get-all-audiobook-category");
+    const response = await apiGet(
+      "/users/audiobook/get-all-audiobook-category"
+    );
     return response;
   },
 
@@ -54,5 +65,28 @@ const HomeService = {
     return response;
   },
 
+  getBookFree: async ({
+    page,
+    per_page,
+    sortorder,
+    format,
+    filter_category,
+  }) => {
+    return apiGet("/users/home/get-book-free", {
+      params: { page, per_page, sortorder, format, filter_category },
+    });
+  },
+
+  getBookMember: async ({
+    page,
+    per_page,
+    sortorder,
+    format,
+    filter_category,
+  }) => {
+    return apiGet("/users/home/get-book-member", {
+      params: { page, per_page, sortorder, format, filter_category },
+    });
+  },
 };
 export default HomeService;

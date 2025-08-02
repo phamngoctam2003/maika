@@ -2,6 +2,9 @@
 
 namespace App\Services;
 
+use App\Services\UserService;
+use App\Models\Books;
+
 /**
  * Home Book Service - Handles all book types
  * Used for Home section to display both ebooks and audiobooks
@@ -67,4 +70,6 @@ class HomeBookService
     {
         return $this->userService->getBooksByCategory($categorySlug);
     }
+
+    
 }

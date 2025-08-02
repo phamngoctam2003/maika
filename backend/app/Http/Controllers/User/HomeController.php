@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\User;
 
+use App\Models\Books;
 use App\Services\HomeBookService;
 
 /**
@@ -18,5 +19,29 @@ class HomeController extends BaseBookController
     public function __construct(HomeBookService $homeBookService)
     {
         parent::__construct($homeBookService);
+    }
+
+    public function getBookFree()
+    {
+        $filters = request()->only(['per_page', 'sortorder', 'format', 'filter_category']);
+        $Books = Books::where('access_type', 'free')
+        ->whereHas('formats', function ($query) use ($filters) {
+            $query->where('name', $filters['format'] ?? 'Sách điện tử');
+        })
+            ->filterCategory($filters['filter_category'] ?? null)
+            ->applyFilters($filters);
+        return response()->json($Books);
+    }
+
+    public function getBookMember()
+    {
+        $filters = request()->only(['per_page', 'sortorder', 'format', 'filter_category']);
+        $Books = Books::where('access_type', 'member')
+        ->whereHas('formats', function ($query) use ($filters) {
+            $query->where('name', $filters['format'] ?? 'Sách điện tử');
+        })
+            ->filterCategory($filters['filter_category'] ?? null)
+            ->applyFilters($filters);
+        return response()->json($Books);
     }
 }

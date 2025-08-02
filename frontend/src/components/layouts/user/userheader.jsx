@@ -6,7 +6,7 @@ import { AntNotification } from "@components/global/notification";
 import { useAuth } from '@/contexts/authcontext';
 import { Loading } from '@components/loading/loading';
 import { LoginGoogle } from '@components/LoginGoogle/LoginGoogle';
-import Sidebar from '../../user/sidebar';
+import Sidebar from '../../user/sidebar/sidebar';
 import HomeService from '@/services/users/api-home';
 export const UserHeader = () => {
     const URL_IMG = import.meta.env.VITE_URL_IMG;
@@ -29,7 +29,7 @@ export const UserHeader = () => {
     const iconcloseRef = useRef(null);
     const btnCuasoRef = useRef(null);
 
-    const { isAuthenticated, currentUser, setCurrentUser, roles, setRoles, permissions, token, setToken, setPermissions, setIsAuthenticated } = useAuth();
+    const { isAuthenticated, currentUser, setCurrentUser, roles, setRoles, permissions, token, setToken, setPermissions, setIsAuthenticated, setUserPackages, setActivePackage } = useAuth();
 
     const onFinish = async (e) => {
         e.preventDefault();
@@ -56,7 +56,7 @@ export const UserHeader = () => {
     };
 
     const setLoginGoogle = (response) => {
-        message.success("Đăng nhập thành công");
+        message.success("Đăng nhập thành công!");
         const user = response.user;
         const permissions = response.user.permissions || [];
         const roles = response.user.roles || [];
@@ -66,6 +66,15 @@ export const UserHeader = () => {
         setIsPopupActive(false);
         setIsAuthenticated(true);
         setToken(response.access_token);
+        if (response.user_packages) {
+            setUserPackages(response.user_packages);
+        }
+        // Set active package từ membership info
+        if (response.membership && response.has_membership) {
+            setActivePackage(response.membership);
+        } else {
+            setActivePackage(null);
+        }
         if (permissions && permissions.length > 0 && !roles.includes('user')) {
             return navigate('/admin');
         }
@@ -242,7 +251,7 @@ export const UserHeader = () => {
                             </div>
                         </div>
 
-                        <Link to="sachhieusoi.php" className="dropdown-trigger">Sách hội viên</Link>
+                        <Link to="/book-member" className="dropdown-trigger">Sách hội viên</Link>
 
                         <div className="nav-item-dropdown">
                             <Link to="sach-noi" className="dropdown-trigger">
@@ -291,13 +300,13 @@ export const UserHeader = () => {
                             </div>
                         </div>
 
-                        <Link to="sachdientu.phpc" className="dropdown-trigger">Sách miễn phí</Link>
+                        <Link to="/book-free" className="dropdown-trigger">Sách miễn phí</Link>
                     </nav>
                 </div>
                 <div id="countdown"></div>
 
-                <div className="nav1-c flex justify-between items-center gap-2">
-                    <div className="form-search">
+                <div className="nav1-c flex justify-between items-start gap-2 mt-2">
+                    <div className="form-search mt-1">
                         <form>
                             <div className="box">
                                 <div className="container-2">
@@ -308,7 +317,7 @@ export const UserHeader = () => {
                         </form>
                     </div>
 
-                    <Link to="package-plan" aria-current="page" className="nuxt-link-exact-active nuxt-link-active flex items-center justify-center">
+                    <Link to="package-plan" aria-current="page" className="mt-1 nuxt-link-exact-active nuxt-link-active flex items-center justify-center">
                         <div className="cursor-pointer bg-package border border-[#FC0] rounded-2xl px-2.5 py-[5.25px] bg-[rgba(255,204,0,0.16)] min-w-[92px] flex items-center">
                             <div className="w-4 h-4">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
@@ -324,11 +333,12 @@ export const UserHeader = () => {
                     <div className="form-submit">
                         {loggedIn ? (
                             <Link to="#">
-                                <img src={
-                                    currentUser?.image
-                                        ? URL_IMG + currentUser.image
-                                        : 'https://tse3.mm.bing.net/th?id=OIP.v6uzcpp3obKaXzgpB7hPpgHaHv&pid=Api&P=0&h=180'
-                                } />
+                                <img
+                                    src={
+                                        currentUser?.image
+                                            ? URL_IMG + currentUser.image
+                                            : 'https://tse3.mm.bing.net/th?id=OIP.v6uzcpp3obKaXzgpB7hPpgHaHv&pid=Api&P=0&h=180'
+                                    } />
                                 <button className="down"></button>
                             </Link>
                         ) : (
@@ -351,14 +361,14 @@ export const UserHeader = () => {
                                 <button className="hoivien-aac"><Link to="#">Trở thành hội viên</Link></button>
                                 <div className="flex-p">
                                     <div className="icon-flex">
-                                        <Link to="#"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="25" height="25" fill="currentColor"><path d="M4 22C4 17.5817 7.58172 14 12 14C16.4183 14 20 17.5817 20 22H4ZM12 13C8.685 13 6 10.315 6 7C6 3.685 8.685 1 12 1C15.315 1 18 3.685 18 7C18 10.315 15.315 13 12 13Z"></path></svg>
+                                        <Link to="/profile"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="25" height="25" fill="currentColor"><path d="M4 22C4 17.5817 7.58172 14 12 14C16.4183 14 20 17.5817 20 22H4ZM12 13C8.685 13 6 10.315 6 7C6 3.685 8.685 1 12 1C15.315 1 18 3.685 18 7C18 10.315 15.315 13 12 13Z"></path></svg>
                                             <p>Quản lý tài khoản</p></Link></div>
                                     <div className="icon-flex">
-                                        <Link to="tusach.php"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="25" height="25" fill="currentColor"><path d="M4 3C3.44772 3 3 3.44772 3 4V20C3 20.5523 3.44772 21 4 21H14C14.5523 21 15 20.5523 15 20V15.2973L15.9995 19.9996C16.1143 20.5398 16.6454 20.8847 17.1856 20.7699L21.0982 19.9382C21.6384 19.8234 21.9832 19.2924 21.8684 18.7522L18.9576 5.0581C18.8428 4.51788 18.3118 4.17304 17.7716 4.28786L14.9927 4.87853C14.9328 4.38353 14.5112 4 14 4H10C10 3.44772 9.55228 3 9 3H4ZM10 6H13V14H10V6ZM10 19V16H13V19H10ZM8 5V15H5V5H8ZM8 17V19H5V17H8ZM17.3321 16.6496L19.2884 16.2338L19.7042 18.1898L17.7479 18.6057L17.3321 16.6496ZM16.9163 14.6933L15.253 6.86789L17.2092 6.45207L18.8726 14.2775L16.9163 14.6933Z"></path></svg>
+                                        <Link to="/profile/book-case"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="25" height="25" fill="currentColor"><path d="M4 3C3.44772 3 3 3.44772 3 4V20C3 20.5523 3.44772 21 4 21H14C14.5523 21 15 20.5523 15 20V15.2973L15.9995 19.9996C16.1143 20.5398 16.6454 20.8847 17.1856 20.7699L21.0982 19.9382C21.6384 19.8234 21.9832 19.2924 21.8684 18.7522L18.9576 5.0581C18.8428 4.51788 18.3118 4.17304 17.7716 4.28786L14.9927 4.87853C14.9328 4.38353 14.5112 4 14 4H10C10 3.44772 9.55228 3 9 3H4ZM10 6H13V14H10V6ZM10 19V16H13V19H10ZM8 5V15H5V5H8ZM8 17V19H5V17H8ZM17.3321 16.6496L19.2884 16.2338L19.7042 18.1898L17.7479 18.6057L17.3321 16.6496ZM16.9163 14.6933L15.253 6.86789L17.2092 6.45207L18.8726 14.2775L16.9163 14.6933Z"></path></svg>
                                             <p>Tủ sách cá nhân</p></Link></div>
                                     <div className="icon-flex">
-                                        <Link to="lich_su.php"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="25" height="25" fill="currentColor"><path d="M2 3.9934C2 3.44476 2.45531 3 2.9918 3H21.0082C21.556 3 22 3.44495 22 3.9934V20.0066C22 20.5552 21.5447 21 21.0082 21H2.9918C2.44405 21 2 20.5551 2 20.0066V3.9934ZM11 5H4V19H11V5ZM13 5V19H20V5H13ZM14 7H19V9H14V7ZM14 10H19V12H14V10Z"></path></svg>
-                                            <p>Lịch sử đọc sách</p></Link></div>
+                                        <Link to="/profile/transaction-histories"><svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" color="currentColor"><path d="M13.5 15H6c-1.886 0-2.828 0-3.414-.586S2 12.886 2 11V7c0-1.886 0-2.828.586-3.414S4.114 3 6 3h12c1.886 0 2.828 0 3.414.586S22 5.114 22 7v5c0 .932 0 1.398-.152 1.765a2 2 0 0 1-1.083 1.083C20.398 15 19.932 15 19 15"/><path d="M14 9a2 2 0 1 1-4 0a2 2 0 0 1 4 0m-1 8a3 3 0 0 1 3-3v-2a3 3 0 0 1 3-3v5.5c0 2.335 0 3.502-.472 4.386a4 4 0 0 1-1.642 1.642C16.002 21 14.835 21 12.5 21H12c-1.864 0-2.796 0-3.53-.305a4 4 0 0 1-2.166-2.164C6 17.796 6 16.864 6 15"/></g></svg>
+                                            <p>Lịch sử thanh toán</p></Link></div>
                                     <div className="icon-flex">
                                         <Link to="#"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="25" height="25" fill="currentColor"><path d="M21 8C22.1046 8 23 8.89543 23 10V14C23 15.1046 22.1046 16 21 16H19.9381C19.446 19.9463 16.0796 23 12 23V21C15.3137 21 18 18.3137 18 15V9C18 5.68629 15.3137 3 12 3C8.68629 3 6 5.68629 6 9V16H3C1.89543 16 1 15.1046 1 14V10C1 8.89543 1.89543 8 3 8H4.06189C4.55399 4.05369 7.92038 1 12 1C16.0796 1 19.446 4.05369 19.9381 8H21ZM7.75944 15.7849L8.81958 14.0887C9.74161 14.6662 10.8318 15 12 15C13.1682 15 14.2584 14.6662 15.1804 14.0887L16.2406 15.7849C15.0112 16.5549 13.5576 17 12 17C10.4424 17 8.98882 16.5549 7.75944 15.7849Z"></path></svg>
                                             <p>Hỗ trợ khách hàng</p></Link></div>

@@ -34,6 +34,10 @@ class CategoryService {
         return $this->categoryRepository->getAllWithBooksAndFormats();
     }
 
+    public function getBookCategories(): Collection {
+        return Category::whereHas('books.formats')->get();
+    }
+
     /**
      * Lấy categories cho sách điện tử
      */

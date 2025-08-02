@@ -17,7 +17,6 @@ export const AuthProvider = ({ children }) => {
     const [token, setToken] = useState(localStorage.getItem('token') || null);
     const [isAuthenticated, setIsAuthenticated] = useState(!!(token && AuthService.isAuthenticated()));
 
-
     // Lưu token vào localStorage khi có sự thay đổi
     useEffect(() => {
         if (token) {
@@ -46,48 +45,39 @@ export const AuthProvider = ({ children }) => {
 
     // Kiểm tra xem người dùng đã đăng nhập khi component mount
     useEffect(() => {
-        (async () => {
-            try {
-                if (AuthService.isAuthenticated()) {
-                    // Lấy thông tin user cùng với membership và user_packages
-                    const response = await AuthService.getCurrentUser();
-                    
-                    // Debug logging để kiểm tra dữ liệu từ backend
-                    console.log('AuthContext - Response from backend:', {
-                        has_membership: response.has_membership,
-                        membership: response.membership,
-                        user_packages: response.user_packages
-                    });
-                    
-                    setCurrentUser(response.user);
-                    setPermissions(response.permissions || []);
-                    setRoles(response.roles || []);
-                    
-                    // Set thông tin gói hội viên từ response
-                    if (response.user_packages) {
-                        setUserPackages(response.user_packages);
-                    }
-                    
-                    // Set active package từ membership info
-                    if (response.membership && response.has_membership) {
-                        setActivePackage(response.membership);
-                        console.log('AuthContext - Active package set:', response.membership);
-                    } else {
-                        setActivePackage(null);
-                        console.log('AuthContext - No active package found');
-                    }
-                    
-                    setIsAuthenticated(true);
-                }
-            } catch (err) {
-                console.error('AuthContext - Error loading user data:', err);
-                setError(err);
-                localStorage.removeItem('token');
-            } finally {
-                setLoading(false);
-            }
-        })();
+        getCurrentUser();
     }, []);
+
+    const getCurrentUser = async () => {
+        try {
+            if (AuthService.isAuthenticated()) {
+                // Lấy thông tin user cùng với membership và user_packages
+                const response = await AuthService.getCurrentUser();
+                setCurrentUser(response.user);
+                setPermissions(response.permissions || []);
+                setRoles(response.roles || []);
+
+                // Set thông tin gói hội viên từ response
+                if (response.user_packages) {
+                    setUserPackages(response.user_packages);
+                }
+
+                // Set active package từ membership info
+                if (response.membership && response.has_membership) {
+                    setActivePackage(response.membership);
+                } else {
+                    setActivePackage(null);
+                }
+
+                setIsAuthenticated(true);
+            }
+        } catch (err) {
+            setError(err);
+            localStorage.removeItem('token');
+        } finally {
+            setLoading(false);
+        }
+    };
     // Kiểm tra quyền
     const hasPermission = (permission) => {
         return permissions.includes(permission);
@@ -105,18 +95,17 @@ export const AuthProvider = ({ children }) => {
     const hasMembership = () => {
         // Kiểm tra có activePackage và chưa hết hạn
         if (!activePackage) {
-            console.log('AuthContext - hasMembership: No activePackage');
             return false;
         }
-        
+
         // Kiểm tra thời gian hết hạn
         const now = new Date();
         const endsAt = new Date(activePackage.ends_at);
-        
+
         const isActive = activePackage.status === 'active';
         const notExpired = endsAt > now;
         const result = isActive && notExpired;
-        
+
         return result;
     };
 
@@ -126,7 +115,7 @@ export const AuthProvider = ({ children }) => {
      */
     const getMembershipInfo = () => {
         if (!hasMembership()) return null;
-        
+
         // Backend đã format sẵn thông tin membership
         return {
             packageId: activePackage.package_id,
@@ -161,12 +150,12 @@ export const AuthProvider = ({ children }) => {
                 setCurrentUser(response.user);
                 setPermissions(response.permissions || []);
                 setRoles(response.roles || []);
-                
+
                 // Cập nhật thông tin gói hội viên
                 if (response.user_packages) {
                     setUserPackages(response.user_packages);
                 }
-                
+
                 if (response.membership && response.has_membership) {
                     setActivePackage(response.membership);
                 } else {
@@ -188,6 +177,7 @@ export const AuthProvider = ({ children }) => {
         loading,
         error,
         token,
+        setLoading,
         setRoles,
         setToken,
         setPermissions,
@@ -203,7 +193,8 @@ export const AuthProvider = ({ children }) => {
         // isAuthenticated: AuthService.isAuthenticated(),
         isAuthenticated,
         setIsAuthenticated,
-        setCurrentUser
+        setCurrentUser,
+        getCurrentUser,
     };
 
     return (

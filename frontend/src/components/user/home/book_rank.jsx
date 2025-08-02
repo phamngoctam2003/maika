@@ -3,6 +3,7 @@ import { useNavigate, Link } from "react-router-dom";
 import HomeService from "@/services/users/api-home";
 import useInView from "@/hooks/useInView";
 import BookSkeleton from "@/components/ui/BookSkeleton";
+import { BookCard } from "@components/user/books/bookcard";
 
 export const BookRank = () => {
     const URL_IMG = import.meta.env.VITE_URL_IMG;
@@ -15,10 +16,14 @@ export const BookRank = () => {
     const [canScrollRight, setCanScrollRight] = useState(true);
     const [isHovered, setIsHovered] = useState(false);
 
-    // Fetch data khi component xuất hiện
     const fetchData = async () => {
-        const response = await HomeService.getRankingBooks();
-        setRankingBooks(response);
+        if (hasLoaded) return; // Không gọi lại nếu đã load
+        try {
+            const response = await HomeService.getRankingBooks();
+            setRankingBooks(response?.data || response || []);
+        } catch (e) {
+            setRankingBooks([]);
+        }
     };
 
     const { elementRef, hasLoaded, loading } = useInView(fetchData);
@@ -86,7 +91,6 @@ export const BookRank = () => {
         <div ref={elementRef} className="py-2 lg:py-8 w-full">
             <div className="pl-4 lg:pl-12 w-full">
                 <h2 className="text-xl md:text-2xl font-bold mb-2 lg:mb-6">Bảng xếp hạng</h2>
-                
                 {/* Hiển thị loading skeleton khi đang tải */}
                 {loading && !hasLoaded && (
                     <BookSkeleton count={8} />
@@ -99,71 +103,50 @@ export const BookRank = () => {
                         onMouseEnter={() => setIsHovered(true)}
                         onMouseLeave={() => setIsHovered(false)}
                     >
-                    {/* Nút cuộn trái */}
-                    {canScrollLeft && (
-                        <button
-                            onClick={() => scroll("left")}
-                            style={{
-                                border: '1px solid rgba(255, 255, 255, 1)',
-                            }}
-                            className={`absolute xl:-left-6 -left-8 top-1/2 -translate-y-1/2 z-10 bg-gray-500 bg-opacity-35 hover:bg-opacity-20 text-white rounded-full p-2 transition-all duration-300 backdrop-blur-sm ${isHovered ? 'opacity-100 visible' : 'opacity-0 invisible '
-                                } hidden lg:block`}
-                            aria-label="Trượt sang trái"
-                        >
-                            <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 48 48"><path fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="4" d="M31 36L19 24l12-12" /></svg>
-                        </button>
-                    )}
-                    <div
-                        ref={scrollRef}
-                        className="flex overflow-x-auto gap-2 md:gap-4 xl:gap-6 scrollbar-hide [overflow-scrolling:touch] pr-4 lg:pr-12"
-                    >
-                        {rankingBooks?.map((book, idx) => (
-                            <div
-                                ref={idx === 0 ? itemRef : null}
-                                className="flex-none w-[120px] md:w-[120px] lg:w-[150px] xl:w-[180px] 2xl:w-[244px] cursor-pointer"
-                                key={book.id}
+                        {/* Nút cuộn trái */}
+                        {canScrollLeft && (
+                            <button
+                                onClick={() => scroll("left")}
+                                style={{
+                                    border: '1px solid rgba(255, 255, 255, 1)',
+                                }}
+                                className={`absolute xl:-left-6 -left-8 top-1/2 -translate-y-1/2 z-10 bg-gray-500 bg-opacity-35 hover:bg-opacity-20 text-white rounded-full p-2 transition-all duration-300 backdrop-blur-sm ${isHovered ? 'opacity-100 visible' : 'opacity-0 invisible '
+                                    } hidden lg:block`}
+                                aria-label="Trượt sang trái"
                             >
-                                <div className="">
-                                    <Link
-                                        // to={"ebook/" + book.slug}
-                                        to={`/ebook/${book.slug}`}
-                                        className="block h-auto">
-                                        <div className="relative w-full mb-2 rounded-md lg:rounded-xl shadow-md overflow-hidden">
-                                            <img
-                                                className="w-full h-auto object-cover"
-                                                src={URL_IMG + book.file_path}
-                                                alt={book.title}
-                                                loading="lazy"
-                                            />
-                                        </div>
-                                        <p
-                                            style={{ textOverflow: 'ellipsis' }}
-                                            className="text-sm lg:text-base font-semibold text-gray-100 hover:text-maika-500 line-clamp-2"
-                                        >
-                                            {book?.title}
-                                        </p>
-                                    </Link>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                    {/* Nút cuộn phải */}
-                    {canScrollRight && (
-                        <button
-                            style={{
-                                border: '1px solid rgba(255, 255, 255, 1)',
-                            }}
-                            onClick={() => scroll("right")}
-                            className={`absolute xl:right-6 right-4 top-1/2 -translate-y-1/2 z-10 bg-gray-500 bg-opacity-35 hover:bg-opacity-20 text-white rounded-full p-2 transition-all duration-300 backdrop-blur-sm ${isHovered ? 'opacity-100 visible' : 'opacity-0 invisible'
-                                } hidden lg:block`}
-                            aria-label="Trượt sang phải"
+                                <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 48 48"><path fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="4" d="M31 36L19 24l12-12" /></svg>
+                            </button>
+                        )}
+                        <div
+                            ref={scrollRef}
+                            className="flex overflow-x-auto gap-2 md:gap-4 xl:gap-6 scrollbar-hide [overflow-scrolling:touch] pr-4 lg:pr-12"
                         >
-                            <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 48 48" className="relative z-10">
-                                <path fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="4" d="M19 12L31 24L19 36" />
-                            </svg>
-                        </button>
-                    )}
-                </div>
+                            {rankingBooks?.map((book, idx) => (
+                                <BookCard
+                                    key={book.id}
+                                    book={book}
+                                    link={`/ebook/${book.slug}`}
+                                    ref={idx === 0 ? itemRef : null}
+                                />
+                            ))}
+                        </div>
+                        {/* Nút cuộn phải */}
+                        {canScrollRight && (
+                            <button
+                                style={{
+                                    border: '1px solid rgba(255, 255, 255, 1)',
+                                }}
+                                onClick={() => scroll("right")}
+                                className={`absolute xl:right-6 right-4 top-1/2 -translate-y-1/2 z-10 bg-gray-500 bg-opacity-35 hover:bg-opacity-20 text-white rounded-full p-2 transition-all duration-300 backdrop-blur-sm ${isHovered ? 'opacity-100 visible' : 'opacity-0 invisible'
+                                    } hidden lg:block`}
+                                aria-label="Trượt sang phải"
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 48 48" className="relative z-10">
+                                    <path fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="4" d="M19 12L31 24L19 36" />
+                                </svg>
+                            </button>
+                        )}
+                    </div>
                 )}
             </div>
         </div>

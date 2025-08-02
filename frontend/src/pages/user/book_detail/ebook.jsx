@@ -1,11 +1,12 @@
 import UserBreadcrumb from "@components/user/breadcrumb";
-import CommentSection from "@components/user/CommentSection";
+import CommentSection from "@components/user/comments/CommentSection";
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { AntNotification } from "@components/global/notification";
 import DetailtService from "@/services/users/api-detail";
 import { Button, Dropdown } from "antd";
 import { useAuth } from "@/contexts/authcontext";
+import AddToBookCaseButton from "@components/common/AddToBookCaseButton";
 
 const EbookDetail = () => {
   const URL_IMG = import.meta.env.VITE_URL_IMG;
@@ -29,11 +30,11 @@ const EbookDetail = () => {
   const [hasMoreComments, setHasMoreComments] = useState(true);
   const [totalComments, setTotalComments] = useState(0);
 
-  const [currentFormat, setCurrentFormat] = useState('Sách điện tử'); 
+  const [currentFormat, setCurrentFormat] = useState('Sách điện tử');
 
   const breadcrumbItems = [
     { label: "Trang chủ", path: "/" },
-    { label: `${book?.title}`, path: null },
+    { label: `${book?.title || ""}`, path: null },
   ];
 
   // Auto scroll to top when component mounts or slug changes
@@ -58,25 +59,17 @@ const EbookDetail = () => {
   const canReadMemberBook = () => {
     // Kiểm tra xem người dùng đã đăng nhập chưa
     if (!isAuthenticated || !currentUser) {
-      console.log('BookDetail - canReadMemberBook: User not authenticated');
       return false;
     }
 
     // Sử dụng function hasMembership từ AuthContext
-    // Function này đã kiểm tra gói có active và chưa hết hạn
     const hasActiveMembership = hasMembership();
-    console.log('BookDetail - canReadMemberBook:', {
-      isAuthenticated,
-      currentUser: !!currentUser,
-      hasActiveMembership
-    });
-
     return hasActiveMembership;
   };
 
   /**
    * Kiểm tra xem cuốn sách có yêu cầu hội viên hay không
-   * @returns {boolean} - true nếu sách yêu cầu hội viên, false nếu miễn phí
+   * @returns {boolean}
    */
   const isBookRequireMembership = () => {
     // Chỉ có 2 loại: 'member' (sách hội viên) và 'free' (sách miễn phí)
@@ -84,12 +77,6 @@ const EbookDetail = () => {
 
     // Sách member yêu cầu hội viên, còn lại là free
     const requireMembership = accessType === 'member';
-
-    console.log('BookDetail - isBookRequireMembership:', {
-      book_id: book?.id,
-      access_type: accessType,
-      requireMembership
-    });
 
     return requireMembership;
   };
@@ -185,6 +172,7 @@ const EbookDetail = () => {
     const fecthData = async () => {
       try {
         const response = await DetailtService.getEbook(slug);
+        console.log(response);
         setBook(response);
         // Reset pagination when book changes
         setCurrentPage(1);
@@ -197,6 +185,21 @@ const EbookDetail = () => {
     };
     fecthData();
   }, [slug]);
+
+  // Auto redirect nếu người dùng vào sai trang format
+  useEffect(() => {
+    if (!book?.formats) return;
+
+    const formats = book.formats || [];
+    const hasEbook = formats.some(format => format.name === 'Sách điện tử');
+    const hasAudio = formats.some(format => format.name === 'Sách nói');
+
+    // Nếu đang ở trang ebook nhưng không có ebook format
+    if (currentFormat === 'Sách điện tử' && !hasEbook && hasAudio) {
+      console.log('Redirecting to audiobook because no ebook format available');
+      navigate(`/sach-noi/${book.slug}`, { replace: true });
+    }
+  }, [book, currentFormat, navigate]);
 
   useEffect(() => {
     const fecthDataComment = async () => {
@@ -339,7 +342,7 @@ const EbookDetail = () => {
   return (
     <div className="lg:px-12 w-full bg-color-detail">
       <UserBreadcrumb items={breadcrumbItems} />
-      <div className="relative overflow-hidden block lg:hidden">
+      <div className="relative overflow-hidden block lg:hidden pt-16 pb-6">
         {/* Background image - same as book cover but blurred */}
         <div className="absolute inset-0">
           <img
@@ -355,18 +358,6 @@ const EbookDetail = () => {
         <div className="absolute top-20 right-10 w-32 h-32 bg-white/10 rounded-full blur-xl"></div>
         <div className="absolute bottom-20 left-10 w-24 h-24 bg-white/5 rounded-full blur-lg"></div>
         <div className="absolute top-40 left-20 w-16 h-16 bg-orange-300/20 rounded-full blur-md"></div>
-
-        {/* Header */}
-        <div className="relative z-10 flex items-center justify-between p-4 pt-12">
-          <button className="p-2 text-white hover:bg-white/20 rounded-full transition-colors">
-          </button>
-          <div className="flex gap-3">
-            <button className="p-2 text-white hover:bg-white/20 rounded-full transition-colors">
-            </button>
-            <button className="p-2 text-white hover:bg-white/20 rounded-full transition-colors">
-            </button>
-          </div>
-        </div>
 
         {/* Main content */}
         <div className="relative z-5 flex flex-col items-center px-6 mt-8">
@@ -427,8 +418,8 @@ const EbookDetail = () => {
             </button>
             <button
               className={`flex-1 py-3 rounded-full font-medium transition-colors ${isBookRequireMembership() && !canReadMemberBook()
-                  ? 'bg-orange-500 text-white hover:bg-orange-600' // Cần nâng cấp
-                  : 'bg-green-500 text-white hover:bg-green-600'   // Có thể đọc hoặc sách miễn phí
+                ? 'bg-orange-500 text-white hover:bg-orange-600' // Cần nâng cấp
+                : 'bg-green-500 text-white hover:bg-green-600'   // Có thể đọc hoặc sách miễn phí
                 }`}
               onClick={() => {
                 if (isBookRequireMembership() && !canReadMemberBook()) {
@@ -449,9 +440,15 @@ const EbookDetail = () => {
         <div className="sticky top-[11%] w-[400px] z-[5] h-full mr-15 lg:block hidden">
           <div className="relative w-full">
             <div className=" relative rounded-xl overflow-hidden mb-10">
-              <img alt={book?.title}
-                loading="lazy"
-                src={URL_IMG + book?.file_path} className="relative top-0 left-0 w-full h-full object-cover" />
+              {
+                book?.file_path ?
+                  <img
+                    alt={book?.title}
+                    loading="lazy"
+                    src={URL_IMG + book?.file_path} className="relative top-0 left-0 w-full h-full object-cover" />
+                  :
+                  <div className="relative top-0 left-0 w-full h-full bg-gray-500" />
+              } 
             </div>
             <div className="book-border w-full top-0 left-0 absolute h-full">
             </div>
@@ -466,7 +463,7 @@ const EbookDetail = () => {
 
           <div className="pb-4 border-b border-white-overlay">
             <div className="">
-              <h1 className="lg:text-3xl font-bold text-xl lg:block hidden">{book?.title}</h1>
+              <h1 className="lg:text-3xl font-bold text-xl lg:block hidden">{book?.title || ""}</h1>
               <div className="flex mt-4">
                 <div className="flex items-center mr-6">
                   <span className="text-white-50 block mr-1">4.2</span>
@@ -606,74 +603,72 @@ const EbookDetail = () => {
                     return (
                       <>
                         {/* Button Sách điện tử - luôn hiển thị */}
-                        <button 
+                        <button
                           onClick={() => {
                             if (hasEbook) {
                               handleFormatChange('Sách điện tử');
                             }
                             // Nếu không có ebook thì không làm gì cả
                           }}
-                          className={`flex-1 border py-3 rounded-lg flex items-center justify-center gap-2 transition-colors ${
-                            currentFormat === 'Sách điện tử'
+                          className={`flex-1 border py-3 rounded-lg flex items-center justify-center gap-2 transition-colors ${currentFormat === 'Sách điện tử'
                               ? (book?.access_type?.toLowerCase() === 'member'
-                                  ? (canReadMemberBook() 
-                                      ? 'bg-green-500/20 border-green-400 text-green-200' // Có quyền truy cập
-                                      : 'bg-orange-500/20 border-orange-400 text-orange-200') // Yêu cầu hội viên
-                                  : 'bg-green-500/20 border-green-400 text-green-200') // Sách miễn phí
-                              : (hasEbook 
-                                  ? 'bg-white/10 border-white/30 text-white hover:bg-white/20' // Có format và không active
-                                  : 'bg-gray-600/20 border-gray-500/30 text-gray-400 cursor-not-allowed') // Không có format
-                          }`}
+                                ? (canReadMemberBook()
+                                  ? 'bg-green-500/20 border-green-400 text-green-200' // Có quyền truy cập
+                                  : 'bg-orange-500/20 border-orange-400 text-orange-200') // Yêu cầu hội viên
+                                : 'bg-green-500/20 border-green-400 text-green-200') // Sách miễn phí
+                              : (hasEbook
+                                ? 'bg-white/10 border-white/30 text-white hover:bg-white/20' // Có format và không active
+                                : 'bg-gray-600/20 border-gray-500/30 text-gray-400 cursor-not-allowed') // Không có format
+                            }`}
                         >
                           <div className="text-left">
                             <div className="text-sm font-medium">Sách điện tử</div>
                             <div className="text-xs">
-                              {!hasEbook 
+                              {!hasEbook
                                 ? "Không có sẵn"
                                 : (currentFormat === 'Sách điện tử'
-                                    ? (book?.access_type?.toLowerCase() === 'member'
-                                        ? (canReadMemberBook() ? "Có thể đọc" : "Yêu cầu hội viên")
-                                        : "Miễn phí"
-                                      )
-                                    : "Chuyển sang ebook"
+                                  ? (book?.access_type?.toLowerCase() === 'member'
+                                    ? (canReadMemberBook() ? "Có thể đọc" : "Yêu cầu hội viên")
+                                    : "Miễn phí"
                                   )
+                                  : "Chuyển sang ebook"
+                                )
                               }
                             </div>
                           </div>
                         </button>
-                        
+
                         {/* Button Sách nói - luôn hiển thị */}
-                        <button 
+                        <button
                           onClick={() => {
                             if (hasAudio) {
                               handleFormatChange('Sách nói');
                             }
                             // Nếu không có audio thì không làm gì cả
                           }}
-                          className={`flex-1 py-3 rounded-lg flex items-center justify-center gap-2 transition-colors border-2 ${
-                            currentFormat === 'Sách nói'
+                          className={`flex-1 py-3 rounded-lg flex items-center justify-center gap-2 transition-colors border-2 ${currentFormat === 'Sách nói'
                               ? (book?.access_type?.toLowerCase() === 'member'
-                                  ? (canReadMemberBook()
-                                      ? 'bg-green-500/80 border-green-400 text-white hover:bg-green-500' // Có quyền
-                                      : 'bg-orange-500/80 border-orange-400 text-white hover:bg-orange-500') // Yêu cầu hội viên
-                                  : 'bg-green-500/80 border-green-400 text-white hover:bg-green-500') // Miễn phí
-                              : (hasAudio 
-                                  ? 'bg-white/10 border-white/30 text-white hover:bg-white/20' // Có format và không active
-                                  : 'bg-gray-600/20 border-gray-500/30 text-gray-400 cursor-not-allowed') // Không có format
-                          }`}
+                                ? (canReadMemberBook()
+                                  ? 'bg-green-500/80 border-green-400 text-white hover:bg-green-500' // Có quyền
+                                  : 'bg-orange-500/80 border-orange-400 text-white hover:bg-orange-500') // Yêu cầu hội viên
+                                : 'bg-green-500/80 border-green-400 text-white hover:bg-green-500') // Miễn phí
+                              : (hasAudio
+                                ? 'bg-white/10 border-white/30 text-white hover:bg-white/20' // Có format và không active
+                                : 'bg-gray-600/20 border-gray-500/30 text-gray-400 cursor-not-allowed') // Không có format
+                            }`}
                         >
                           <div className="text-left">
                             <div className="text-sm font-medium">Sách nói</div>
                             <div className="text-xs">
-                              {!hasAudio 
+                              {!hasAudio
                                 ? "Không có sẵn"
                                 : (currentFormat === 'Sách nói'
-                                    ? (book?.access_type?.toLowerCase() === 'member'
-                                        ? (canReadMemberBook() ? "Có thể nghe" : "Yêu cầu hội viên")
-                                        : "Miễn phí"
-                                      )
-                                    : "Chuyển sang sách nói"
+                                  ? (book?.access_type?.toLowerCase() === 'member'
+                                    ? (canReadMemberBook() ? "Có thể nghe" : "Yêu cầu hội viên")
+                                    : "Miễn phí"
                                   )
+                                  : "Chuyển sang sách nói"
+                                )
                               }
                             </div>
                           </div>
@@ -706,11 +701,7 @@ const EbookDetail = () => {
                 </span>
               </button>
               <div className="w-12 ml-3 p-3 bg-white-overlay rounded-full border-white-overlay style-next-back">
-                <img
-                  src="https://waka.vn/svgs/icon-heart.svg"
-                  alt="icon-heart"
-                  className="cursor-pointer"
-                />{" "}
+               <AddToBookCaseButton bookId={book?.id} isSavedInitially={book?.is_saved_in_bookcase} />
                 <img
                   src="https://waka.vn/svgs/liked_heart.svg"
                   alt="liked_heart"

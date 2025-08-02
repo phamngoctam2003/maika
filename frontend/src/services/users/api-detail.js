@@ -31,6 +31,19 @@ const DetailService = {
 
   checkUserComment: async (bookId) => {
     return apiPost(`/users/book-comments/check-user-comment`, { book_id: bookId });
+  },
+
+  // API methods để lấy chapters và audio
+  getBookChapters: async (bookId) => {
+    return apiGet(`/users/books/${bookId}/chapters`);
+  },
+
+  getChapterAudio: async (bookId, chapterId) => {
+    return apiGet(`/users/books/${bookId}/chapters/${chapterId}/audio`);
+  },
+
+  updateListeningProgress: async (bookId, chapterId, progressData) => {
+    return apiPost(`/users/books/${bookId}/chapters/${chapterId}/progress`, progressData);
   }
 };
 export default DetailService;

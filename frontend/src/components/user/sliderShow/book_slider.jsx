@@ -6,20 +6,15 @@ import 'swiper/css/navigation';
 import 'swiper/css/effect-coverflow';
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { AntNotification } from "@components/global/notification";
-import HomeService from '@/services/users/api-home';
-
-
 export default function BookSlider({ books, categoryId, categoryOptions }) {
     const [activeIndex, setActiveIndex] = useState(0);
-    // const [books, setBooks] = useState([]);
-    const [loading, setLoading] = useState(true);
     const [isLargeScreen, setIsLargeScreen] = useState(false);
     const navigate = useNavigate();
     const URL_IMG = import.meta.env.VITE_URL_IMG;
     const handleCategoryChange = (value, option) => {
         navigate(`${option.link}`);
     };
+    const [currentFormat, setCurrentFormat] = useState('Sách');
 
     useEffect(() => {
         const checkScreenSize = () => {
@@ -29,7 +24,16 @@ export default function BookSlider({ books, categoryId, categoryOptions }) {
         window.addEventListener('resize', checkScreenSize);
         return () => window.removeEventListener('resize', checkScreenSize);
     }, []);
-    console.log(books, categoryOptions);
+
+    useEffect(() => {
+        const pathname = window.location.pathname;
+        if (pathname.includes('/ebook')) {
+            setCurrentFormat('Sách điện tử');
+        } else if (pathname.includes('/sach-noi')) {
+            setCurrentFormat('Sách nói');
+        }
+    }, [window.location.pathname]);
+
     return (
         <>
             <div
@@ -65,7 +69,7 @@ export default function BookSlider({ books, categoryId, categoryOptions }) {
                     <div className="space-y-4 flex-1 min-w-0 xl:block hidden">
                         <div className="flex items-center mb-4 gap-4">
                             <h2 className="text-3xl md:text-5xl font-bold">
-                                Sách
+                                {currentFormat}
                             </h2>
                             <Select
                                 placeholder="Chọn thể loại"

@@ -17,7 +17,7 @@ export const LoginModal = ({
 }) => {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
-    const { setCurrentUser, setToken, setPermissions, setRoles, setIsAuthenticated } = useAuth();
+    const { setCurrentUser, setToken, setPermissions, setRoles, setIsAuthenticated, setUserPackages, setActivePackage } = useAuth();
 
     const logoGoogle = (<svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
         <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
@@ -35,6 +35,7 @@ export const LoginModal = ({
             const res = await AuthService.login(email, password);
 
             if (res && res.access_token) {
+
                 setLoginGoogle(res);
                 return true;
             } else {
@@ -67,6 +68,14 @@ export const LoginModal = ({
         setRoles(roles);
         setIsAuthenticated(true);
         closeAllModals();
+        if (response.has_membership) {
+            setUserPackages(response.has_membership);
+        }
+        if (response.membership && response.has_membership) {
+            setActivePackage(response.membership);
+        } else {
+            setActivePackage(null);
+        }
         if (onLoginSuccess) onLoginSuccess();
         if (permissions && permissions.length > 0) {
             return navigate('/admin');
@@ -77,7 +86,7 @@ export const LoginModal = ({
     if (!isOpen) return null;
     return (
         <div className={`fixed left-0 top-0 h-full w-full bg-gray-900 text-white transform transition-transform duration-300 ease-in-out z-10 overflow-y-auto ${isOpen ? 'translate-x-0' : '-translate-x-full'
-            }`}>    
+            }`}>
             <div className="bg-gray-900 w-full relative">
                 {/* Background Books */}
                 {/* <div className="absolute inset-0 opacity-30">

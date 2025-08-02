@@ -11,7 +11,7 @@ import axios from 'axios';
 const PackagePlan = () => {
     const [packages, setPackages] = useState([]);
     const [showPaymentLoading, setShowPaymentLoading] = useState(false);
-    const { isAuthenticated } = useAuth();
+    const { isAuthenticated, setActivePackage, hasMembership } = useAuth();
     const [isOpenModalPayment, setIsOpenModalPayment] = useState(false);
     const [paymentData, setPaymentData] = useState(null);
 
@@ -23,7 +23,6 @@ const PackagePlan = () => {
         try {
             const response = await PackageService.getPackage();
             setPackages(response.data || []);
-            console.log("Fetched packages:", response.data);
             if (!response || response.data.length === 0) {
                 return (
                     <div className="flex items-center justify-center h-screen">
@@ -77,8 +76,6 @@ const PackagePlan = () => {
 
         PackageService.createVnpayPayment(id, returnUrl)
             .then(response => {
-                console.log("VNPay payment response:", response);
-
                 // Kiểm tra response structure mới
                 if (response.data && response.success) {
                     // Lưu thông tin đơn hàng vào localStorage để tracking

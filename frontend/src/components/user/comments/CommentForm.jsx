@@ -35,7 +35,6 @@ const CommentForm = ({ isOpen, onClose, onSubmit, existingComment = null, isUpda
   const handleRatingChange = (value) => {
     setFormData(prev => ({ ...prev, rating: value }));
   };
-  console.log('Rating changed to:', formData.rating);
 
   const handleContentChange = (e) => {
     setFormData(prev => ({ ...prev, content: e.target.value }));
