@@ -66,6 +66,17 @@ const VnpayService = {
     return params.vnp_ResponseCode === '00';
   },
 
+  // Xử lý kết quả trả về từ VNPay
+  vnpReturn: async (paymentData) => {
+    try {
+      const response = await axios.post("/vnpay/return", paymentData);
+      return response;
+    } catch (error) {
+      console.error("VNPay return error:", error);
+      throw error;
+    }
+  },
+
   // Lấy thông tin lỗi thanh toán
   getPaymentErrorMessage: (responseCode) => {
     const errorMessages = {
