@@ -39,7 +39,7 @@ const PackagePlan = () => {
         const paymentData = VnpayService.handlePaymentResult();
 
         if (paymentData?.vnp_TxnRef) {
-            axios.post("http://localhost:8000/api/vnpay/return", paymentData)
+            VnpayService.vnpReturn(paymentData)
                 .then((res) => {
                     fetchPackages();
                     setPaymentData(res.data);
