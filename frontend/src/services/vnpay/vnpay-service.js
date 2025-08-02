@@ -72,7 +72,6 @@ const VnpayService = {
       const response = await axios.post("/vnpay/return", paymentData);
       return response;
     } catch (error) {
-      console.error("VNPay return error:", error);
       throw error;
     }
   },

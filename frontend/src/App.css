@@ -2177,13 +2177,13 @@ audio::-webkit-media-controls-seek-forward-button {
 
 
 .bg-banner-book {
-    background: url('./images/png/bg-banner-book.png') no-repeat center center;
+    background: url('/images/png/bg-banner-book.png') no-repeat center center;
     background-repeat: no-repeat;
     background-size: cover;
     background-position-y: 20%;
 }
 .bg-major {
-    background: url('./images/png/banner-major.png') no-repeat center center;
+    background: url('/images/png/banner-major.png') no-repeat center center;
     background-repeat: no-repeat;
     background-size: cover;
     background-position-y: 20%;
