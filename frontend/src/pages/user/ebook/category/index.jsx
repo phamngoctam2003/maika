@@ -2,11 +2,11 @@ import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { Helmet } from "react-helmet";
 import EbookService from "@/services/users/api-ebook";
-import BookCard from "@/components/user/books/BookCard";
+import { BookCardCategory } from "@/components/user/books/BookCard";
 import { Pagination } from "antd";
 import BookGridSkeleton from "@/components/ui/BookSkeleton";
 import HomeService from "@/services/users/api-home";
-import BookSlider from "@/components/user/book_slider";
+import BookSlider from "@/components/user/sliderShow/book_slider";
 
 
 const EbookCategory = () => {
@@ -105,7 +105,7 @@ const EbookCategory = () => {
                         <>
                             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 gap-2 sm:gap-4 lg:gap-6">
                                 {books.map((book) => (
-                                    <BookCard
+                                    <BookCardCategory
                                         key={book.id}
                                         book={book}
                                         link={`/ebook/${book.slug}`}

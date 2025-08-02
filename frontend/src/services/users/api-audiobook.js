@@ -32,7 +32,7 @@ const AudioBookService = {
 
   // API lấy sách theo danh mục
   getAudioByCategory: async (categorySlug, limit = 12) => {
-    const response = await apiGet(`/users/audiobook/get-audiobooks-by-category/${categorySlug}?limit=${limit}`);
+    const response = await apiGet(`/users/home/get-books-by-category/${categorySlug}?limit=${limit}`);
     return response;
   },
 
@@ -43,8 +43,8 @@ const AudioBookService = {
   },
 
   // API lấy danh sách categories cho sách nói
-  getAudioCategories: async (page = 1, limit = 5) => {
-    const response = await apiGet(`/users/audiobook?page=${page}&limit=${limit}`);
+  getAudioCategories: async (limit = 5) => {
+    const response = await apiGet(`/users/audiobook?limit=${limit}`);
     return response;
   },
 

@@ -92,6 +92,7 @@ Route::group([
     Route::middleware(['auth:api'])->group(function () {
         Route::post('logout', [AuthController::class, 'logout']);
         Route::post('refresh', [AuthController::class, 'refresh']);
+        Route::post('/change-password', [AuthController::class, 'changePassword']);
     });
     Route::middleware(['check.role:admin'])->group(function () {
         Route::post('admin/category/create', [CategoryController::class, 'create']);
@@ -105,11 +106,15 @@ Route::group([
 
 route::group(['prefix' => 'users'], function () {
     route::post('{slug}/increase-view', [HomeController::class, 'increaseView']);
+    Route::post('profile', [AuthController::class, 'updateProfile']);
     route::group(['prefix' => 'home', 'middleware' => 'throttle:home'], function () {
+        route::get('get-book-free', [HomeController::class, 'getBookFree']);
+        route::get('get-book-member', [HomeController::class, 'getBookMember']);
         route::get('get-latest', [HomeController::class, 'getLatest']);
         route::get('get-ranking', [HomeController::class, 'getRanking']);
         route::get('get-proposed', [HomeController::class, 'getProposed']);
         route::get('get-books-by-category/{categorySlug}', [HomeController::class, 'getBooksByCategory']);
+        route::get('get-category-book', [CategoryController::class, 'getBookCategories']);
     });
 
     route::group(['prefix' => 'ebook'], function () {
@@ -119,21 +124,28 @@ route::group(['prefix' => 'users'], function () {
         route::get('/get-all-ebook-category', [CategoryController::class, 'getAllEbookCategories']);
         route::get('get-ranking', [EbookController::class, 'getRanking']);
         route::get('get-proposed', [EbookController::class, 'getProposed']);
-        route::get('get-ebooks-by-category/{categorySlug}', [EbookController::class, 'getBooksByCategory']);
     });
     route::group(['prefix' => 'audiobook'], function () {
         route::get('/', [CategoryController::class, 'getAudiobookCategories']);
-        route::get('/getcategory/{slug}', [AudioBookController::class, 'getAudiobooksCategorySlug']);
+        route::get('getcategory/{slug}', [AudioBookController::class, 'getAudiobooksCategorySlug']);
         route::get('get-latest', [AudioBookController::class, 'getLatest']);
         route::get('get-all-audiobook-category', [CategoryController::class, 'getAllAudiobookCategories']);
         route::get('get-ranking', [AudioBookController::class, 'getRanking']);
         route::get('get-proposed', [AudioBookController::class, 'getProposed']);
-        route::get('get-audiobooks-by-category/{categorySlug}', [AudioBookController::class, 'getBooksByCategory']);
     });
 
     route::group(['prefix' => 'detail'], function () {
         route::get('get-ebook-reader/{slug}', [BookDetaiController::class, 'getEbookReader']);
         route::get('get-ebook/{slug}', [BookDetaiController::class, 'getEbook']);
+    });
+
+    // Audio chapters and progress routes
+    route::group(['prefix' => 'books'], function () {
+        route::get('stream-audio/{path}', [AudioBookController::class, 'stream'])->where('path', '.*');
+        route::get('{bookId}/chapters', [ChapterController::class, 'getBookChapters']);
+        route::get('{bookId}/chapters/{chapterId}/audio', [ChapterController::class, 'getChapterAudio']);
+        route::post('{bookId}/chapters/{chapterId}/progress', [ChapterController::class, 'updateListeningProgress'])
+            ->middleware('auth:api');
     });
 
     Route::group(['prefix' => 'reading-history'], function () {
@@ -180,4 +192,20 @@ Route::group(['prefix' => 'payment'], function () {
         ->middleware('auth:api');
     Route::post('/cleanup', [PaymentController::class, 'cleanupPendingPayments'])
         ->middleware('auth:api');
+});
+
+// trong file routes/api.php
+
+Route::group(['prefix' => 'users', 'middleware' => 'auth:api'], function () {
+    // ... các route khác của bạn
+    
+    // Route để thêm sách vào tủ sách
+    Route::post('book-case/add', [App\Http\Controllers\User\BookCaseController::class, 'store']);
+    Route::delete('book-case/{book}', [App\Http\Controllers\User\BookCaseController::class, 'destroy']);
+    Route::get('book-case', [App\Http\Controllers\User\BookCaseController::class, 'getBookCase']);
+});
+Route::middleware('auth:api')->group(function () {
+    // ...existing code...
+    Route::get('/transaction-histories', [AuthController::class, 'transactionHistories']);
+    // ...existing code...
 });

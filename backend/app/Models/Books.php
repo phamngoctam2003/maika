@@ -34,4 +34,43 @@ class Books extends Model
     {
         return $this->hasMany(Chapter::class, 'book_id', 'id');
     }
+    /**
+     * The users who have this book in their bookcase.
+     */
+    public function usersInBookCase()
+    {
+        return $this->belongsToMany(User::class, 'user_book_case', 'book_id', 'user_id')->withTimestamps();
+    }
+
+
+    public function scopePaginate($query, $perPage)
+    {
+        return $query->paginate($perPage);
+    }
+    public function scopeApplyFilters($query, $filters)
+    {
+        $query->when($filters['sortorder'] ?? 'desc', function ($query, $sort) {
+            return $query->orderBy('created_at', $sort);
+        });
+        return $query->paginate($filters['per_page'] ?? 10);
+    }
+    public function scopeSearch($query, $keyword)
+    {
+        if (!empty($keyword)) {
+            return $query->where('title', 'LIKE', '%' . $keyword . '%')
+                ->orWhereHas('variants', function ($query) use ($keyword) {
+                    $query->where('sku', 'LIKE', '%' . $keyword . '%');
+                });
+        }
+        return $query;
+    }
+    public function scopeFilterCategory($query, $slug)
+    {
+        if (!empty($slug)) {
+            return $query->whereHas('categories', function ($query) use ($slug) {
+                $query->where('slug', $slug);
+            });
+        }
+        return $query;
+    }
 }

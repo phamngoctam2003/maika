@@ -132,4 +132,5 @@ class UserRepository implements UserRepositoryInterface
             ->take($limit)
             ->get();
     }
+
 }

@@ -149,6 +149,7 @@ header a:hover {
   width: 42px;
   height: 42px;
   border-radius: 50%;
+  object-fit: cover;
 }
 
 .form-submit .down {
@@ -603,7 +604,6 @@ header a:hover {
 
 /* search */
 .container-2 {
-  margin: 5px 16px 0 0;
   width: auto;
   vertical-align: middle;
   white-space: nowrap;
@@ -2173,4 +2173,40 @@ audio::-webkit-media-controls-seek-forward-button {
 .custom-select .ant-select-selection-placeholder {
   color: #fff !important;
   opacity: 0.8;
+}
+
+
+.bg-banner-book {
+    background: url('./images/png/bg-banner-book.png') no-repeat center center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position-y: 20%;
+}
+.bg-major {
+    background: url('./images/png/banner-major.png') no-repeat center center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position-y: 20%;
+}
+
+/* date picker antd */
+.custom-datepicker .ant-picker-input input {
+  background-color: #1f2937; /* bg-gray-800 */
+  color: #fff;
+  border-radius: 0.375rem;
+  transition: all 0.2s;
+}
+.custom-datepicker .ant-picker-input input:focus,
+.custom-datepicker .ant-picker-input input:hover {
+  background-color: #000; /* Đổi sang màu đen khi hover */
+  border-color: #22c55e;
+  outline: none;
+}
+.ant-picker-input input::placeholder {
+  color: #fff !important;
+  opacity: 1;
+}
+.ant-picker-input input::placeholder:hover {
+  color: #000000 !important;
+  opacity: 1;
 }

@@ -1,16 +1,18 @@
 import UserBreadcrumb from "@components/user/breadcrumb";
-import CommentSection from "@components/user/CommentSection";
+import CommentSection from "@components/user/comments/CommentSection";
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { AntNotification } from "@components/global/notification";
 import DetailtService from "@/services/users/api-detail";
 import { Button, Dropdown } from "antd";
 import { useAuth } from "@/contexts/authcontext";
+import { useBook } from "@/contexts/book_context.jsx";
 
 const SachNoiDetail = () => {
     const URL_IMG = import.meta.env.VITE_URL_IMG;
     const navigate = useNavigate();
     const { slug } = useParams();
+    const [book, setBook] = useState(null);
 
     // Lấy thông tin user từ AuthContext để kiểm tra quyền truy cập
     const {
@@ -21,19 +23,19 @@ const SachNoiDetail = () => {
         isMembershipExpiringSoon,
         activePackage
     } = useAuth();
+    const { openAudioModal, setOpenAudioModal, isAudioPlaying, setIsAudioPlaying, setCurrentBook } = useBook();
 
-    const [book, setBook] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
     const [comments, setComments] = useState([]);
     const [commentsLoading, setCommentsLoading] = useState(false);
     const [hasMoreComments, setHasMoreComments] = useState(true);
     const [totalComments, setTotalComments] = useState(0);
 
-    const [currentFormat, setCurrentFormat] = useState('Sách nói'); 
+    const [currentFormat, setCurrentFormat] = useState('Sách nói');
 
     const breadcrumbItems = [
         { label: "Trang chủ", path: "/" },
-        { label: `${book?.title}`, path: null },
+        { label: `${book?.title || ""}`, path: null },
     ];
 
     // Auto scroll to top when component mounts or slug changes
@@ -44,7 +46,6 @@ const SachNoiDetail = () => {
     // Xác định format hiện tại dựa vào URL
     useEffect(() => {
         const pathname = window.location.pathname;
-        console.log('Current pathname:', pathname);
         if (pathname.includes('/ebook/')) {
             setCurrentFormat('Sách điện tử');
         } else if (pathname.includes('/sach-noi/')) {
@@ -54,7 +55,7 @@ const SachNoiDetail = () => {
 
     /**
      * Kiểm tra xem người dùng có quyền đọc sách hội viên hay không
-     * @returns {boolean} - true nếu có quyền, false nếu không có quyền
+     * @returns {boolean} 
      */
     const canReadMemberBook = () => {
         // Kiểm tra xem người dùng đã đăng nhập chưa
@@ -63,20 +64,13 @@ const SachNoiDetail = () => {
         }
 
         // Sử dụng function hasMembership từ AuthContext
-        // Function này đã kiểm tra gói có active và chưa hết hạn
         const hasActiveMembership = hasMembership();
-        console.log('BookDetail - canReadMemberBook:', {
-            isAuthenticated,
-            currentUser: !!currentUser,
-            hasActiveMembership
-        });
-
         return hasActiveMembership;
     };
 
     /**
      * Kiểm tra xem cuốn sách có yêu cầu hội viên hay không
-     * @returns {boolean} - true nếu sách yêu cầu hội viên, false nếu miễn phí
+     * @returns {boolean} 
      */
     const isBookRequireMembership = () => {
         // Chỉ có 2 loại: 'member' (sách hội viên) và 'free' (sách miễn phí)
@@ -88,11 +82,7 @@ const SachNoiDetail = () => {
         return requireMembership;
     };
 
-    /**
-     * Xử lý logic khi người dùng bấm "Đọc sách"
-     * Kiểm tra quyền truy cập trước khi cho phép đọc
-     */
-    const handleReadBook = () => {
+    const handleReadBook = async () => {
         const requireMembership = isBookRequireMembership();
         const canRead = canReadMemberBook();
 
@@ -120,12 +110,40 @@ const SachNoiDetail = () => {
         }
 
         if (currentFormat === 'Sách nói') {
-            navigate(`/audio-reader/${book?.slug}`);
+            // Lấy thông tin chapters và audio khi user bấm nghe
+            try {
+                if (book?.id) {
+                    // Set book hiện tại vào context để audio player có thể sử dụng
+                    setCurrentBook(book);
+
+                    // Gọi API để lấy chapters và audio - có thể implement sau
+                    // const chapters = await DetailtService.getBookChapters(book.id);
+                    // const firstChapterAudio = await DetailtService.getChapterAudio(book.id, chapters[0].id);
+
+                    // Lưu chapters vào state nếu cần
+                    // setBookChapters(chapters);
+                    // setCurrentAudio(firstChapterAudio);
+                }
+            } catch (error) {
+                AntNotification.showNotification(
+                    "Lỗi tải audio",
+                    "Không thể tải nội dung audio. Vui lòng thử lại",
+                    "error"
+                );
+                return;
+            }
+
+            setOpenAudioModal(true);
+            if (!isAudioPlaying) {
+                // Nếu modal đã mở, toggle trạng thái audio
+                setIsAudioPlaying(true);
+            } else {
+                setIsAudioPlaying(pre => !pre);
+            }
         } else {
             navigate(`/reader/${book?.slug}`);
         }
     };
-
     const handleAddComment = async (commentData) => {
         try {
             // Call API to add comment
@@ -184,11 +202,25 @@ const SachNoiDetail = () => {
                 setHasMoreComments(true);
                 setTotalComments(0);
             } catch (error) {
-                console.error("Error fetching latest products:", error);
+                console.error("Error fetching audiobook:", error);
             }
         };
         fecthData();
     }, [slug]);
+
+    // Auto redirect nếu người dùng vào sai trang format
+    useEffect(() => {
+        if (!book?.formats) return;
+
+        const formats = book.formats || [];
+        const hasEbook = formats.some(format => format.name === 'Sách điện tử');
+        const hasAudio = formats.some(format => format.name === 'Sách nói');
+
+        // Nếu đang ở trang sách nói nhưng không có audio format
+        if (currentFormat === 'Sách nói' && !hasAudio && hasEbook) {
+            navigate(`/ebook/${book.slug}`, { replace: true });
+        }
+    }, [book, currentFormat, navigate]);
 
     useEffect(() => {
         const fecthDataComment = async () => {
@@ -234,7 +266,6 @@ const SachNoiDetail = () => {
      */
     const getSupportedFormats = () => {
         const formats = book?.formats || [];
-
         return {
             hasEbook: formats.some(format => format.name === 'Sách điện tử'),
             hasAudio: formats.some(format => format.name === 'Sách nói'),
@@ -246,11 +277,11 @@ const SachNoiDetail = () => {
      * Xử lý chuyển đổi format sách
      * @param {string} formatType - 'Sách điện tử' hoặc 'Sách nói'
      */
+    const { hasEbook, hasAudio } = getSupportedFormats();
     const handleFormatChange = (formatType) => {
         if (formatType === currentFormat) return; // Đã ở format hiện tại
 
         const { hasEbook, hasAudio } = getSupportedFormats();
-
         // Kiểm tra format có được hỗ trợ không
         if (formatType === 'Sách điện tử' && !hasEbook) {
             AntNotification.showNotification(
@@ -337,6 +368,7 @@ const SachNoiDetail = () => {
                     <img
                         src={URL_IMG + book?.file_path}
                         alt="Background"
+                        loading="lazy"
                         className="w-full h-full object-cover"
                     />
                     {/* Blur and dark overlay */}
@@ -369,8 +401,8 @@ const SachNoiDetail = () => {
                     <div className="relative mb-6">
                         <img
                             src={URL_IMG + book?.file_path}
-                            alt="Gió xuân rực lửa"
                             className="w-64 h-auto object-cover rounded-lg shadow-2xl relative"
+                            loading="lazy"
                         />
                         {/* Book shadow */}
                         <div className="absolute -bottom-2 left-2 right-2 h-4 bg-black/30 rounded-full blur-md"></div>
@@ -444,24 +476,26 @@ const SachNoiDetail = () => {
                 <div className="sticky top-[11%] w-[400px] z-[5] h-full mr-15 lg:block hidden">
                     <div className="relative w-full">
                         <div className=" relative rounded-xl overflow-hidden mb-10">
-                            <img alt={book?.title}
-                                loading="lazy"
-                                src={URL_IMG + book?.file_path} className="relative top-0 left-0 w-full h-full object-cover" />
+                            {
+                                book?.file_path ?
+                                    <img
+                                        alt={book?.title}
+                                        loading="lazy"
+                                        src={URL_IMG + book?.file_path} className="relative top-0 left-0 w-full h-full object-cover" />
+                                    :
+                                        <div className="relative top-0 left-0 w-full h-full bg-gray-500" />
+                            }
+
                         </div>
                         <div className="book-border w-full top-0 left-0 absolute h-full">
                         </div>
-                        {/* <div className="type-sale top-0 right-0 absolute w-30 h-7 pl-3">
-              <p className="font-medium font-medium text-white-default uppercase py-1">
-              Hội viên
-              </p> <img src="https://waka.vn/svgs/icon-sale.svg" alt="icon-sale" className="cursor-pointer absolute top-0 right-0" />
-            </div> */}
                     </div>
                 </div>
                 <div className="lg:w-[54%] w-full z-[8] between-content mr-15">
 
                     <div className="pb-4 border-b border-white-overlay">
                         <div className="">
-                            <h1 className="lg:text-3xl font-bold text-xl lg:block hidden">{book?.title}</h1>
+                            <h1 className="lg:text-3xl font-bold text-xl lg:block hidden">{book?.title || ""}</h1>
                             <div className="flex mt-4">
                                 <div className="flex items-center mr-6">
                                     <span className="text-white-50 block mr-1">4.2</span>
@@ -605,14 +639,14 @@ const SachNoiDetail = () => {
                                                         }
                                                     }}
                                                     className={`flex-1 border py-3 rounded-lg flex items-center justify-center gap-2 transition-colors ${currentFormat === 'Sách điện tử'
-                                                            ? (book?.access_type?.toLowerCase() === 'member'
-                                                                ? (canReadMemberBook()
-                                                                    ? 'bg-green-500/20 border-green-400 text-green-200' // Có quyền truy cập
-                                                                    : 'bg-orange-500/20 border-orange-400 text-orange-200') // Yêu cầu hội viên
-                                                                : 'bg-green-500/20 border-green-400 text-green-200') // Sách miễn phí
-                                                            : (hasEbook
-                                                                ? 'bg-white/10 border-white/30 text-white hover:bg-white/20' // Có format và không active
-                                                                : 'bg-gray-600/20 border-gray-500/30 text-gray-400 cursor-not-allowed') // Không có format
+                                                        ? (book?.access_type?.toLowerCase() === 'member'
+                                                            ? (canReadMemberBook()
+                                                                ? 'bg-green-500/20 border-green-400 text-green-200' // Có quyền truy cập
+                                                                : 'bg-orange-500/20 border-orange-400 text-orange-200') // Yêu cầu hội viên
+                                                            : 'bg-green-500/20 border-green-400 text-green-200') // Sách miễn phí
+                                                        : (hasEbook
+                                                            ? 'bg-white/10 border-white/30 text-white hover:bg-white/20' // Có format và không active
+                                                            : 'bg-gray-600/20 border-gray-500/30 text-gray-400 cursor-not-allowed') // Không có format
                                                         }`}
                                                 >
                                                     <div className="text-left">
@@ -640,14 +674,14 @@ const SachNoiDetail = () => {
                                                         }
                                                     }}
                                                     className={`flex-1 py-3 rounded-lg flex items-center justify-center gap-2 transition-colors border-2 ${currentFormat === 'Sách nói'
-                                                            ? (book?.access_type?.toLowerCase() === 'member'
-                                                                ? (canReadMemberBook()
-                                                                    ? 'bg-green-500/80 border-green-400 text-white hover:bg-green-500' // Có quyền
-                                                                    : 'bg-orange-500/80 border-orange-400 text-white hover:bg-orange-500') // Yêu cầu hội viên
-                                                                : 'bg-green-500/80 border-green-400 text-white hover:bg-green-500') // Miễn phí
-                                                            : (hasAudio
-                                                                ? 'bg-white/10 border-white/30 text-white hover:bg-white/20' // Có format và không active
-                                                                : 'bg-gray-600/20 border-gray-500/30 text-gray-400 cursor-not-allowed') // Không có format
+                                                        ? (book?.access_type?.toLowerCase() === 'member'
+                                                            ? (canReadMemberBook()
+                                                                ? 'bg-green-500/80 border-green-400 text-white hover:bg-green-500' // Có quyền
+                                                                : 'bg-orange-500/80 border-orange-400 text-white hover:bg-orange-500') // Yêu cầu hội viên
+                                                            : 'bg-green-500/80 border-green-400 text-white hover:bg-green-500') // Miễn phí
+                                                        : (hasAudio
+                                                            ? 'bg-white/10 border-white/30 text-white hover:bg-white/20' // Có format và không active
+                                                            : 'bg-gray-600/20 border-gray-500/30 text-gray-400 cursor-not-allowed') // Không có format
                                                         }`}
                                                 >
                                                     <div className="text-left">
@@ -676,18 +710,17 @@ const SachNoiDetail = () => {
                         <div className="flex items-center relative z-30">
                             <button
                                 onClick={handleReadBook}
-                                className="flex items-center justify-center my-4 py-3 rounded-full cursor-pointer text-white-default text-16-16 whitespace-nowrap w-[233px] px-4 button-col bg-maika-500"
+                                className="flex items-center justify-center my-4 py-2 rounded-full cursor-pointer text-white-default text-16-16 whitespace-nowrap w-[233px] px-4 button-col bg-maika-500 gap-1"
                             >
-                                <img
-                                    src="https://waka.vn/svgs/icon-book-blank.svg"
-                                    alt="icon-book-blank"
-                                    className="cursor-pointer mr-2"
-                                    data-v-5b161707=""
-                                />
+                                {isAudioPlaying && openAudioModal ?
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 16 16"><path fill="currentColor" fillRule="evenodd" d="M5 3a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h1a1 1 0 0 0 1-1V4a1 1 0 0 0-1-1H5Zm5 0a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h1a1 1 0 0 0 1-1V4a1 1 0 0 0-1-1h-1Z" clipRule="evenodd" /></svg>
+                                    :
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 20 20"><path fill="currentColor" fillRule="evenodd" d="M10 18a8 8 0 1 0 0-16a8 8 0 0 0 0 16ZM9.555 7.168A1 1 0 0 0 8 8v4a1 1 0 0 0 1.555.832l3-2a1 1 0 0 0 0-1.664l-3-2Z" clipRule="evenodd" /></svg>
+                                }
                                 <span data-v-5b161707="">
                                     {isBookRequireMembership() && !canReadMemberBook()
                                         ? (isAuthenticated ? "Nâng cấp để nghe sách" : "Đăng nhập để nghe sách")
-                                        : (currentFormat === 'Sách nói' ? "Nghe sách" : "Đọc sách")
+                                        : (isAudioPlaying && openAudioModal ? "Tạm dừng" : "Nghe sách")
                                     }
                                 </span>
                             </button>

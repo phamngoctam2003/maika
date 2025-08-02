@@ -80,4 +80,5 @@ abstract class BaseBookController extends Controller
             ], 500);
         }
     }
+
 }

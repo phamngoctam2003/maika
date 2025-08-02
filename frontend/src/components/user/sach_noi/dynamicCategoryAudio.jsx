@@ -3,29 +3,31 @@ import AudioBookService from "@/services/users/api-audiobook";
 import { LazyCategoryAudio } from "./LazyCategoryAudio";
 import useInView from "@/hooks/useInView";
 import useScrollInView from "@/hooks/useScrollInView";
+import BookSliderSkeleton from "@/components/ui/BookSkeleton";
 
-export const DynamicCategoryAudio = ({ 
-    initialPageSize = 2, 
-    loadMorePageSize = 3, 
-    maxAttempts = 5 
+
+export const DynamicCategoryAudio = ({
+    initialPageSize = 2,
+    loadMorePageSize = 8, // Số lượng load thêm mỗi lần scroll
+    maxAttempts = 5, 
+
 } = {}) => {
     const [categories, setCategories] = useState([]);
     const [currentLimit, setCurrentLimit] = useState(1);
     const [hasMore, setHasMore] = useState(true);
     const [loading, setLoading] = useState(false);
-    
+
     // Load category đầu tiên
     const fetchInitialCategory = async () => {
         if (categories.length > 0) {
             return; // Đã load rồi thì không load lại
         }
-        
+
         try {
             setLoading(true);
-            const response = await AudioBookService.getAudioCategories(1, initialPageSize);
-            console.log("Fetched audiobook categories:", response);
+            const response = await AudioBookService.getAudioCategories(loadMorePageSize);
             const data = response?.data || response || {};
-            
+
             // Kiểm tra format dữ liệu
             let initialCategories = [];
             if (Array.isArray(data)) {
@@ -33,7 +35,7 @@ export const DynamicCategoryAudio = ({
             } else if (data.data && Array.isArray(data.data)) {
                 initialCategories = data.data;
             }
-            
+
             if (initialCategories && initialCategories.length > 0) {
                 setCategories(initialCategories);
                 setHasMore(data.has_more !== false);
@@ -47,30 +49,29 @@ export const DynamicCategoryAudio = ({
             setLoading(false);
         }
     };
-    
+
     // Load thêm categories khi scroll - với debug logging
     const loadMoreCategories = async () => {
-        
+
         if (!hasMore) {
             return;
         }
-        
+
         if (loading) {
             return;
         }
-        
+
         // Safety check: nếu đã thử quá nhiều lần
         if (currentLimit > maxAttempts) {
             setHasMore(false);
             return;
         }
-        
+
         try {
             setLoading(true);
 
-            const response = await AudioBookService.getAudioCategories(currentLimit, loadMorePageSize);
+            const response = await AudioBookService.getAudioCategories(currentLimit);
             const data = response?.data || response || {};
-            console.log("Fetched more audiobook categories:", data);
             // Xử lý dữ liệu trả về từ API
             let responseCategories = [];
             if (Array.isArray(data)) {
@@ -78,18 +79,18 @@ export const DynamicCategoryAudio = ({
             } else if (data?.data && Array.isArray(data.data)) {
                 responseCategories = data.data;
             }
-            
+
             // Kiểm tra nếu API không trả về gì hoặc empty array
             if (!responseCategories || responseCategories.length === 0) {
                 setHasMore(false);
                 return;
             }
-            
+
             // Chỉ thêm categories mới
             const newCategories = responseCategories.filter(
                 newCat => !categories.some(existingCat => existingCat.id === newCat.id)
             );
-            
+
             if (newCategories.length > 0) {
                 setCategories(prev => {
                     const updated = [...prev, ...newCategories];
@@ -103,12 +104,12 @@ export const DynamicCategoryAudio = ({
                 setHasMore(false);
                 return;
             }
-            
+
             // Kiểm tra API có báo hết data không
             if (data.has_more === false) {
                 setHasMore(false);
             }
-            
+
         } catch (error) {
             setHasMore(false);
         } finally {
@@ -118,24 +119,24 @@ export const DynamicCategoryAudio = ({
 
     // Hook để load category đầu tiên khi component mount
     const { elementRef: initialRef } = useInView(fetchInitialCategory);
-    
+
     // Hook để load more khi scroll tới cuối
-    const { elementRef: loadMoreRef } = useScrollInView(loadMoreCategories, { 
+    const { elementRef: loadMoreRef } = useScrollInView(loadMoreCategories, {
         triggerOnce: false, // Có thể trigger nhiều lần
-        threshold: 0.1 
+        threshold: 0.1
     });
-    
+
     return (
         <div ref={initialRef}>
-            {/* Hiển thị loading skeleton chỉ khi đang load lần đầu */}
             {loading && categories.length === 0 && (
-                <div className="lg:px-12 px-4 mb-12">
-                    <div className="animate-pulse">
-                        <div className="h-6 bg-gray-300 rounded w-48 mb-4"></div>
+                <div className="pl-4 lg:pl-12 w-full">
+                    <div className="animate-pulse pb-4 ">
+                        <div className="h-8 bg-gray-300 rounded w-52 mb-4"></div>
                     </div>
+                    <BookSliderSkeleton />
                 </div>
             )}
-            
+
             {categories.length > 0 ? (
                 <>
                     {categories.map((category) => {
@@ -148,17 +149,17 @@ export const DynamicCategoryAudio = ({
                             />
                         );
                     })}
-                    
+
                     {/* Load more trigger - ẩn và tự động trigger khi scroll tới */}
                     {hasMore && (
-                        <div 
-                            ref={loadMoreRef} 
+                        <div
+                            ref={loadMoreRef}
                             className="h-20 w-full flex items-center justify-center"
                             style={{ minHeight: '80px' }}
                         >
                         </div>
                     )}
-                    
+
                 </>
             ) : (
                 !loading && (
