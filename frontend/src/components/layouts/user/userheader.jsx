@@ -405,16 +405,10 @@ export const UserHeader = () => {
                     </div>
                     <div className="w-full px-4 select-none">
                         <nav className="overflow-x-auto whitespace-nowrap scrollbar-hide gap-6 flex font-semibold">
-                            <Link to="ebook" className="pgp inline-block">Sách hiệu sồi</Link>
-                            <Link to="sachdientu.phpc" className="pgp inline-block">Sách tóm tắt</Link>
-                            <Link to="sachdientu.php" className="pgp inline-block">Sách điện tử</Link>
-                            <Link to="sachnoi.php" id="About" className="pgp inline-block">Sách nói</Link>
-                            <Link to="sachhieusoi.php" className="pgp inline-block">Sách hiệu sồi</Link>
-                            <Link to="sachdientu.phpc" className="pgp inline-block">Sách tóm tắt</Link>
-                            <Link to="sachdientu.php" className="pgp inline-block">Sách điện tử</Link>
-                            <Link to="sachnoi.php" id="About" className="pgp inline-block">Sách nói</Link>
-                            <Link to="sachhieusoi.php" className="pgp inline-block">Sách hiệu sồi</Link>
-                            <Link to="sachdientu.phpc" className="pgp inline-block">Sách tóm tắt</Link>
+                            <Link to="ebook" className="pgp inline-block">Sách điện tử</Link>
+                            <Link to="sach-noi" className="pgp inline-block">Sách nói</Link>
+                            <Link to="book-member" className="pgp inline-block">Sách hội viên</Link>
+                            <Link to="book-free" className="pgp inline-block">Sách miễn phí</Link>
                         </nav>
                     </div>
                 </div>
