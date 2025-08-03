@@ -1826,7 +1826,7 @@ audio::-webkit-media-controls-seek-forward-button {
 
 /* Hội viên */
 .bg-member-package-plan {
-  background: url("./images/jpg/member-package-plan.jpg"),
+  background: url("/images/jpg/member-package-plan.jpg"),
     #d3d3d3 0 -540.896px / 100% 493.742%;
   background-repeat: no-repeat;
   background-size: cover;
