@@ -1954,13 +1954,10 @@ audio::-webkit-media-controls-seek-forward-button {
 /* Tự động căn dropdown về phải khi gần cạnh phải màn hình */
 .dropdown-container:nth-last-child(-n + 2) .dropdown-menu,
 .nav-item-dropdown:nth-last-child(-n + 2) .dropdown-menu {
-      left: -60px;
-
-
+  left: -60px;
 }
 
 /* Responsive cho mobile */
-
 
 .dropdown-container:hover .dropdown-menu,
 .nav-item-dropdown:hover .dropdown-menu {
@@ -2175,18 +2172,11 @@ audio::-webkit-media-controls-seek-forward-button {
   opacity: 0.8;
 }
 
-
 .bg-banner-book {
-    background: url('/images/png/bg-banner-book.png') no-repeat center center;
-    background-repeat: no-repeat;
-    background-size: cover;
-    background-position-y: 20%;
+  background-position-y: 20%;
 }
 .bg-major {
-    background: url('/images/png/banner-major.png') no-repeat center center;
-    background-repeat: no-repeat;
-    background-size: cover;
-    background-position-y: 20%;
+  background-position-y: 20%;
 }
 
 /* date picker antd */
