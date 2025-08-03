@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import HomeService from '@/services/users/api-home';
 import LazyBookFree from './lazy_book_free';
 import { Select } from 'antd';
-import bgBook from '/images/png/banner-major.png';
 const BookFree = () => {
     const [categoryOptions, setCategoryOptions] = useState([]);
     const [books, setBooks] = useState([]);
@@ -50,12 +49,7 @@ const BookFree = () => {
             >
 
                 <div
-                style={{
-                    backgroundImage: `url(${bgBook})`,
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'center',
-                    backgroundRepeat: 'no-repeat',
-                }} className="flex lg:px-12 px-4 gap-4 h-[259px] w-full bg-major relative justify-end items-end pb-4">
+                    className="flex lg:px-12 px-4 gap-4 h-[259px] w-full bg-major relative justify-end items-end pb-4">
                     {/* Left content */}
                     <div className="space-y-4 flex-1 min-w-0">
                         <div className="flex flex-col lg:flex-row items-start lg:items-center gap-4 lg:gap-10">

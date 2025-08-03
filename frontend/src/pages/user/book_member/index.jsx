@@ -2,8 +2,6 @@ import { useEffect, useState } from 'react';
 import HomeService from '@/services/users/api-home';
 import LazyBookMember from './lazy_book_member';
 import { Select } from 'antd';
-import bgBook from '/images/png/bg-banner-book.png';
-
 
 const BookMember = () => {
     const [categoryOptions, setCategoryOptions] = useState([]);
@@ -52,12 +50,6 @@ const BookMember = () => {
             >
 
                 <div
-                    style={{
-                        backgroundImage: `url(${bgBook})`,
-                        backgroundSize: 'cover',
-                        backgroundPosition: 'center',
-                        backgroundRepeat: 'no-repeat',
-                    }}
                     className="flex lg:px-12 px-4 gap-4 h-[259px] w-full bg-banner-book relative justify-end items-end pb-4">
 
                     <div className="space-y-4 flex-1 min-w-0">
