@@ -523,7 +523,7 @@ export default function MediaPlayer() {
                         </div>
 
                         {/* Track Info */}
-                        <div className="min-w-0 flex-1 hidden lg:block">
+                        <div className="min-w-0 flex-1 hidden md:block">
                             <h3 className="text-white text-sm font-medium truncate">
                                 {currentChapter?.title || currentBook?.title || "Ngũ ngôn làm giàu chủ..."}
                             </h3>
@@ -632,7 +632,7 @@ export default function MediaPlayer() {
 
 
                         {/* Volume Control */}
-                        <div className="flex items-center gap-2">
+                        <div className=" items-center gap-2 md:flex hidden">
                             <button 
                                 onClick={() => {
                                     if (audioRef.current) {
