@@ -47,7 +47,6 @@ const BookFree = () => {
             <div
                 className="relative w-full text-white overflow-hidden select-none"
             >
-
                 <div
                     className="flex lg:px-12 px-4 gap-4 h-[259px] w-full bg-major relative justify-end items-end pb-4">
                     {/* Left content */}
@@ -75,8 +74,6 @@ const BookFree = () => {
                                 />
                             </div>
                         </div>
-
-
                         <h4 className='font-bold xl:text-xl text-lg lg:block hidden'>Khám phá thế giới sách Waka với hơn 3500+ Sách điện tử và Sách nói</h4>
                     </div>
                 </div>

@@ -37,17 +37,17 @@ const LazyBookFree = ({format, filterCategory, categoryName}) => {
     }, [format, currentPage, pageSize, sortorder, filterCategory]);
 
     // Tạo fallback title khi categoryName chưa load
-    const pageTitle = `${categoryName} - Sách hội viên | Maika`;
+    const pageTitle = categoryName ? `${categoryName} - Sách hội viên | Maika` : 'Sách hội viên | Maika';
 
     return (
         <>
             <Helmet>
                 <title>{pageTitle}</title>
-                <meta name="description" content={`Khám phá bộ sưu tập sách điện tử ${categoryName} phong phú tại Maika`} />
+                <meta name="description" content={`Khám phá bộ sưu tập sách ${categoryName} phong phú tại Maika`} />
             </Helmet>
             <div className="bg-[#121214] text-white py-2 lg:py-8 w-full px-4 lg:px-12">
                 <h2 className="text-xl md:text-2xl font-bold mb-2 lg:mb-6 text-white">
-                    {categoryName ?? 'Tất cả sách miễn phí'}
+                    {categoryName || 'Tất cả sách hội viên'}
                 </h2>
                 <div className=" py-2">
                     {/* Books Grid */}

@@ -5,7 +5,7 @@ import BookCaseService from '@/services/users/api-bookcase';
 
 const AddToBookCaseButton = ({ bookId, isSavedInitially = false }) => {
     const [isLoading, setIsLoading] = useState(false);
-    const { isAuthenticated } = useAuth();
+    const { isAuthenticated, setIsLoginModalOpen } = useAuth();
     const [isSaved, setIsSaved] = useState(isSavedInitially); // Trạng thái đã lưu
 
     console.log('isSavedInitially:', isSavedInitially);
@@ -20,6 +20,7 @@ const AddToBookCaseButton = ({ bookId, isSavedInitially = false }) => {
 
         if (!isAuthenticated) {
             message.info('Vui lòng đăng nhập để sử dụng tính năng này.');
+            setIsLoginModalOpen(true);
             return;
         }
 

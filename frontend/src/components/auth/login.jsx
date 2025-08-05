@@ -85,22 +85,9 @@ export const LoginModal = ({
     }
     if (!isOpen) return null;
     return (
-        <div className={`fixed left-0 top-0 h-full w-full bg-gray-900 text-white transform transition-transform duration-300 ease-in-out z-10 overflow-y-auto ${isOpen ? 'translate-x-0' : '-translate-x-full'
+        <div className={`z-[21] fixed left-0 top-0 h-full w-full bg-gray-900 text-white transform transition-transform duration-300 ease-in-out overflow-y-auto ${isOpen ? 'translate-x-0' : '-translate-x-full'
             }`}>
             <div className="bg-gray-900 w-full relative">
-                {/* Background Books */}
-                {/* <div className="absolute inset-0 opacity-30">
-                    <div className="grid grid-cols-4 gap-2 p-4">
-                        {books.concat(books).map((book, index) => (
-                            <img
-                                key={index}
-                                src={book.image}
-                                alt={book.title}
-                                className="w-full h-20 object-cover rounded opacity-50"
-                            />
-                        ))}
-                    </div>
-                </div> */}
 
                 {/* Modal Content */}
                 <div className="relative z-20 p-6">

@@ -76,7 +76,7 @@ class BookCaseController extends Controller
         $books = $user->bookCase()->with('categories')->get();
 
         if ($books->isEmpty()) {
-            return response()->json(['message' => 'Tủ sách của bạn hiện tại trống'], 404);
+            return response()->json(['message' => 'Tủ sách yêu thích của bạn hiện tại trống'], 404);
         }
 
         return response()->json($books, 200);

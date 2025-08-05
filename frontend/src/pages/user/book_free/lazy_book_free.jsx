@@ -7,7 +7,7 @@ import BookGridSkeleton from "@/components/ui/BookSkeleton";
 import HomeService from "@/services/users/api-home";
 
 
-const LazyBookFree = ({format, filterCategory, categoryName}) => {
+const LazyBookFree = ({ format, filterCategory, categoryName }) => {
     const [books, setBooks] = useState([]);
     const [loading, setLoading] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
@@ -24,7 +24,7 @@ const LazyBookFree = ({format, filterCategory, categoryName}) => {
                 filter_category: filterCategory,
             });
             const data = response?.data || response || {};
-                setBooks(data);
+            setBooks(data);
         } catch (error) {
             console.error('Error fetching books free:', error);
         } finally {
@@ -33,21 +33,20 @@ const LazyBookFree = ({format, filterCategory, categoryName}) => {
     };
 
     useEffect(() => {
-            fetchBooksFree();
+        fetchBooksFree();
     }, [format, currentPage, pageSize, sortorder, filterCategory]);
 
     // Tạo fallback title khi categoryName chưa load
-    const pageTitle = `${categoryName} - Sách miễn phí | Maika`;
-
+    const pageTitle =  categoryName ? `${categoryName} - Sách miễn phí | Maika` : 'Sách miễn phí | Maika';
     return (
         <>
             <Helmet>
                 <title>{pageTitle}</title>
-                <meta name="description" content={`Khám phá bộ sưu tập sách điện tử ${categoryName} phong phú tại Maika`} />
+                <meta name="description" content={`Khám phá bộ sưu tập sách ${categoryName} phong phú tại Maika`} />
             </Helmet>
             <div className="bg-[#121214] text-white py-2 lg:py-8 w-full px-4 lg:px-12">
                 <h2 className="text-xl md:text-2xl font-bold mb-2 lg:mb-6 text-white">
-                    {categoryName ?? 'Tất cả sách miễn phí'}
+                    {categoryName || 'Tất cả sách miễn phí'}
                 </h2>
                 <div className=" py-2">
                     {/* Books Grid */}

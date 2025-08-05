@@ -17,8 +17,8 @@ const DetailService = {
     return apiGet(`/users/detail/get-ebook-reader/${slug}`);
   },
 
-  getEbook: async (slug) => {
-    return apiGet(`/users/detail/get-ebook/${slug}`);
+  getBook: async (slug) => {
+    return apiGet(`/users/detail/get-book/${slug}`);
   },
 
   getComments: async (bookId, page = 1, perPage = 10) => {

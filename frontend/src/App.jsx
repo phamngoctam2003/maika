@@ -29,7 +29,7 @@ import BookMember from "./pages/user/book_member/index";
 import PackagePlan from "./pages/user/package_plan/package_plan";
 
 import ProfileManagement from "@/pages/user/profile/ProfileManagement";
-import BookCase from "@/pages/user/profile/book_case";
+import BookCase from "@/pages/user/profile/BookCase";
 import TransactionHistories from "@/pages/user/profile/transaction-histories";
 
 import AudioPlayer from "./pages/test/test_audio";

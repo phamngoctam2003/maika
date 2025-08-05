@@ -101,4 +101,19 @@ class AudiobookController extends BaseBookController
         }, $status, $headers);
     }
 
+    public function getAudiobooksByCategory($categorySlug, Request $request)
+    {
+        try {
+            $limit = $request->get('limit', 12);
+            $books = $this->bookService->getAudiobooksByCategory($categorySlug, $limit);
+            return response()->json($books, 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Có lỗi xảy ra khi lấy sách theo danh mục.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+
 }

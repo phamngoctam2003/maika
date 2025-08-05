@@ -152,13 +152,13 @@ class AuthController extends Controller
 
         try {
             // Load thông tin packages cùng với pivot data
-            $user->load(['packages' => function($query) {
+            $user->load(['packages' => function ($query) {
                 $query->withPivot([
                     'id',
-                    'starts_at', 
-                    'ends_at', 
-                    'status', 
-                    'payment_method', 
+                    'starts_at',
+                    'ends_at',
+                    'status',
+                    'payment_method',
                     'payment_status',
                     'amount',
                     'created_at',
@@ -168,7 +168,7 @@ class AuthController extends Controller
 
             // Lấy gói active đầu tiên (nếu có)
             $activePackage = $user->getActivePackage();
-            
+
             // Format thông tin gói hội viên để gửi về frontend
             $membershipInfo = null;
             if ($activePackage) {
@@ -194,7 +194,7 @@ class AuthController extends Controller
                 'membership' => $membershipInfo,
                 'has_membership' => $user->hasMembership(),
                 // Tất cả packages của user (để debug hoặc hiển thị lịch sử)
-                'user_packages' => $user->packages->map(function($package) {
+                'user_packages' => $user->packages->map(function ($package) {
                     return [
                         'id' => $package->pivot->id,
                         'package_id' => $package->id,
@@ -233,24 +233,59 @@ class AuthController extends Controller
                 'message' => 'Tài khoản của bạn đã bị khóa'
             ], 401);
         }
+        $user->load(['packages' => function ($query) {
+            $query->withPivot([
+                'id',
+                'starts_at',
+                'ends_at',
+                'status',
+                'payment_method',
+                'payment_status',
+                'amount',
+                'created_at',
+                'updated_at'
+            ]);
+        }]);
 
+        $activePackage = $user->getActivePackage();
+
+        $membershipInfo = null;
+        if ($activePackage) {
+            $membershipInfo = [
+                'package_id' => $activePackage->id,
+                'package_name' => $activePackage->name,
+                'starts_at' => $activePackage->pivot->starts_at,
+                'ends_at' => $activePackage->pivot->ends_at,
+                'status' => $activePackage->pivot->status,
+                'payment_method' => $activePackage->pivot->payment_method,
+                'amount' => $activePackage->pivot->amount,
+                'is_expiring_soon' => $user->isMembershipExpiringSoon(),
+                'has_membership' => true
+            ];
+        }
         try {
             return response()->json([
                 'access_token' => $token,
                 'token_type' => 'bearer',
                 'expires_in' => $expires_in,
-                'user' => [
-                    'status' => $user->status,
-                    'id' => $user->id,
-                    'email' => $user->email,
-                    'phone' => $user->phone,
-                    'fullName' => $user->fullName,
-                    'image' => $user->image,
-                    'gender' => $user->gender,
-                    'birthDay' => $user->birthDay,
-                    'roles' => $user->getRoleNames(),
-                    'permissions' => $user->getAllPermissions()->pluck('name'),
-                ]
+                'membership' => $membershipInfo,
+                'has_membership' => $user->hasMembership(),
+                'user' => $user,
+                'roles' => $user->getRoleNames(),
+                'permissions' => $user->getAllPermissions()->pluck('name'),
+                'user_packages' => $user->packages->map(function ($package) {
+                    return [
+                        'id' => $package->pivot->id,
+                        'package_id' => $package->id,
+                        'package_name' => $package->name,
+                        'starts_at' => $package->pivot->starts_at,
+                        'ends_at' => $package->pivot->ends_at,
+                        'status' => $package->pivot->status,
+                        'payment_method' => $package->pivot->payment_method,
+                        'amount' => $package->pivot->amount,
+                        'created_at' => $package->pivot->created_at,
+                    ];
+                })
             ]);
         } catch (\Exception $e) {
             return response()->json([
@@ -383,7 +418,7 @@ class AuthController extends Controller
                 'updated_at'
             ])
             ->get()
-            ->map(function($package) {
+            ->map(function ($package) {
                 return [
                     'id' => $package->pivot->id,
                     'package_id' => $package->id,

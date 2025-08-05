@@ -129,10 +129,7 @@ export const clearBookReadingHistory = (slug) => {
 export const restoreReadingPosition = async (slug, bookContent) => {
   try {
     const response = await axios.get(`/users/reading-history/${slug}`);
-    console.log('📚 Response từ server:', response); // Debug log
-    
     const data = response;
-    
     // Fix: Kiểm tra đúng cách
     if (!data || data.chapter_index === undefined || data.chapter_index === null) {
       console.log('📚 Không có lịch sử đọc hoặc data không hợp lệ');
@@ -140,9 +137,6 @@ export const restoreReadingPosition = async (slug, bookContent) => {
     }
     
     const { chapter_index, character_position, chapter_progress } = data;
-    
-    console.log('📚 Parsed data:', { chapter_index, character_position, chapter_progress });
-
     // Validate chapter_index
     if (chapter_index < 0 || chapter_index >= bookContent.length) {
       console.warn(`📚 Chapter index không hợp lệ: ${chapter_index}, max: ${bookContent.length - 1}`);

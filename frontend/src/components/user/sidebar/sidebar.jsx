@@ -133,11 +133,10 @@ const Logout = () => (
 
 const Sidebar = () => {
     const URL_IMG = import.meta.env.VITE_URL_IMG;
-    const { setIsAuthenticated, isAuthenticated, currentUser, setCurrentUser, setToken, setPermissions, setRoles } = useAuth();
+    const { setIsAuthenticated, isAuthenticated, currentUser, setCurrentUser, setToken, setPermissions, setRoles, isLoginModalOpen, setIsLoginModalOpen } = useAuth();
 
     const [isOpen, setIsOpen] = useState(false);
     const [isDanhMucOpen, setIsDanhMucOpen] = useState(true);
-    const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
     const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -218,7 +217,7 @@ const Sidebar = () => {
             {/* Toggle Button - Always visible */}
             <button
                 onClick={toggleSidebar}
-                className="top-4 left-4 p-1 w-11 z-20 h-11 flex justify-center items-center text-white rounded-lg shadow-lg transition-all duration-200 hover:scale-105"
+                className="top-4 left-4 p-1 w-11 z-[20] h-11 flex justify-center items-center text-white rounded-lg shadow-lg transition-all duration-200 hover:scale-105"
                 aria-label={isOpen ? "Đóng menu" : "Mở menu"}
             >
                 {isOpen ? <XIcon /> : <MenuIcon />}

@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Services;
+
 use App\Models\Books;
 use App\Services\UserService;
 
@@ -26,7 +27,7 @@ class AudiobookService
      * Get latest audiobooks only (format: "Sách nói")
      * @return mixed
      */
-   public function getLatest()
+    public function getLatest()
     {
         // Get books filtered by ebook format
         return $this->userService->getLatestByFormat('Sách nói');
@@ -66,9 +67,19 @@ class AudiobookService
      * @param int $limit
      * @return mixed
      */
-    public function getBooksByCategory($categorySlug, $limit = 12)
+    public function getEbooksByCategory($categorySlug, $limit = 12)
     {
-        return $this->userService->getBooksByCategoryAndFormat($categorySlug, 'Sách nói', $limit);
+        // Lấy sách thuộc category và có format là "Sách nói"
+        return Books::with('categories', 'formats', 'authors')
+            ->whereHas('categories', function ($query) use ($categorySlug) {
+                $query->where('slug', $categorySlug);
+            })
+            ->whereHas('formats', function ($query) {
+                $query->where('name', 'Sách nói');
+            })
+            ->latest()
+            ->take($limit)
+            ->get();
     }
 
     /**
@@ -83,7 +94,7 @@ class AudiobookService
     public function getAudiobooksCategorySlug(string $slug, int $page = 1, int $limit = 12)
     {
         $offset = ($page - 1) * $limit;
-        
+
         return Books::with('categories', 'formats', 'authors')
             ->whereHas('categories', function ($query) use ($slug) {
                 $query->where('slug', $slug);
@@ -93,6 +104,21 @@ class AudiobookService
             })
             ->latest()
             ->skip($offset)
+            ->take($limit)
+            ->get();
+    }
+
+    public function getAudiobooksByCategory($categorySlug, $limit = 12)
+    {
+        // Lấy sách thuộc category và có format là "Sách nói"
+        return Books::with('categories', 'formats', 'authors')
+            ->whereHas('categories', function ($query) use ($categorySlug) {
+                $query->where('slug', $categorySlug);
+            })
+            ->whereHas('formats', function ($query) {
+                $query->where('name', 'Sách nói');
+            })
+            ->latest()
             ->take($limit)
             ->get();
     }

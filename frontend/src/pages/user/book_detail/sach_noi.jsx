@@ -4,15 +4,19 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { AntNotification } from "@components/global/notification";
 import DetailtService from "@/services/users/api-detail";
-import { Button, Dropdown } from "antd";
+import { Dropdown } from "antd";
 import { useAuth } from "@/contexts/authcontext";
 import { useBook } from "@/contexts/book_context.jsx";
+import { Loading } from "@components/loading/loading";
+import AddToBookCaseButton from "@components/common/AddToBookCaseButton";
+import ListeningHistoryService from '@/services/users/api-listening-history'; // Tạo service này nếu chưa có
 
 const SachNoiDetail = () => {
     const URL_IMG = import.meta.env.VITE_URL_IMG;
     const navigate = useNavigate();
     const { slug } = useParams();
     const [book, setBook] = useState(null);
+    const [loading, setLoading] = useState(true);
 
     // Lấy thông tin user từ AuthContext để kiểm tra quyền truy cập
     const {
@@ -21,9 +25,11 @@ const SachNoiDetail = () => {
         hasMembership,
         getMembershipInfo,
         isMembershipExpiringSoon,
-        activePackage
+        activePackage,
+        setIsLoginModalOpen,
+
     } = useAuth();
-    const { openAudioModal, setOpenAudioModal, isAudioPlaying, setIsAudioPlaying, setCurrentBook } = useBook();
+    const { openAudioModal, setOpenAudioModal, isAudioPlaying, setIsAudioPlaying, setCurrentBook, currentBook } = useBook();
 
     const [currentPage, setCurrentPage] = useState(1);
     const [comments, setComments] = useState([]);
@@ -32,6 +38,8 @@ const SachNoiDetail = () => {
     const [totalComments, setTotalComments] = useState(0);
 
     const [currentFormat, setCurrentFormat] = useState('Sách nói');
+    const [hasListeningHistory, setHasListeningHistory] = useState(false);
+    const [lastListeningProgress, setLastListeningProgress] = useState(null);
 
     const breadcrumbItems = [
         { label: "Trang chủ", path: "/" },
@@ -53,6 +61,74 @@ const SachNoiDetail = () => {
         }
     }, [slug]);
 
+
+    useEffect(() => {
+        const checkListeningHistory = async () => {
+            if (!book?.id || !isAuthenticated) return;
+
+            try {
+                const progress = await ListeningHistoryService.getLastProgressByBook(book.id);
+                if (progress && progress.current_time > 0) {
+                    setHasListeningHistory(true);
+                    setLastListeningProgress(progress);
+                } else {
+                    setHasListeningHistory(false);
+                    setLastListeningProgress(null);
+                }
+            } catch (error) {
+                console.error("Error checking listening history:", error);
+                setHasListeningHistory(false);
+            }
+        };
+
+        checkListeningHistory();
+    }, [book?.id, isAuthenticated]);
+
+
+    const handleContinueListening = async () => {
+        if (!book?.id) return;
+
+        try {
+            if (lastListeningProgress) {
+                const { chapter_id, current_time } = lastListeningProgress;
+                setCurrentBook({
+                    ...book,
+                    resumeChapterId: chapter_id,
+                    resumeTime: 0,
+                });
+            } else {
+                // Fallback: gọi API nếu chưa có trong state
+                const res = await ListeningHistoryService.getLastProgressByBook(book.id);
+                if (res) {
+                    const { chapter_id, current_time } = res;
+                    setCurrentBook({
+                        ...book,
+                        resumeChapterId: chapter_id,
+                        resumeTime: current_time,
+                    });
+                } else {
+                    setCurrentBook({
+                        ...book,
+                        resumeChapterId: null,
+                        resumeTime: 0,
+                    });
+                }
+            }
+            setOpenAudioModal(true);
+            if (!isAudioPlaying) {
+                setIsAudioPlaying(true);
+            } else {
+                setIsAudioPlaying(pre => !pre);
+            }
+        } catch (e) {
+            console.error("Error continuing listening:", e);
+            setCurrentBook({
+                ...book,
+                resumeChapterId: null,
+                resumeTime: 0,
+            });
+        }
+    };
     /**
      * Kiểm tra xem người dùng có quyền đọc sách hội viên hay không
      * @returns {boolean} 
@@ -193,8 +269,9 @@ const SachNoiDetail = () => {
 
     useEffect(() => {
         const fecthData = async () => {
+            setLoading(true);
             try {
-                const response = await DetailtService.getEbook(slug);
+                const response = await DetailtService.getBook(slug);
                 setBook(response);
                 // Reset pagination when book changes
                 setCurrentPage(1);
@@ -203,6 +280,8 @@ const SachNoiDetail = () => {
                 setTotalComments(0);
             } catch (error) {
                 console.error("Error fetching audiobook:", error);
+            } finally {
+                setLoading(false);
             }
         };
         fecthData();
@@ -359,8 +438,42 @@ const SachNoiDetail = () => {
         );
     };
 
+    // Component hiển thị thông tin lịch sử nghe
+    // const ListeningProgressInfo = () => {
+    //     if (!hasListeningHistory || !lastListeningProgress) return null;
+
+    //     const formatTime = (seconds) => {
+    //         const hours = Math.floor(seconds / 3600);
+    //         const minutes = Math.floor((seconds % 3600) / 60);
+    //         const secs = Math.floor(seconds % 60);
+
+    //         if (hours > 0) {
+    //             return `${hours}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    //         }
+    //         return `${minutes}:${secs.toString().padStart(2, '0')}`;
+    //     };
+
+    //     return (
+    //         <div className="mb-4 p-3 rounded-lg bg-blue-500/10 border border-blue-400/30">
+    //             <div className="flex items-center gap-2 text-blue-200 text-sm">
+    //                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+    //                     <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
+    //                 </svg>
+    //                 <span>Bạn đã nghe đến {formatTime(lastListeningProgress.current_time)}</span>
+    //                 {lastListeningProgress.chapter_name && (
+    //                     <span>• Chương: {lastListeningProgress.chapter_name}</span>
+    //                 )}
+    //             </div>
+    //         </div>
+    //     );
+    // };
     return (
         <div className="lg:px-12 w-full bg-color-detail">
+            {
+                loading && (
+                    <Loading isLoading={loading} />
+                )
+            }
             <UserBreadcrumb items={breadcrumbItems} />
             <div className="relative overflow-hidden block lg:hidden">
                 {/* Background image - same as book cover but blurred */}
@@ -446,10 +559,11 @@ const SachNoiDetail = () => {
 
                     {/* Action buttons - Mobile version */}
                     <div className="flex gap-4 w-full max-w-sm mb-8 z-[4]">
-                        <button className="flex-1 bg-white/20 text-white border border-white/30 py-3 rounded-full font-medium hover:bg-white/30 transition-colors">
-                            NGHE THỬ
-                        </button>
-                        {/* Button nâng cấp - chỉ hiển thị khi cần hội viên và user chưa có quyền */}
+                        <div className="lg:hidden block w-12 p-3 bg-white-overlay rounded-full border-white-overlay style-next-back">
+                            {
+                                <AddToBookCaseButton bookId={book?.id} isSavedInitially={book?.is_saved_in_bookcase} />
+                            }
+                        </div>
                         <button
                             className={`flex-1 py-3 rounded-full font-medium transition-colors ${isBookRequireMembership() && !canReadMemberBook()
                                 ? 'bg-orange-500 text-white hover:bg-orange-600' // Cần nâng cấp
@@ -458,14 +572,18 @@ const SachNoiDetail = () => {
                             onClick={() => {
                                 if (isBookRequireMembership() && !canReadMemberBook()) {
                                     // Redirect đến trang nâng cấp
-                                    navigate('/package-plan', { replace: true });
+                                    isAuthenticated ? navigate('/package-plan', { replace: true }) : setIsLoginModalOpen(true);
                                 } else {
                                     // Có thể thực hiện action khác
-                                    handleReadBook();
+                                    hasListeningHistory ? handleContinueListening() : handleReadBook();
                                 }
                             }}
                         >
-                            {isBookRequireMembership() && !canReadMemberBook() ? "NÂNG CẤP" : "NGHE NGAY"}
+                            {
+                                isBookRequireMembership() && !canReadMemberBook()
+                                    ? (isAuthenticated ? "Nâng cấp" : "Đăng nhập")
+                                    : (currentFormat === 'Sách nói' ? "Nghe sách" : "Đọc sách")
+                            }
                         </button>
                     </div>
                 </div>
@@ -483,7 +601,7 @@ const SachNoiDetail = () => {
                                         loading="lazy"
                                         src={URL_IMG + book?.file_path} className="relative top-0 left-0 w-full h-full object-cover" />
                                     :
-                                        <div className="relative top-0 left-0 w-full h-full bg-gray-500" />
+                                    <div className="relative top-0 left-0 w-full h-full bg-gray-500" />
                             }
 
                         </div>
@@ -492,7 +610,6 @@ const SachNoiDetail = () => {
                     </div>
                 </div>
                 <div className="lg:w-[54%] w-full z-[8] between-content mr-15">
-
                     <div className="pb-4 border-b border-white-overlay">
                         <div className="">
                             <h1 className="lg:text-3xl font-bold text-xl lg:block hidden">{book?.title || ""}</h1>
@@ -707,42 +824,26 @@ const SachNoiDetail = () => {
                                 {/**/}
                             </div>
                         </div>{" "}
-                        <div className="flex items-center relative z-30">
+                        <div className="items-center relative z-30 lg:flex hidden">
+                            {/* Nút "Nghe tiếp" chỉ hiển thị nếu có lịch sử nghe */}
                             <button
-                                onClick={handleReadBook}
-                                className="flex items-center justify-center my-4 py-2 rounded-full cursor-pointer text-white-default text-16-16 whitespace-nowrap w-[233px] px-4 button-col bg-maika-500 gap-1"
+                                onClick={hasListeningHistory ? handleContinueListening : handleReadBook}
+                                className="flex items-center justify-center my-4 py-2  rounded-full cursor-pointer text-white-default text-16-16 whitespace-nowrap w-[233px] px-4 button-col bg-maika-500 gap-1"
                             >
                                 {isAudioPlaying && openAudioModal ?
                                     <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 16 16"><path fill="currentColor" fillRule="evenodd" d="M5 3a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h1a1 1 0 0 0 1-1V4a1 1 0 0 0-1-1H5Zm5 0a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h1a1 1 0 0 0 1-1V4a1 1 0 0 0-1-1h-1Z" clipRule="evenodd" /></svg>
                                     :
                                     <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 20 20"><path fill="currentColor" fillRule="evenodd" d="M10 18a8 8 0 1 0 0-16a8 8 0 0 0 0 16ZM9.555 7.168A1 1 0 0 0 8 8v4a1 1 0 0 0 1.555.832l3-2a1 1 0 0 0 0-1.664l-3-2Z" clipRule="evenodd" /></svg>
                                 }
-                                <span data-v-5b161707="">
+                                <span>
                                     {isBookRequireMembership() && !canReadMemberBook()
                                         ? (isAuthenticated ? "Nâng cấp để nghe sách" : "Đăng nhập để nghe sách")
                                         : (isAudioPlaying && openAudioModal ? "Tạm dừng" : "Nghe sách")
                                     }
                                 </span>
                             </button>
-                            <div className="w-12 ml-3 p-3 bg-white-overlay rounded-full border-white-overlay style-next-back">
-                                <img
-                                    src="https://waka.vn/svgs/icon-heart.svg"
-                                    alt="icon-heart"
-                                    className="cursor-pointer"
-                                />{" "}
-                                <img
-                                    src="https://waka.vn/svgs/liked_heart.svg"
-                                    alt="liked_heart"
-                                    className="cursor-pointer"
-                                    style={{ display: "none" }}
-                                />
-                            </div>{" "}
-                            <div className="p-3 btn-icon inline-block ml-3 style-next-back">
-                                <img
-                                    src="https://waka.vn/svgs/icon-share.svg"
-                                    alt="icon-share"
-                                    className="cursor-pointer"
-                                />
+                            <div className="w-12 ml-3 flex justify-center items-center">
+                                <AddToBookCaseButton bookId={book?.id} isSavedInitially={book?.is_saved_in_bookcase} />
                             </div>
                         </div>
                         <div className="my-15 mr-3 mt-4">
