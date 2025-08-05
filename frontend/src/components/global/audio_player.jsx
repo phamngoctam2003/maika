@@ -509,26 +509,26 @@ export default function MediaPlayer() {
             <div className="w-full bg-gray-900 border-t border-gray-700">
 
                 {/* Player Container */}
-                <div className="flex items-center justify-between px-4 py-3 max-w-full">
+                <div className="flex items-center justify-between md:px-4 px-2 py-3 max-w-full">
 
                     {/* Left Section - Track Info */}
                     <div className="flex items-center gap-3 min-w-0 flex-1 max-w-xs lg:max-w-sm">
                         {/* Album Art */}
-                        <div className="flex-shrink-0">
+                        <div className="flex-shrink-0 lg:block hidden  ">
                             <img
-                                src={currentBook?.cover_image ? URL_PATH + currentBook.cover_image : "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=60&h=60&fit=crop&crop=center"}
+                                src={currentBook?.file_path ? URL_PATH + currentBook.file_path : "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=60&h=60&fit=crop&crop=center"}
                                 alt="Album Art"
                                 className="w-14 h-14 rounded object-cover"
                             />
                         </div>
 
                         {/* Track Info */}
-                        <div className="min-w-0 flex-1">
+                        <div className="min-w-0 flex-1 hidden lg:block">
                             <h3 className="text-white text-sm font-medium truncate">
                                 {currentChapter?.title || currentBook?.title || "Ngũ ngôn làm giàu chủ..."}
                             </h3>
                             <p className="text-gray-400 text-xs truncate">
-                                {currentBook?.authors?.[0]?.name || "Ngô Hoàng Liên"}
+                                {currentBook?.authors?.[0]?.name || "Không có tác giả"}
                             </p>
                         </div>
 
@@ -541,9 +541,6 @@ export default function MediaPlayer() {
                             >
                                 <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 1024 1024"><path fill="currentColor" d="M287.984 114.16c31.376 0 88.094 15.008 180.094 105.616l45.616 44.912l44.928-45.632c63.872-64.896 131.84-105.2 177.376-105.2c61.408 0 109.809 21.008 157.009 68.096c44.464 44.368 68.992 103.36 68.992 166.112c.032 62.784-24.448 121.824-69.408 166.672c-3.664 3.712-196.992 212.304-358.96 387.104c-7.632 7.248-16.352 8.32-20.991 8.32c-4.576 0-13.2-1.024-20.8-8.096c-39.472-43.905-325.552-362-358.815-395.232C88.497 462.416 64 403.376 64 340.608c.015-62.752 24.511-121.728 69.04-166.144c43.295-43.264 93.984-60.304 154.944-60.304zm-.002-64c-76.528 0-144 22.895-200.176 79.008c-117.072 116.768-117.072 306.128 0 422.96c33.424 33.44 357.855 394.337 357.855 394.337c18.48 18.496 42.753 27.68 66.96 27.68c24.225 0 48.4-9.184 66.912-27.68c0 0 354.88-383.024 358.656-386.85c117.04-116.88 117.04-306.24 0-423.007c-58.112-58-123.024-86.784-202.208-86.784c-75.648 0-160 60.32-223.008 124.32C447.981 110.159 366.237 50.16 287.981 50.16z" /></svg>
                             </button>
-                            <button className="p-2 rounded-full text-gray-400 hover:text-white transition-colors">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"><circle cx="18" cy="5" r="3" /><circle cx="6" cy="12" r="3" /><circle cx="18" cy="19" r="3" /><path d="m8.59 13.51l6.83 3.98m-.01-10.98l-6.82 3.98" /></g></svg>
-                            </button>
                         </div>
                     </div>
 
@@ -552,19 +549,6 @@ export default function MediaPlayer() {
 
                         {/* Control Buttons */}
                         <div className="flex items-center gap-4">
-                            {/* Speed indicator */}
-                            <div className="text-xs text-gray-400 bg-gray-800 px-2 py-1 rounded">
-                                1,0
-                            </div>
-
-                            {/* Shuffle/Random */}
-                            <button className="text-gray-400 hover:text-white transition-colors">
-                                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
-                                    <path d="M14.83 13.41L13.42 14.82L16.55 17.95L14.5 20H20V14.5L17.95 16.55L14.83 13.41ZM14.5 4L16.55 6.05L13.42 9.18L14.83 10.59L17.95 7.46L20 9.5V4H14.5ZM10.59 9.17L5.41 4L4 5.41L9.17 10.58L10.59 9.17ZM15.41 15.59L20.59 21L19.18 22.41L13.77 17L15.41 15.59Z" />
-                                </svg>
-                            </button>
-
-                            {/* Backward 10s */}
                             <button 
                                 onClick={skip10Backward}
                                 className="text-gray-400 hover:text-white transition-colors"
@@ -616,12 +600,6 @@ export default function MediaPlayer() {
                                 <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 20 20"><path fill="currentColor" d="M15.733 5.628V3.75a.75.75 0 0 1 1.5 0v3.5a.75.75 0 0 1-.75.75h-4a.75.75 0 0 1 0-1.5h2.025c-1.195-1.39-2.903-2.25-4.775-2.25c-2.399 0-4.53 1.415-5.655 3.543a.834.834 0 0 1-.728.457c-.538 0-.911-.533-.67-1.013C4.023 4.579 6.658 2.75 9.734 2.75c2.406 0 4.542 1.119 6 2.878ZM12.501 17c1.875 0 2.5-1.567 2.5-3.5s-.625-3.5-2.5-3.5s-2.5 1.567-2.5 3.5s.625 3.5 2.5 3.5Zm.677-1.813a.59.59 0 0 1-.217.223c-.07.038-.204.09-.46.09c-.255 0-.39-.052-.459-.09a.59.59 0 0 1-.217-.223c-.178-.288-.324-.837-.324-1.687c0-.85.146-1.399.324-1.688a.59.59 0 0 1 .217-.222c.07-.038.204-.09.46-.09c.255 0 .39.052.459.09a.59.59 0 0 1 .217.223c.178.288.323.837.323 1.687c0 .85-.145 1.399-.323 1.688ZM8.25 10.75a.75.75 0 0 0-1.238-.57l-1.75 1.5a.75.75 0 1 0 .977 1.14l.511-.44v3.87a.75.75 0 0 0 1.5 0v-5.5Z" /></svg>
                             </button>
 
-                            {/* Repeat */}
-                            <button className="text-green-500">
-                                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
-                                    <path d="M7 7H17V10L21 6L17 2V5H5V11H7V7ZM17 17H7V14L3 18L7 22V19H19V13H17V17Z" />
-                                </svg>
-                            </button>
                         </div>
 
                         {/* Progress Bar */}
@@ -652,10 +630,6 @@ export default function MediaPlayer() {
                     {/* Right Section - Volume and Menu */}
                     <div className="flex items-center gap-4 min-w-0 flex-1 max-w-xs lg:max-w-sm justify-end">
 
-                        {/* Menu/Queue */}
-                        <button className="text-gray-400 hover:text-white transition-colors">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 100 100"><path fill="currentColor" d="M88.721 20.13H26.258a3.407 3.407 0 0 0-3.407 3.407v3.143a3.407 3.407 0 0 0 3.407 3.407h62.463a3.407 3.407 0 0 0 3.407-3.407v-3.143a3.407 3.407 0 0 0-3.407-3.407zm0 24.892H26.258a3.407 3.407 0 0 0-3.407 3.407v3.143a3.407 3.407 0 0 0 3.407 3.407h62.463a3.407 3.407 0 0 0 3.407-3.407v-3.143a3.407 3.407 0 0 0-3.407-3.407zm0 24.891H26.258a3.407 3.407 0 0 0-3.407 3.407v3.143a3.407 3.407 0 0 0 3.407 3.407h62.463a3.407 3.407 0 0 0 3.407-3.407V73.32a3.408 3.408 0 0 0-3.407-3.407z" /><circle cx="12.856" cy="25.108" r="4.984" fill="currentColor" /><circle cx="12.856" cy="49.002" r="4.984" fill="currentColor" /><circle cx="12.856" cy="74.891" r="4.984" fill="currentColor" /></svg>
-                        </button>
 
                         {/* Volume Control */}
                         <div className="flex items-center gap-2">
