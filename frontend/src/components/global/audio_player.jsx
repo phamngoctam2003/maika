@@ -34,37 +34,60 @@ export default function MediaPlayer() {
                     if (chaptersData && chaptersData.length > 0) {
                         setChapters(chaptersData);
 
-                        // Lấy audio của chương đầu tiên
-                        const firstChapter = chaptersData[0];
-                        setCurrentChapter(firstChapter);
+                        // Nếu có resumeChapterId thì phát chương đó, không thì phát chương đầu
+                        let targetChapter = chaptersData[0];
+                        if (currentBook.resumeChapterId) {
+                            const found = chaptersData.find(ch => ch.id === currentBook.resumeChapterId);
+                            if (found) targetChapter = found;
+                        }
+                        setCurrentChapter(targetChapter);
                         setLastProgressSaveTime(0); // Reset progress save time
 
                         try {
-                            const audioResponse = await DetailService.getChapterAudio(currentBook.id, firstChapter.id);
+                            const audioResponse = await DetailService.getChapterAudio(currentBook.id, targetChapter.id);
                             const audioData = audioResponse.data || audioResponse;
-
                             if (audioRef.current && audioData.audioUrl) {
                                 audioRef.current.src = audioData.audioUrl;
                                 audioRef.current.load(); // Load the audio
                                 setDuration(audioData.duration || 0);
+
+                                // Nếu có resumeTime thì seek đến đó sau khi loadedmetadata
+                                if (currentBook.resumeTime && audioRef.current) {
+                                    audioRef.current.onloadedmetadata = () => {
+                                        audioRef.current.currentTime = currentBook.resumeTime;
+                                        setCurrentTime(currentBook.resumeTime);
+                                    };
+                                }
                             } else {
-                                console.warn('No audio URL found in response');
                                 // Fallback: tạo URL từ path có sẵn
-                                if (firstChapter.audio_path) {
-                                    const fallbackUrl = URL_PATH + firstChapter.audio_path;
+                                if (targetChapter.audio_path) {
+                                    const fallbackUrl = URL_PATH + targetChapter.audio_path;
                                     if (audioRef.current) {
                                         audioRef.current.src = fallbackUrl;
                                         audioRef.current.load();
+                                        // Seek nếu có resumeTime
+                                        if (currentBook.resumeTime && audioRef.current) {
+                                            audioRef.current.onloadedmetadata = () => {
+                                                audioRef.current.currentTime = currentBook.resumeTime;
+                                                setCurrentTime(currentBook.resumeTime);
+                                            };
+                                        }
                                     }
                                 }
                             }
                         } catch (audioError) {
                             // Fallback: sử dụng audio_path từ chapter data
-                            if (firstChapter.audio_path && audioRef.current) {
-                                const fallbackUrl = URL_PATH + firstChapter.audio_path;
-                                console.log('Error fallback, using URL:', fallbackUrl);
+                            if (targetChapter.audio_path && audioRef.current) {
+                                const fallbackUrl = URL_PATH + targetChapter.audio_path;
                                 audioRef.current.src = fallbackUrl;
                                 audioRef.current.load();
+                                // Seek nếu có resumeTime
+                                if (currentBook.resumeTime && audioRef.current) {
+                                    audioRef.current.onloadedmetadata = () => {
+                                        audioRef.current.currentTime = currentBook.resumeTime;
+                                        setCurrentTime(currentBook.resumeTime);
+                                    };
+                                }
                             }
                             AntNotification.showNotification(
                                 "Lỗi tải audio",

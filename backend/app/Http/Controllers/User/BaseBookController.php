@@ -67,18 +67,4 @@ abstract class BaseBookController extends Controller
         }
     }
 
-    public function getBooksByCategory($categorySlug, Request $request)
-    {
-        try {
-            $limit = $request->get('limit', 12);
-            $books = $this->bookService->getBooksByCategory($categorySlug, $limit);
-            return response()->json($books, 200);
-        } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Có lỗi xảy ra khi lấy sách theo danh mục.',
-                'error' => $e->getMessage()
-            ], 500);
-        }
-    }
-
 }

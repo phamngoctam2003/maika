@@ -66,10 +66,7 @@ class EbookService
      * @param int $limit
      * @return mixed
      */
-    public function getBooksByCategory($categorySlug, $limit = 12)
-    {
-        return $this->userService->getBooksByCategoryAndFormat($categorySlug, 'Sách điện tử', $limit);
-    }
+
 
     /**
      * Get specific ebook details
@@ -90,6 +87,20 @@ class EbookService
             })
             ->latest()
             ->skip($offset)
+            ->take($limit)
+            ->get();
+    }
+    public function getEbooksByCategory($categorySlug, $limit = 12)
+    {
+        // Lấy sách thuộc category và có format là "Sách điện tử"
+        return Books::with('categories', 'formats', 'authors')
+            ->whereHas('categories', function ($query) use ($categorySlug) {
+                $query->where('slug', $categorySlug);
+            })
+            ->whereHas('formats', function ($query) {
+                $query->where('name', 'Sách điện tử');
+            })
+            ->latest()
             ->take($limit)
             ->get();
     }

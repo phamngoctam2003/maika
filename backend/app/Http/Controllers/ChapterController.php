@@ -176,6 +176,10 @@ class ChapterController extends Controller
             $progress = null;
             if ($userId) {
                 $progress = ListeningProgress::getProgress($userId, $chapterId);
+                // $progressHistory = ListeningProgress::where('user_id', $userId)
+                //     ->where('book_id', $bookId)
+                //     ->orderByDesc('last_accessed_at')
+                //     ->first();
             }
 
             return response()->json([
@@ -184,7 +188,7 @@ class ChapterController extends Controller
                     'chapter_id' => $chapter->id,
                     'title' => $chapter->title,
                     'audio_path' => $chapter->audio_path,
-                    'audioUrl' => url('api/users/books/stream-audio/' . $chapter->audio_path), 
+                    'audioUrl' => url('api/users/books/stream-audio/' . $chapter->audio_path),
                     'content' => $chapter->content,
                     'chapter_order' => $chapter->chapter_order,
                     'duration' => $this->getAudioDuration($chapter->audio_path), // Optional: get audio duration
@@ -192,8 +196,10 @@ class ChapterController extends Controller
                         'current_time' => $progress->current_time,
                         'progress_percentage' => $progress->progress_percentage,
                         'is_completed' => $progress->is_completed,
-                        'last_accessed_at' => $progress->last_accessed_at
-                    ] : null
+                        'last_accessed_at' => $progress->last_accessed_at,
+                        'chapter_id' => $progress->chapter_id
+                    ] : null,
+                    // 'progress_history' => $progressHistory ? $progressHistory: null
                 ]
             ]);
         } catch (\Exception $e) {

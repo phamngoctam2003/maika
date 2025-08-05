@@ -1,10 +1,8 @@
-
-export default function ProfileTabs({ selectedTab, setSelectedTab }) {
+export default function BookCaseTabs({ selectedTab, setSelectedTab }) {
   const tabs = [
-    { id: 'personal', label: 'Thông tin cá nhân' },
-    // { id: 'address', label: 'Địa chỉ' },
-    { id: 'security', label: 'Tài khoản và bảo mật' },
-    { id: 'linked', label: 'Tài khoản liên kết' }
+    { id: 'recently-read', label: 'Đang đọc' },
+    { id: 'recently-listened', label: 'Đang nghe' },
+    { id: 'favourite', label: 'Sách yêu thích' },
   ];
 
   return (

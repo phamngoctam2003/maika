@@ -15,12 +15,12 @@ class BookDetaiController extends Controller
     {
         $this->userService = $userService;
     }
-    public function getEbook($slug)
+    public function getBook($slug)
     {
         try {
-            $ebook = $this->userService->getEbook($slug);
+            $ebook = $this->userService->getBook($slug);
             if (!$ebook) {
-                return response()->json(['message' => 'Ebook không tồn tại.'], 404);
+                return response()->json(['message' => 'Book không tồn tại.'], 404);
             }
 
             // Mặc định sách chưa được lưu

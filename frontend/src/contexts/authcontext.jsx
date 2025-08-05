@@ -16,6 +16,7 @@ export const AuthProvider = ({ children }) => {
     const [error, setError] = useState(null);
     const [token, setToken] = useState(localStorage.getItem('token') || null);
     const [isAuthenticated, setIsAuthenticated] = useState(!!(token && AuthService.isAuthenticated()));
+    const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
 
     // Lưu token vào localStorage khi có sự thay đổi
     useEffect(() => {
@@ -166,7 +167,6 @@ export const AuthProvider = ({ children }) => {
             console.error('Error refreshing user data:', err);
         }
     };
-
     const value = {
         currentUser,
         permissions,
@@ -177,6 +177,8 @@ export const AuthProvider = ({ children }) => {
         loading,
         error,
         token,
+        isLoginModalOpen,
+        setIsLoginModalOpen,
         setLoading,
         setRoles,
         setToken,

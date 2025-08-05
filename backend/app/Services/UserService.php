@@ -18,7 +18,7 @@ class UserService {
     public function getLatest () {
         return $this->userRepository->getLatest ();
     }
-    public function getEbook (string $slug): ?Books {
+    public function getBook (string $slug): ?Books {
         return $this->userRepository->getBookSlug ($slug);
     }
     public function getAudiobook (string $slug): ?Books {
@@ -69,14 +69,4 @@ class UserService {
         return $this->userRepository->getProposedByFormat($format);
     }
 
-    /**
-     * Get books by category and format
-     * @param string $categorySlug - Category slug
-     * @param string $format - Book format ("Sách điện tử" or "Sách nói")
-     * @param int $limit - Number of books to return
-     * @return mixed
-     */
-    public function getBooksByCategoryAndFormat(string $categorySlug, string $format, int $limit = 12) {
-        return $this->userRepository->getBooksByCategoryAndFormat($categorySlug, $format, $limit);
-    }
 }

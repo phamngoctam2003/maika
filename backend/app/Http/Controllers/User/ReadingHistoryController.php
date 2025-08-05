@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\ReadingHistory;
 use App\Services\ReadingHistoryService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use App\Models\Books;
 
 class ReadingHistoryController extends Controller
 {
@@ -34,8 +36,35 @@ class ReadingHistoryController extends Controller
         }
     }
 
+    /**
+     * Lấy danh sách lịch sử đọc sách gần đây của user.
+     */
+    public function recentlyRead(Request $request)
+    {
+        $user = Auth::user();
+
+        $limit = $request->get('limit', 10);
+
+        $histories = ReadingHistory::with(['book', 'book.authors', 'book.categories'])
+            ->where('user_id', $user->id)
+            ->orderByDesc('last_read_at')
+            ->limit($limit)
+            ->get();
+
+        return response()->json([
+            'data' => $histories
+        ]);
+    }
+
+    /**
+     * Lấy tiến độ đọc của user cho một sách cụ thể.
+     */
     public function getProgress($slug)
     {
+        $user = Auth::user();
+        if (!$user) {
+            return response()->json(['message' => 'Chưa đăng nhập'], 401);
+        }
         try {
             $progress = $this->service->getProgress($slug);
             if (!$progress) {

@@ -113,11 +113,11 @@ route::group(['prefix' => 'users'], function () {
         route::get('get-latest', [HomeController::class, 'getLatest']);
         route::get('get-ranking', [HomeController::class, 'getRanking']);
         route::get('get-proposed', [HomeController::class, 'getProposed']);
-        route::get('get-books-by-category/{categorySlug}', [HomeController::class, 'getBooksByCategory']);
         route::get('get-category-book', [CategoryController::class, 'getBookCategories']);
     });
 
     route::group(['prefix' => 'ebook'], function () {
+        route::get('get-ebooks-by-category/{categorySlug}', [EbookController::class, 'getEbooksByCategory']);
         route::get('get-latest', [EbookController::class, 'getLatest']);
         route::get('/', [CategoryController::class, 'getEbookCategories']);
         route::get('/getcategory/{slug}', [EbookController::class, 'getEbooksCategorySlug']);
@@ -126,6 +126,7 @@ route::group(['prefix' => 'users'], function () {
         route::get('get-proposed', [EbookController::class, 'getProposed']);
     });
     route::group(['prefix' => 'audiobook'], function () {
+        route::get('get-audiobooks-by-category/{categorySlug}', [AudiobookController::class, 'getAudiobooksByCategory']);
         route::get('/', [CategoryController::class, 'getAudiobookCategories']);
         route::get('getcategory/{slug}', [AudioBookController::class, 'getAudiobooksCategorySlug']);
         route::get('get-latest', [AudioBookController::class, 'getLatest']);
@@ -136,7 +137,7 @@ route::group(['prefix' => 'users'], function () {
 
     route::group(['prefix' => 'detail'], function () {
         route::get('get-ebook-reader/{slug}', [BookDetaiController::class, 'getEbookReader']);
-        route::get('get-ebook/{slug}', [BookDetaiController::class, 'getEbook']);
+        route::get('get-book/{slug}', [BookDetaiController::class, 'getBook']);
     });
 
     // Audio chapters and progress routes
@@ -167,6 +168,12 @@ route::group(['prefix' => 'users'], function () {
         route::get('/', [PackageController::class, 'getPackagesWithUser']);
         route::post('/purchase', [PackageController::class, 'setUserPackage'])
             ->middleware('throttle:5,1'); // Limit 5 requests per minute
+    });
+
+    Route::group(['prefix' => 'listening-history'], function () {
+        Route::get('/', [\App\Http\Controllers\User\ListeningProgressController::class, 'recentlyListened']);
+        Route::post('/save', [\App\Http\Controllers\User\ListeningProgressController::class, 'save']);
+        Route::get('/{chapterId}', [\App\Http\Controllers\User\ListeningProgressController::class, 'getProgress']);
     });
 });
 

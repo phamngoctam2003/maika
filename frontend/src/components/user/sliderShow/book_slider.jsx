@@ -35,9 +35,8 @@ export default function BookSlider({ books, categoryId, categoryOptions }) {
     }, [window.location.pathname]);
 
     return (
-        <>
             <div
-                className="relative px-12 pt-28 pb-4 w-full text-white overflow-hidden select-none "
+                className="relative xl:px-12 pt-28 pb-4 w-full text-white overflow-hidden select-none "
                 style={{
                     backgroundImage: `url(${URL_IMG + books[activeIndex]?.file_path})`,
                     backgroundSize: 'cover',
@@ -162,6 +161,5 @@ export default function BookSlider({ books, categoryId, categoryOptions }) {
                     </div>
                 </div>
             </div>
-        </>
     );
 }

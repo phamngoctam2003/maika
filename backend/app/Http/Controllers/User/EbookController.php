@@ -27,19 +27,19 @@ class EbookController extends BaseBookController
         try {
             $page = $request->get('page', 1);
             $limit = $request->get('limit', 12);
-            
+
             // Lấy sách theo category slug với pagination
             $books = $this->bookService->getEbookCategorySlug($slug, $page, $limit);
-            
+
             // Tính tổng số sách để xác định has_more
             $totalCount = Books::whereHas('categories', function ($query) use ($slug) {
                 $query->where('slug', $slug);
             })
-            ->whereHas('formats', function ($query) {
-                $query->where('name', 'Sách điện tử');
-            })
-            ->count();
-            
+                ->whereHas('formats', function ($query) {
+                    $query->where('name', 'Sách điện tử');
+                })
+                ->count();
+
             return response()->json([
                 'data' => $books,
                 'total' => $totalCount,
@@ -49,6 +49,19 @@ class EbookController extends BaseBookController
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Có lỗi xảy ra khi lấy danh sách sách theo danh mục.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+    public function getEbooksByCategory($categorySlug, Request $request)
+    {
+        try {
+            $limit = $request->get('limit', 12);
+            $books = $this->bookService->getEbooksByCategory($categorySlug, $limit);
+            return response()->json($books, 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Có lỗi xảy ra khi lấy sách theo danh mục.',
                 'error' => $e->getMessage()
             ], 500);
         }
