@@ -96,12 +96,22 @@ export default function MediaPlayer() {
                             );
                         }
                     } else {
-                        console.warn('No chapters found for this book');
+                        
                         AntNotification.showNotification(
                             "Không có nội dung",
                             "Sách này chưa có nội dung audio",
                             "warning"
                         );
+                        setChapters([]);
+                        setCurrentChapter(null);
+                        if (audioRef.current) {
+                            audioRef.current.src = "";
+                            audioRef.current.load();
+                        }
+                        setDuration(0);
+                        setCurrentTime(0);
+                        setIsAudioPlaying(false);
+                        setOpenAudioModal(false);
                     }
                 } catch (error) {
                     console.error('Error loading chapters:', error);
@@ -467,14 +477,12 @@ export default function MediaPlayer() {
                         if (audioDuration && !isNaN(audioDuration)) {
                             setDuration(audioDuration);
                             setCurrentTime(0);
-                            console.log('Metadata loaded, duration:', audioDuration);
                         }
                     }
                 }}
                 onEnded={nextChapter}
                 onCanPlay={() => {
                     // Audio đã sẵn sàng để phát
-                    console.log('Audio ready to play');
                     if (audioRef.current && audioRef.current.duration) {
                         setDuration(audioRef.current.duration);
                     }
@@ -482,7 +490,6 @@ export default function MediaPlayer() {
                     if (shouldAutoPlay.current && isAudioPlaying) {
                         audioRef.current.play()
                         .then(() => {
-                            console.log('Auto play on canplay success');
                             shouldAutoPlay.current = false;
                         })
                         .catch(error => {

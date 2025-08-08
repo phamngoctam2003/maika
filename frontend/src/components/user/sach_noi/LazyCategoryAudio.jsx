@@ -107,7 +107,7 @@ export const LazyCategoryAudio = ({
           </h2>
           {showViewAll && (
             <Link
-              to={`/category/${categorySlug}`}
+              to={`/sach-noi/category/${categorySlug}`}
               className="text-maika-500 hover:text-maika-400 font-medium text-sm lg:text-base transition-colors pr-4 lg:pr-12"
             >
               Xem tất cả →

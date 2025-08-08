@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, Form } from 'react-router-dom';
 import { message, notification as Notification } from 'antd';
 import { AuthService } from '@/services/api-auth';
 import { AntNotification } from "@components/global/notification";
@@ -8,6 +8,7 @@ import { Loading } from '@components/loading/loading';
 import { LoginGoogle } from '@components/LoginGoogle/LoginGoogle';
 import Sidebar from '../../user/sidebar/sidebar';
 import HomeService from '@/services/users/api-home';
+import FormSearch from '@components/user/form_search/form_search';
 export const UserHeader = () => {
     const URL_IMG = import.meta.env.VITE_URL_IMG;
     const logoGoogle = (<svg className="hover:scale-125 transition-transform duration-300" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 128 128"><path fill="#fff" d="M44.59 4.21a63.28 63.28 0 0 0 4.33 120.9a67.6 67.6 0 0 0 32.36.35a57.13 57.13 0 0 0 25.9-13.46a57.44 57.44 0 0 0 16-26.26a74.33 74.33 0 0 0 1.61-33.58H65.27v24.69h34.47a29.72 29.72 0 0 1-12.66 19.52a36.16 36.16 0 0 1-13.93 5.5a41.29 41.29 0 0 1-15.1 0A37.16 37.16 0 0 1 44 95.74a39.3 39.3 0 0 1-14.5-19.42a38.31 38.31 0 0 1 0-24.63a39.25 39.25 0 0 1 9.18-14.91A37.17 37.17 0 0 1 76.13 27a34.28 34.28 0 0 1 13.64 8q5.83-5.8 11.64-11.63c2-2.09 4.18-4.08 6.15-6.22A61.22 61.22 0 0 0 87.2 4.59a64 64 0 0 0-42.61-.38z" /><path fill="#e33629" d="M44.59 4.21a64 64 0 0 1 42.61.37a61.22 61.22 0 0 1 20.35 12.62c-2 2.14-4.11 4.14-6.15 6.22Q95.58 29.23 89.77 35a34.28 34.28 0 0 0-13.64-8a37.17 37.17 0 0 0-37.46 9.74a39.25 39.25 0 0 0-9.18 14.91L8.76 35.6A63.53 63.53 0 0 1 44.59 4.21z" /><path fill="#f8bd00" d="M3.26 51.5a62.93 62.93 0 0 1 5.5-15.9l20.73 16.09a38.31 38.31 0 0 0 0 24.63q-10.36 8-20.73 16.08a63.33 63.33 0 0 1-5.5-40.9z" /><path fill="#587dbd" d="M65.27 52.15h59.52a74.33 74.33 0 0 1-1.61 33.58a57.44 57.44 0 0 1-16 26.26c-6.69-5.22-13.41-10.4-20.1-15.62a29.72 29.72 0 0 0 12.66-19.54H65.27c-.01-8.22 0-16.45 0-24.68z" /><path fill="#319f43" d="M8.75 92.4q10.37-8 20.73-16.08A39.3 39.3 0 0 0 44 95.74a37.16 37.16 0 0 0 14.08 6.08a41.29 41.29 0 0 0 15.1 0a36.16 36.16 0 0 0 13.93-5.5c6.69 5.22 13.41 10.4 20.1 15.62a57.13 57.13 0 0 1-25.9 13.47a67.6 67.6 0 0 1-32.36-.35a63 63 0 0 1-23-11.59A63.73 63.73 0 0 1 8.75 92.4z" /></svg>);
@@ -20,7 +21,6 @@ export const UserHeader = () => {
     const [audiobookCategories, setAudiobookCategories] = useState([]);
 
     const [loggedIn, setLoggedIn] = useState(null); // Thay đổi trạng thái đăng nhập
-    const [isPopupActive, setIsPopupActive] = useState(false);
     const [isPopupLogin, setIsPopupLogin] = useState(true);
 
     const vobocloginRef = useRef(null);
@@ -29,7 +29,7 @@ export const UserHeader = () => {
     const iconcloseRef = useRef(null);
     const btnCuasoRef = useRef(null);
 
-    const { isAuthenticated, currentUser, setCurrentUser, roles, setRoles, permissions, token, setToken, setPermissions, setIsAuthenticated, setUserPackages, setActivePackage } = useAuth();
+    const { isAuthenticated, currentUser, setCurrentUser, roles, setRoles, permissions, token, setToken, setPermissions, setIsAuthenticated, setUserPackages, setActivePackage, isPopupActiveLogin, setIsPopupActiveLogin } = useAuth();
 
     const onFinish = async (e) => {
         e.preventDefault();
@@ -63,7 +63,7 @@ export const UserHeader = () => {
         setCurrentUser(user);
         setPermissions(permissions);
         setRoles(roles);
-        setIsPopupActive(false);
+        setIsPopupActiveLogin(false);
         setIsAuthenticated(true);
         setToken(response.access_token);
         if (response.user_packages) {
@@ -106,11 +106,11 @@ export const UserHeader = () => {
 
     const handlePopupClick = () => {
         setIsPopupLogin(true);
-        setIsPopupActive(true);
+        setIsPopupActiveLogin(true);
     };
 
     const handleCloseClick = () => {
-        setIsPopupActive(false);
+        setIsPopupActiveLogin(false);
         setIsPopupLogin(true);
     };
 
@@ -122,7 +122,7 @@ export const UserHeader = () => {
                 } else {
                     setIsLoading(true);
                     setLoggedIn(true);
-                    setIsPopupActive(false);
+                    setIsPopupActiveLogin(false);
                 }
             } catch (error) {
                 console.error('Lỗi khi lấy thông tin người dùng', error);
@@ -306,17 +306,7 @@ export const UserHeader = () => {
                 <div id="countdown"></div>
 
                 <div className="nav1-c flex justify-between items-start gap-2 mt-2">
-                    <div className="form-search mt-1">
-                        <form>
-                            <div className="box">
-                                <div className="container-2">
-                                    <input type="search" className="search" placeholder="Search..." />
-                                    <span className="icon1"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M11 2C15.968 2 20 6.032 20 11C20 15.968 15.968 20 11 20C6.032 20 2 15.968 2 11C2 6.032 6.032 2 11 2ZM11 18C14.8675 18 18 14.8675 18 11C18 7.1325 14.8675 4 11 4C7.1325 4 4 7.1325 4 11C4 14.8675 7.1325 18 11 18ZM19.4853 18.0711L22.3137 20.8995L20.8995 22.3137L18.0711 19.4853L19.4853 18.0711Z"></path></svg></span>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-
+                    <FormSearch />
                     <Link to="package-plan" aria-current="page" className="mt-1 nuxt-link-exact-active nuxt-link-active flex items-center justify-center">
                         <div className="cursor-pointer bg-package border border-[#FC0] rounded-2xl px-2.5 py-[5.25px] bg-[rgba(255,204,0,0.16)] min-w-[92px] flex items-center">
                             <div className="w-4 h-4">
@@ -367,7 +357,7 @@ export const UserHeader = () => {
                                         <Link to="/profile/book-case"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="25" height="25" fill="currentColor"><path d="M4 3C3.44772 3 3 3.44772 3 4V20C3 20.5523 3.44772 21 4 21H14C14.5523 21 15 20.5523 15 20V15.2973L15.9995 19.9996C16.1143 20.5398 16.6454 20.8847 17.1856 20.7699L21.0982 19.9382C21.6384 19.8234 21.9832 19.2924 21.8684 18.7522L18.9576 5.0581C18.8428 4.51788 18.3118 4.17304 17.7716 4.28786L14.9927 4.87853C14.9328 4.38353 14.5112 4 14 4H10C10 3.44772 9.55228 3 9 3H4ZM10 6H13V14H10V6ZM10 19V16H13V19H10ZM8 5V15H5V5H8ZM8 17V19H5V17H8ZM17.3321 16.6496L19.2884 16.2338L19.7042 18.1898L17.7479 18.6057L17.3321 16.6496ZM16.9163 14.6933L15.253 6.86789L17.2092 6.45207L18.8726 14.2775L16.9163 14.6933Z"></path></svg>
                                             <p>Tủ sách cá nhân</p></Link></div>
                                     <div className="icon-flex">
-                                        <Link to="/profile/transaction-histories"><svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" color="currentColor"><path d="M13.5 15H6c-1.886 0-2.828 0-3.414-.586S2 12.886 2 11V7c0-1.886 0-2.828.586-3.414S4.114 3 6 3h12c1.886 0 2.828 0 3.414.586S22 5.114 22 7v5c0 .932 0 1.398-.152 1.765a2 2 0 0 1-1.083 1.083C20.398 15 19.932 15 19 15"/><path d="M14 9a2 2 0 1 1-4 0a2 2 0 0 1 4 0m-1 8a3 3 0 0 1 3-3v-2a3 3 0 0 1 3-3v5.5c0 2.335 0 3.502-.472 4.386a4 4 0 0 1-1.642 1.642C16.002 21 14.835 21 12.5 21H12c-1.864 0-2.796 0-3.53-.305a4 4 0 0 1-2.166-2.164C6 17.796 6 16.864 6 15"/></g></svg>
+                                        <Link to="/profile/transaction-histories"><svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" color="currentColor"><path d="M13.5 15H6c-1.886 0-2.828 0-3.414-.586S2 12.886 2 11V7c0-1.886 0-2.828.586-3.414S4.114 3 6 3h12c1.886 0 2.828 0 3.414.586S22 5.114 22 7v5c0 .932 0 1.398-.152 1.765a2 2 0 0 1-1.083 1.083C20.398 15 19.932 15 19 15" /><path d="M14 9a2 2 0 1 1-4 0a2 2 0 0 1 4 0m-1 8a3 3 0 0 1 3-3v-2a3 3 0 0 1 3-3v5.5c0 2.335 0 3.502-.472 4.386a4 4 0 0 1-1.642 1.642C16.002 21 14.835 21 12.5 21H12c-1.864 0-2.796 0-3.53-.305a4 4 0 0 1-2.166-2.164C6 17.796 6 16.864 6 15" /></g></svg>
                                             <p>Lịch sử thanh toán</p></Link></div>
                                     <div className="icon-flex">
                                         <Link to="#"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="25" height="25" fill="currentColor"><path d="M21 8C22.1046 8 23 8.89543 23 10V14C23 15.1046 22.1046 16 21 16H19.9381C19.446 19.9463 16.0796 23 12 23V21C15.3137 21 18 18.3137 18 15V9C18 5.68629 15.3137 3 12 3C8.68629 3 6 5.68629 6 9V16H3C1.89543 16 1 15.1046 1 14V10C1 8.89543 1.89543 8 3 8H4.06189C4.55399 4.05369 7.92038 1 12 1C16.0796 1 19.446 4.05369 19.9381 8H21ZM7.75944 15.7849L8.81958 14.0887C9.74161 14.6662 10.8318 15 12 15C13.1682 15 14.2584 14.6662 15.1804 14.0887L16.2406 15.7849C15.0112 16.5549 13.5576 17 12 17C10.4424 17 8.98882 16.5549 7.75944 15.7849Z"></path></svg>
@@ -387,20 +377,21 @@ export const UserHeader = () => {
                         <div className='lg:hidden flex justify-start items-start'>
                             <Sidebar />
                         </div>
-                        <div className='flex justify-center items-center'>
-                            <div className="goicuoc">
-                                <Link to="#"><button>Gói Cước</button></Link>
-                            </div>
-                            <div className="form-search">
-                                <form>
-                                    <div className="box">
-                                        <div className="container-2">
-                                            <input type="search" className="search" placeholder="Search..." />
-                                            <span className="icon1"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M11 2C15.968 2 20 6.032 20 11C20 15.968 15.968 20 11 20C6.032 20 2 15.968 2 11C2 6.032 6.032 2 11 2ZM11 18C14.8675 18 18 14.8675 18 11C18 7.1325 14.8675 4 11 4C7.1325 4 4 7.1325 4 11C4 14.8675 7.1325 18 11 18ZM19.4853 18.0711L22.3137 20.8995L20.8995 22.3137L18.0711 19.4853L19.4853 18.0711Z"></path></svg></span>
-                                        </div>
+                        <div className='flex justify-center items-center gap-2'>
+                            <FormSearch />
+                            <Link to="package-plan" aria-current="page" className="mt-1 nuxt-link-exact-active nuxt-link-active flex items-center justify-center">
+                                <div className="cursor-pointer bg-package border border-[#FC0] rounded-2xl px-2.5 py-[5.25px] bg-[rgba(255,204,0,0.16)] min-w-[92px] flex items-center">
+                                    <div className="w-4 h-4">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                            <path d="M11.0912 6.78786C11.2433 7.00395 11.5374 7.06431 11.7623 6.92565L14.3148 5.35251C14.3598 5.33578 14.4107 5.34331 14.4486 5.37254C14.4898 5.4043 14.5075 5.45516 14.497 5.50302L14.497 5.503L14.4953 5.51114L12.9055 13.3979C12.8917 13.4554 12.8385 13.5 12.7727 13.5H3.22729C3.16153 13.5 3.10829 13.4554 3.09446 13.3979L1.50469 5.51114L1.50476 5.51112L1.50298 5.50301C1.4925 5.45516 1.51022 5.4043 1.55138 5.37254C1.58926 5.34331 1.64024 5.33578 1.68523 5.35251L4.23766 6.92565C4.46264 7.06431 4.75668 7.00395 4.90882 6.78786L7.889 2.55533C7.91407 2.52132 7.95505 2.5 8 2.5C8.04495 2.5 8.08593 2.52132 8.111 2.55533L11.0912 6.78786Z" stroke="#FFCC00" strokeLinejoin="round" />
+                                            <circle cx="8" cy="9" r="1.5" stroke="#FFCC00" />
+                                        </svg>
                                     </div>
-                                </form>
-                            </div>
+                                    <p className="text-[13px] text-[#fc0] pl-[3px] whitespace-nowrap ">
+                                        Gói cước
+                                    </p>
+                                </div>
+                            </Link>
                         </div>
                     </div>
                     <div className="w-full px-4 select-none">
@@ -415,9 +406,9 @@ export const UserHeader = () => {
             </div>
             <div id="section1"></div>
             {/* Lớp overlay */}
-            {isPopupActive && <div onClick={handleCloseClick} className="overlay"></div>}
+            {isPopupActiveLogin && <div onClick={handleCloseClick} className="overlay"></div>}
 
-            <div ref={vobocloginRef} className={`voboclogin ${isPopupActive ? 'active-popup' : ''}`}>
+            <div ref={vobocloginRef} className={`voboclogin ${isPopupActiveLogin ? 'active-popup' : ''}`}>
                 <span ref={iconcloseRef} className="icon-close" onClick={handleCloseClick}></span>
                 <div className="from-box login">
                     <h2>Đăng Nhập</h2>

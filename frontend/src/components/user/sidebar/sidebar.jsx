@@ -4,6 +4,7 @@ import { LoginModal } from '@components/auth/login';
 import { RegisterModal } from '@components/auth/register';
 import { AuthService } from '@/services/api-auth';
 import { message } from 'antd';
+import { Link } from 'react-router-dom'
 
 
 // Custom SVG Icons
@@ -187,29 +188,28 @@ const Sidebar = () => {
     }
 
     const menuItems = [
-        { icon: HomeIcon, text: 'Trang chủ', hasNew: false },
-        { icon: FlameIcon, text: 'Ưu đãi HOT', hasNew: false },
+        { icon: HomeIcon, text: 'Trang chủ', link: '/', hasNew: false },
     ];
 
     const danhMucItems = [
-        { icon: BookIcon, text: 'Sách điện tử', hasNew: false },
-        { icon: MessageIcon, text: 'Sách nói', hasNew: false },
-        { icon: ImageIcon, text: 'Truyện tranh', hasNew: false },
-        { icon: SearchIcon, text: 'Sách hiểu Sói', hasNew: false },
-        { icon: HeadphonesIcon, text: 'Podcast', hasNew: false },
-        { icon: BookOpenIcon, text: 'Sách tóm tắt', hasNew: false },
+        { icon: BookIcon, text: 'Sách điện tử', link: '/ebook', hasNew: false },
+        { icon: MessageIcon, text: 'Sách nói', link: '/sach-noi', hasNew: false },
+        { icon: ImageIcon, text: 'Sách miễn phí', link: '/book-free', hasNew: false },
+        { icon: SearchIcon, text: 'Sách hội viên', link: '/book-member', hasNew: false },
     ];
 
     const otherItems = [
-        { icon: PackageIcon, text: 'Combo', hasNew: false },
-        { icon: UsersIcon, text: 'Tuyển tập', hasNew: false },
-        { icon: DollarIcon, text: 'Tác giả', hasNew: false },
-        { icon: InfoIcon, text: 'Tin tức', hasNew: false },
-        { icon: StarIcon, text: 'Review sách', hasNew: false },
+        // { icon: DollarIcon, text: 'Tác giả', hasNew: false },
+        // { icon: InfoIcon, text: 'Tin tức', hasNew: false },
+        // { icon: StarIcon, text: 'Bảng xếp hạng', hasNew: false },
+        { icon: BookOpenIcon, text: 'Tủ sách cá nhân', link: '/profile/book-case', hasNew: false },
+        { icon: PackageIcon, text: 'Lịch sử giao dịch', link: '/profile/transaction-histories', hasNew: false },
     ];
 
+
     const profileItems = [
-        { icon: Support, text: 'Hỗ trơ', hasNew: false },
+        ...(isAuthenticated ? [{ icon: UsersIcon, text: 'Tài khoản', link: 'profile', hasNew: false }] : []),
+        { icon: Support, text: 'Hỗ trợ', hasNew: false },
         ...(isAuthenticated ? [{ icon: Logout, text: 'Đăng xuất', hasNew: false }] : []),
     ];
     return (
@@ -271,12 +271,15 @@ const Sidebar = () => {
                 {/* Main Menu Items */}
                 <div className="px-4 py-2">
                     {menuItems.map((item, index) => (
-                        <div key={index} className="flex items-center p-3 hover:bg-gray-800 rounded-lg cursor-pointer transition-colors group">
+                        console.log(item.link),
+                        <Link
+                        onClick={toggleSidebar}
+                        to={item.link} key={index} className="flex items-center p-3 hover:bg-gray-800 rounded-lg cursor-pointer transition-colors group">
                             <div className="mr-3 text-gray-400 group-hover:text-white">
                                 <item.icon />
                             </div>
                             <span className="font-medium">{item.text}</span>
-                        </div>
+                        </Link>
                     ))}
                 </div>
 
@@ -289,17 +292,18 @@ const Sidebar = () => {
                         <span className="font-semibold text-lg">Danh mục</span>
                         {isDanhMucOpen ? <ChevronUpIcon /> : <ChevronDownIcon />}
                     </div>
-
                     {/* Animated dropdown */}
                     <div className={`overflow-hidden transition-all duration-300 ${isDanhMucOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
                         }`}>
                         {danhMucItems.map((item, index) => (
-                            <div key={index} className="flex items-center p-3 ml-2 hover:bg-gray-800 rounded-lg cursor-pointer transition-colors group">
+                            <Link
+                            onClick={toggleSidebar}
+                            to={item.link} key={index} className="flex items-center p-3 ml-2 hover:bg-gray-800 rounded-lg cursor-pointer transition-colors group">
                                 <div className="mr-3 text-gray-400 group-hover:text-white">
                                     <item.icon />
                                 </div>
                                 <span>{item.text}</span>
-                            </div>
+                            </Link>
                         ))}
                     </div>
                 </div>
@@ -307,24 +311,27 @@ const Sidebar = () => {
                 {/* Other Menu Items */}
                 <div className="px-4 py-2 border-t border-gray-700">
                     {otherItems.map((item, index) => (
-                        <div key={index} className="flex items-center p-3 hover:bg-gray-800 rounded-lg cursor-pointer transition-colors group">
+                        <Link
+                        onClick={toggleSidebar}
+                        to={item.link} key={index} className="flex items-center p-3 hover:bg-gray-800 rounded-lg cursor-pointer transition-colors group">
                             <div className="mr-3 text-gray-400 group-hover:text-white">
                                 <item.icon />
                             </div>
                             <span>{item.text}</span>
-                        </div>
+                        </Link>
                     ))}
                 </div>
                 <div className="px-4 py-2 border-t border-gray-700">
                     {profileItems.map((item, index) => (
-                        <div key={index}
+                        <Link
+                        to={item.link} key={index}
                             onClick={item.text === 'Đăng xuất' ? handleLogout : null}
                             className="flex items-center p-3 hover:bg-gray-800 rounded-lg cursor-pointer transition-colors group">
                             <div className="mr-3 text-gray-400 group-hover:text-white">
                                 <item.icon />
                             </div>
                             <span>{item.text}</span>
-                        </div>
+                        </Link>
                     ))}
                 </div>
             </div>

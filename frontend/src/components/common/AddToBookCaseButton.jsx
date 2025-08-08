@@ -7,9 +7,6 @@ const AddToBookCaseButton = ({ bookId, isSavedInitially = false }) => {
     const [isLoading, setIsLoading] = useState(false);
     const { isAuthenticated, setIsLoginModalOpen } = useAuth();
     const [isSaved, setIsSaved] = useState(isSavedInitially); // Trạng thái đã lưu
-
-    console.log('isSavedInitially:', isSavedInitially);
-    console.log('isSaved:', isSaved);
     useEffect(() => {
         setIsSaved(isSavedInitially);
     }, [isSavedInitially]);

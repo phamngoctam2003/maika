@@ -3,7 +3,7 @@ export default function ProfileTabs({ selectedTab, setSelectedTab }) {
   const tabs = [
     { id: 'personal', label: 'Thông tin cá nhân' },
     // { id: 'address', label: 'Địa chỉ' },
-    { id: 'security', label: 'Tài khoản và bảo mật' },
+    { id: 'security', label: 'Bảo mật' },
     { id: 'linked', label: 'Tài khoản liên kết' }
   ];
 

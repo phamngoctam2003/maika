@@ -4,6 +4,7 @@ namespace App\Http\Controllers\User;
 
 use App\Models\Books;
 use App\Services\HomeBookService;
+use Illuminate\Http\Request;
 
 /**
  * Home Controller - Handles home page book operations
@@ -25,9 +26,9 @@ class HomeController extends BaseBookController
     {
         $filters = request()->only(['per_page', 'sortorder', 'format', 'filter_category']);
         $Books = Books::where('access_type', 'free')
-        ->whereHas('formats', function ($query) use ($filters) {
-            $query->where('name', $filters['format'] ?? 'Sách điện tử');
-        })
+            ->whereHas('formats', function ($query) use ($filters) {
+                $query->where('name', $filters['format'] ?? 'Sách điện tử');
+            })
             ->filterCategory($filters['filter_category'] ?? null)
             ->applyFilters($filters);
         return response()->json($Books);
@@ -37,11 +38,25 @@ class HomeController extends BaseBookController
     {
         $filters = request()->only(['per_page', 'sortorder', 'format', 'filter_category']);
         $Books = Books::where('access_type', 'member')
-        ->whereHas('formats', function ($query) use ($filters) {
-            $query->where('name', $filters['format'] ?? 'Sách điện tử');
-        })
+            ->whereHas('formats', function ($query) use ($filters) {
+                $query->where('name', $filters['format'] ?? 'Sách điện tử');
+            })
             ->filterCategory($filters['filter_category'] ?? null)
             ->applyFilters($filters);
         return response()->json($Books);
+    }
+
+    public function getBooksByCategory($categorySlug, Request $request)
+    {
+        try {
+            $limit = $request->get('limit', 12);
+            $books = $this->bookService->getBooksByCategory($categorySlug, $limit);
+            return response()->json($books, 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Có lỗi xảy ra khi lấy sách theo danh mục.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 }

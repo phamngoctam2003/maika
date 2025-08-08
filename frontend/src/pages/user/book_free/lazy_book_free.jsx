@@ -1,10 +1,10 @@
-import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { Helmet } from "react-helmet";
 import { BookCardCategory } from "@/components/user/books/BookCard";
 import { Pagination } from "antd";
 import BookGridSkeleton from "@/components/ui/BookSkeleton";
 import HomeService from "@/services/users/api-home";
+import { Link } from "react-router-dom";
 
 
 const LazyBookFree = ({ format, filterCategory, categoryName }) => {
@@ -73,12 +73,12 @@ const LazyBookFree = ({ format, filterCategory, categoryName }) => {
                             <p className="text-gray-400 mb-6">
                                 Danh mục "{categoryName}" hiện chưa có sách miễn phí nào.
                             </p>
-                            <a
-                                href="/ebook"
+                            <Link
+                                to="/ebook"
                                 className="inline-block bg-maika-500 hover:bg-maika-600 text-white px-6 py-3 rounded-lg transition-colors"
                             >
                                 Khám phá sách khác
-                            </a>
+                            </Link>
                         </div>
                     )}
                 </div>

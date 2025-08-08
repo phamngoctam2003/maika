@@ -114,6 +114,8 @@ route::group(['prefix' => 'users'], function () {
         route::get('get-ranking', [HomeController::class, 'getRanking']);
         route::get('get-proposed', [HomeController::class, 'getProposed']);
         route::get('get-category-book', [CategoryController::class, 'getBookCategories']);
+        route::get('get-books-by-category/{categorySlug}', [HomeController::class, 'getBooksByCategory']);
+
     });
 
     route::group(['prefix' => 'ebook'], function () {
