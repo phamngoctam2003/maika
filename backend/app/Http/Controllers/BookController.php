@@ -36,7 +36,7 @@ class BookController extends Controller
             'description' => 'nullable|string',
             'publication_year' => 'required|integer|min:1900|max:' . date('Y'),
             'file_path' => 'required|file',
-            'access_type' => 'nullable',
+            'access_type' => 'required|string',
             'category_id' => 'required|array|exists:categories,id',
             'format_id' => 'required|array|exists:book_formats,id',
         ]);
@@ -72,8 +72,14 @@ class BookController extends Controller
     public function update(Request $request, $id)
     {
         $validatedData = $request->validate([
-            'name' => 'required|string|max:255|unique:book_types,name,' . $id,
-            'category_id' => 'required|exists:categories,id',
+            'title' => 'required|string|max:255',
+            'author' => 'required|array|max:255',
+            'description' => 'nullable|string',
+            'publication_year' => 'required|integer|min:1900|max:' . date('Y'),
+            'file_path' => 'nullable|file',
+            'access_type' => 'required|string',
+            'category_id' => 'required|array|exists:categories,id',
+            'format_id' => 'required|array|exists:book_formats,id',
         ]);
         try {
             $book = $this->bookService->getBookById($id);
@@ -141,6 +147,4 @@ class BookController extends Controller
             ], 500);
         }
     }
-    
-    
 }

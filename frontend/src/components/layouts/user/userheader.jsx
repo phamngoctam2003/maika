@@ -29,7 +29,7 @@ export const UserHeader = () => {
     const iconcloseRef = useRef(null);
     const btnCuasoRef = useRef(null);
 
-    const { isAuthenticated, currentUser, setCurrentUser, roles, setRoles, permissions, token, setToken, setPermissions, setIsAuthenticated, setUserPackages, setActivePackage, isPopupActiveLogin, setIsPopupActiveLogin } = useAuth();
+    const { isAuthenticated, currentUser, setCurrentUser, roles, setRoles, permissions, token, setToken, setPermissions, setIsAuthenticated, setUserPackages, setActivePackage, isPopupActiveLogin, setIsPopupActiveLogin, activePackage } = useAuth();
 
     const onFinish = async (e) => {
         e.preventDefault();
@@ -348,7 +348,39 @@ export const UserHeader = () => {
                                         alt="Hình ảnh khách hàng"
                                     />
                                 </div>
-                                <button className="hoivien-aac"><Link to="#">Trở thành hội viên</Link></button>
+                                {
+                                    activePackage ? (
+                                        <Link
+                                            to={`/package-plan`}
+                                            class="package-btn mt-2">
+                                            <strong className='package-strong'>
+                                                {activePackage.ends_at && (
+                                                    <span className="">
+                                                        Hội viên
+                                                        {(() => {
+                                                            const end = new Date(activePackage.ends_at.replace(" ", "T"));
+                                                            const now = new Date();
+                                                            const diff = Math.max(0, Math.ceil((end - now) / (1000 * 60 * 60 * 24)));
+                                                            return `(Còn ${diff} ngày)`;
+                                                        })()}
+                                                    </span>
+                                                )}
+                                            </strong>
+                                            <div id="container-stars">
+                                                <div id="package-stars"></div>
+                                            </div>
+
+                                            <div id="package-glow">
+                                                <div class="package-circle"></div>
+                                                <div class="package-circle"></div>
+                                            </div>
+                                        </Link>
+                                    ) : (
+                                        <Link to='/package-plan' className="hoivien-aac mt-2">
+                                            Trở thành hội viên
+                                        </Link>
+                                    )
+                                }
                                 <div className="flex-p">
                                     <div className="icon-flex">
                                         <Link to="/profile"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="25" height="25" fill="currentColor"><path d="M4 22C4 17.5817 7.58172 14 12 14C16.4183 14 20 17.5817 20 22H4ZM12 13C8.685 13 6 10.315 6 7C6 3.685 8.685 1 12 1C15.315 1 18 3.685 18 7C18 10.315 15.315 13 12 13Z"></path></svg>
