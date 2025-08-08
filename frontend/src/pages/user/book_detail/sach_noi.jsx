@@ -469,13 +469,24 @@ const SachNoiDetail = () => {
     //     );
     // };
     return (
-        <div className="bg-color-detail min-h-screen">
-            <div className="lg:px-12 w-full">
+        <>
+            <div className="lg:px-12 w-full bg-color-detail relative pb-24">
                 {
                     loading && (
                         <Loading isLoading={loading} />
                     )
                 }
+                <div
+                    className="absolute inset-0 pointer-events-none"
+                    style={{
+                        background: `
+              linear-gradient(to top, 
+                rgba(18, 18, 20, 0.98) 4%, 
+                transparent 18%
+              )
+            `,
+                    }}
+                ></div>
                 <UserBreadcrumb items={breadcrumbItems} />
                 <div className="relative overflow-hidden block lg:hidden pt-16 pb-6">
                     <div className="absolute inset-0">
@@ -928,7 +939,7 @@ const SachNoiDetail = () => {
                 </div>
             </div>
             <Propose />
-        </div>
+        </>
     );
 }
 
