@@ -10,7 +10,7 @@ export default function SidebarProfile({ formData, activePackage }) {
 
     return (
         <div
-            className="w-full border-r-[1px] border-gray-600 lg:w-72 pr-8">
+            className="w-full border-r-[1px] border-gray-600 lg:w-72 pr-8 lg:block hidden">
             <div className="flex items-center gap-3 mb-6">
                 {
                     formData?.image ? (

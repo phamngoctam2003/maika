@@ -139,7 +139,7 @@ export default function ProfileManagement() {
           />
         );
       case 'linked':
-        return <LinkedAccountForm />;
+        return <LinkedAccountForm currentUser={currentUser} />;
       default:
         return null;
     }
@@ -150,7 +150,7 @@ export default function ProfileManagement() {
       <div className="flex flex-col lg:flex-row min-h-screen">
         <SidebarProfile formData={currentUser} activePackage={activePackage} />
 
-        <div className="flex-1 p-6 lg:p-8">
+        <div className="flex-1 lg:p-8">
           <h1 className="text-xl font-semibold mb-6">Quản lý thông tin</h1>
 
           <ProfileTabs selectedTab={selectedTab} setSelectedTab={setSelectedTab} />

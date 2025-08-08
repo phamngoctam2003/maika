@@ -65,6 +65,14 @@ const HomeService = {
     return response;
   },
 
+    getBookSearch: async ({
+    keyword,
+  }) => {
+    return apiGet("/books", {
+      params: { keyword},
+    });
+  },
+
   getBookFree: async ({
     page,
     per_page,

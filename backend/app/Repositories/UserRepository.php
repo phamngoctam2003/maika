@@ -47,7 +47,6 @@ class UserRepository implements UserRepositoryInterface
         return Books::orderBy('views', 'desc')->take(10)->get();
     }
 
-    // Lấy sách đề xuất (có thể random hoặc theo thuật toán)
     public function getProposed()
     {
         return Books::inRandomOrder()->take(12)->get();
@@ -73,8 +72,8 @@ class UserRepository implements UserRepositoryInterface
     public function getLatestByFormat(string $format)
     {
         return Books::whereHas('formats', function ($query) use ($format) {
-                $query->where('name', $format);
-            })
+            $query->where('name', $format);
+        })
             ->latest()
             ->take(12)
             ->get();
@@ -103,15 +102,33 @@ class UserRepository implements UserRepositoryInterface
      */
     public function getProposedByFormat(string $format)
     {
-        return Books::with('categories', 'formats', 'authors')
-            ->whereHas('formats', function ($query) use ($format) {
-                $query->where('name', $format);
-            })
-            ->inRandomOrder()
-            ->take(12)
-            ->get();
+        try {
+            $books =  Books::with('categories', 'formats', 'authors')
+                ->whereHas('formats', function ($query) use ($format) {
+                    $query->where('name', $format);
+                })
+                ->inRandomOrder()
+                ->take(12)
+                ->get();
+            /** @var \App\Models\User|null $user */
+            $user = auth('api')->user();
+            if ($user) {
+                foreach ($books as $book) {
+                    $isSaved = $user->bookCase()->where('book_id', $book->id)->exists();
+                    $book->is_saved_in_bookcase = $isSaved;
+                }
+            } else {
+                foreach ($books as $book) {
+                    $book->is_saved_in_bookcase = false;
+                }
+            }
+            // Trả về collection, nếu lỗi trả về Collection rỗng để đúng kiểu trả về
+            return $books->values();
+        } catch (\Exception $e) {
+            // Nếu có lỗi, trả về Collection rỗng thay vì JsonResponse để đúng kiểu trả về
+            return collect([]);
+        }
     }
-
     /**
      * Get books by category and format
      * @param string $categorySlug
@@ -132,5 +149,5 @@ class UserRepository implements UserRepositoryInterface
             ->take($limit)
             ->get();
     }
-
 }
+

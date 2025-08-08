@@ -38,7 +38,7 @@ class BookDetaiController extends Controller
             return response()->json($ebook, 200);
         } catch (\Exception $e) {
             return response()->json([
-                'message' => 'Có lỗi xảy ra khi lấy ebook.',
+                'message' => 'Có lỗi xảy ra khi lấy sách.',
                 'error' => $e->getMessage()
             ], 500);
         }

@@ -17,6 +17,8 @@ export const AuthProvider = ({ children }) => {
     const [token, setToken] = useState(localStorage.getItem('token') || null);
     const [isAuthenticated, setIsAuthenticated] = useState(!!(token && AuthService.isAuthenticated()));
     const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+    const [isPopupActiveLogin, setIsPopupActiveLogin] = useState(false);
+
 
     // Lưu token vào localStorage khi có sự thay đổi
     useEffect(() => {
@@ -178,6 +180,8 @@ export const AuthProvider = ({ children }) => {
         error,
         token,
         isLoginModalOpen,
+        isPopupActiveLogin,
+        setIsPopupActiveLogin,
         setIsLoginModalOpen,
         setLoading,
         setRoles,

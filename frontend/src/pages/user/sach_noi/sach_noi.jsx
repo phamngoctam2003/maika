@@ -29,7 +29,6 @@ const SachNoi = () => {
     }, []);
 
     useEffect(() => {
-        // Lấy danh sách sách nói mới nhất (hoặc bạn có thể lấy theo category tuỳ ý)
         const fetchBooks = async () => {
             try {
                 const res = await AudioBookService.getProposedBooks();

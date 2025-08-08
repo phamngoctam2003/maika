@@ -3,7 +3,6 @@ import { message } from 'antd';
 import ProfileService from '@/services/users/api-profile';
 
 export default function SecurityForm({ currentUser }) {
-  console.log('SecurityForm currentUser:', currentUser?.google_id);
   if (currentUser?.google_id) {
     // Nếu người dùng đã liên kết tài khoản Google
     return (

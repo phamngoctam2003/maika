@@ -157,7 +157,7 @@ class CategoryController extends Controller
         }
     }
 
-      public function getBookCategories(Request $request)
+    public function getBookCategories(Request $request)
     {
         try {
             $limit = $request->get('limit', 1);
@@ -201,4 +201,6 @@ class CategoryController extends Controller
             ], 500);
         }
     }
+
+    
 }

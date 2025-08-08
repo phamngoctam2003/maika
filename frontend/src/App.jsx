@@ -32,7 +32,8 @@ import ProfileManagement from "@/pages/user/profile/ProfileManagement";
 import BookCase from "@/pages/user/profile/BookCase";
 import TransactionHistories from "@/pages/user/profile/transaction-histories";
 
-import AudioPlayer from "./pages/test/test_audio";
+import AudioPlayer from "@/pages/test/test_audio";
+import Search from "@/pages/user/search/search";
 // -------------------------------
 function App() {
 
@@ -75,6 +76,7 @@ function App() {
     { path: "profile", element: <ProfileManagement /> },
     { path: "profile/book-case", element: <BookCase /> },
     { path: "profile/transaction-histories", element: <TransactionHistories /> },
+    { path: "/search", element: <Search /> },
   ];
   const router = createBrowserRouter([
     {

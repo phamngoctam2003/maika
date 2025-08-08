@@ -25,7 +25,7 @@ const TransactionHistories = () => {
             console.log('Transaction Histories:', response);
             setTransactions(response || []);
         } catch (error) {
-            message.error('Không lấy được lịch sử giao dịch.');
+            console.error('Không lấy được lịch sử giao dịch.');
         } finally {
             setLoading(false);
         }

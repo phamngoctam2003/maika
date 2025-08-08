@@ -4,10 +4,9 @@ export const SlideShow = () => {
     const [currentIndex, setCurrentIndex] = useState(0);
     const timeoutRef = useRef(null);
     const items = [
-        "https://307a0e78.vws.vegacdn.vn/view/v2/image/img.banner_web_v2/0/0/0/3859.jpg?v=1&w=1920&h=600",
-        "https://307a0e78.vws.vegacdn.vn/view/v2/image/img.banner_web_v2/0/0/0/3859.jpg?v=1&w=1920&h=600",
-        "https://307a0e78.vws.vegacdn.vn/view/v2/image/img.banner_web_v2/0/0/0/3859.jpg?v=1&w=1920&h=600",
-        "https://307a0e78.vws.vegacdn.vn/view/v2/image/img.banner_web_v2/0/0/0/3859.jpg?v=1&w=1920&h=600"
+        "./images/slider/3811.png",
+        "./images/slider/3843.png",
+        "./images/slider/3859.png",
     ];
 
     useEffect(() => {
