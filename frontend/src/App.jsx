@@ -19,6 +19,7 @@ import BookReader from "./pages/user/book_reader";
 
 import Books from "./pages/admin/books";
 import Create_Book from "./pages/admin/books/create";
+import Update_Book from "./pages/admin/books/update";
 
 import Chapters from "./pages/admin/chapters";
 import Create_Chapter from "./pages/admin/chapters/create";
@@ -49,6 +50,7 @@ function App() {
 
     { path: 'books', element: < Books /> },
     { path: 'books/create', element: < Create_Book /> },
+    { path: 'books/update/:id', element: < Update_Book /> },
 
     { path: 'books/chapters/:bookId', element: < Chapters /> },
     { path: 'books/chapters/create/:bookId', element: < Create_Chapter /> },
