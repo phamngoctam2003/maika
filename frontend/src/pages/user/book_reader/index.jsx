@@ -29,6 +29,7 @@ const BookReader = () => {
     currentUser, 
     isAuthenticated, 
     hasMembership, 
+    activePackage,
     getMembershipInfo 
   } = useAuth();
   
@@ -274,7 +275,6 @@ const BookReader = () => {
   }, [book?.slug, bookContent]); // Chỉ chạy khi book và content đã sẵn sàng
 
   /**
-   * Kiểm tra xem người dùng có quyền đọc sách hội viên hay không
    * @returns {boolean} - true nếu có quyền, false nếu không có quyền
    */
   const canReadMemberBook = () => {
@@ -284,15 +284,8 @@ const BookReader = () => {
       return false;
     }
 
-    // Sử dụng function hasMembership từ AuthContext
     // Function này đã kiểm tra gói có active và chưa hết hạn
     const hasActiveMembership = hasMembership();
-    console.log('BookReader - canReadMemberBook:', {
-      isAuthenticated,
-      currentUser: !!currentUser,
-      hasActiveMembership,
-      slug
-    });
     
     return hasActiveMembership;
   };
@@ -307,14 +300,6 @@ const BookReader = () => {
     
     // Sách member yêu cầu hội viên, còn lại là free
     const requireMembership = accessType === 'member';
-    
-    console.log('BookReader - isBookRequireMembership:', {
-      book_id: book?.id,
-      book_slug: book?.slug,
-      access_type: accessType,
-      requireMembership
-    });
-    
     return requireMembership;
   };
 
@@ -359,15 +344,20 @@ const BookReader = () => {
       return;
     }
     
-    console.log('BookReader - Access granted for book:', book?.slug);
   };
 
   // Effect để kiểm tra quyền truy cập khi book data đã load
   useEffect(() => {
-    if (book && !isLoading) {
+    // Đảm bảo dữ liệu hội viên đã được load và không còn loading
+    if (book && !isLoading && currentUser !== undefined && typeof hasMembership === 'function') {
+      // Nếu activePackage đang null hoặc undefined và sách yêu cầu hội viên thì không kiểm tra quyền vội
+      if (isBookRequireMembership() && (activePackage === undefined || activePackage === null)) {
+        // Chờ activePackage load xong mới kiểm tra quyền
+        return;
+      }
       checkAccessPermission();
     }
-  }, [book, isLoading, isAuthenticated, currentUser]);
+  }, [book, isLoading, isAuthenticated, currentUser, hasMembership, activePackage]);
 
   // Loading screen
   if (isLoading || !book || bookContent.length === 0) {
