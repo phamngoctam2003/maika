@@ -121,7 +121,7 @@ const EbookDetail = () => {
 
     // Chuyển đến trang phù hợp với format hiện tại
     if (currentFormat === 'Sách nói') {
-      navigate(`/audio-reader/${book?.slug}`);
+      navigate(`/sach-noi/${book?.slug}`);
     } else {
       navigate(`/reader/${book?.slug}`);
     }
