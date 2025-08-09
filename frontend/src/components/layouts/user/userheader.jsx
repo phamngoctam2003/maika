@@ -326,7 +326,7 @@ export const UserHeader = () => {
                                     src={
                                         currentUser?.image
                                             ? URL_IMG + currentUser.image
-                                            : 'https://tse3.mm.bing.net/th?id=OIP.v6uzcpp3obKaXzgpB7hPpgHaHv&pid=Api&P=0&h=180'
+                                            : './images/png/image_user.png'
                                     } />
                                 <button className="down"></button>
                             </Link>
@@ -342,7 +342,7 @@ export const UserHeader = () => {
                                         src={
                                             currentUser?.image
                                                 ? URL_IMG + currentUser.image
-                                                : 'https://tse3.mm.bing.net/th?id=OIP.v6uzcpp3obKaXzgpB7hPpgHaHv&pid=Api&P=0&h=180'
+                                                : './images/png/image_user.png'
                                         }
                                         alt="Hình ảnh khách hàng"
                                     />

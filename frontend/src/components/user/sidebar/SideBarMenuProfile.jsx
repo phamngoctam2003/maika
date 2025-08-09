@@ -67,7 +67,9 @@ export default function SidebarProfile({ formData, activePackage }) {
                             className="w-12 h-12 rounded-full bg-gradient-to-br from-green-400 to-cyan-400"
                         />
                     ) : (
-                        <div className="w-12 h-12 rounded-full bg-gradient-to-br from-green-400 to-cyan-400"></div>
+                        <img
+                        src='./images/png/image_user.png'
+                        className="w-12 h-12 rounded-full bg-gradient-to-br from-green-400 to-cyan-400" />
                     )
                 }
                 <span className="font-medium">{formData?.fullName || ''}</span>
