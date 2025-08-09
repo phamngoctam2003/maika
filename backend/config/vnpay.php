@@ -27,7 +27,7 @@ return [
     | Payment Settings
     |--------------------------------------------------------------------------
     */
-    'timeout_minutes' => env('VNP_TIMEOUT_MINUTES', 60), // Tăng lên 60 phút
+    'timeout_minutes' => env('VNP_TIMEOUT_MINUTES', 15), 
     'version' => '2.1.0',
     'currency' => 'VND',
     'locale' => 'vn',
