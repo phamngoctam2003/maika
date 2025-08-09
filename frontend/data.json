@@ -1,0 +1,242 @@
+[
+    {
+        "id": 50723801,
+        "title": "Cuộc chiến thương mại giữa Mỹ và Trung Quốc tiếp diễn",
+        "date": 1731590280,
+        "url": "/cuoc-chien-thuong-mai-my-trung-quoc-c50723801.epi",
+        "thumb": "https://soledad.pencidesign.net/soledad-magazine/wp-content/uploads/sites/7/2017/07/featured1-1170x781.jpg",
+        "publisher": {
+            "name": "Báo Kinh Tế",
+            "logo": "https://example.com/logo1.png"
+        },
+        "categoryId": 1
+    },
+    {
+        "id": 50723802,
+        "title": "Những tác động của AI đến cuộc sống hàng ngày",
+        "date": 1731590380,
+        "url": "/tac-dong-ai-cuoc-song-c50723802.epi",
+        "thumb": "https://soledad.pencidesign.net/soledad-magazine/wp-content/uploads/sites/7/2017/07/featured1-1170x781.jpg",
+        "publisher": {
+            "name": "Báo Công Nghệ",
+            "logo": "https://example.com/logo2.png"
+        },
+        "categoryId": 2
+    },
+    {
+        "id": 50723803,
+        "title": "Thị trường bất động sản tiếp tục giảm sâu",
+        "date": 1731590480,
+        "url": "/thi-truong-bat-dong-san-giam-c50723803.epi",
+        "thumb": "https://soledad.pencidesign.net/soledad-magazine/wp-content/uploads/sites/7/2017/07/featured1-1170x781.jpg",
+        "publisher": {
+            "name": "Báo Đầu Tư",
+            "logo": "https://example.com/logo3.png"
+        },
+        "categoryId": 3
+    },
+    {
+        "id": 50723804,
+        "title": "Apple ra mắt iPhone 15 với nhiều cải tiến",
+        "date": 1731590580,
+        "url": "/apple-ra-mat-iphone-15-c50723804.epi",
+        "thumb": "https://soledad.pencidesign.net/soledad-magazine/wp-content/uploads/sites/7/2017/07/featured1-1170x781.jpg",
+        "publisher": {
+            "name": "Báo Công Nghệ",
+            "logo": "https://example.com/logo2.png"
+        },
+        "categoryId": 2
+    },
+    {
+        "id": 50723805,
+        "title": "Năng lượng tái tạo và sự phát triển bền vững",
+        "date": 1731590680,
+        "url": "/nang-luong-tai-tao-phat-trien-c50723805.epi",
+        "thumb": "https://soledad.pencidesign.net/soledad-magazine/wp-content/uploads/sites/7/2017/07/featured1-1170x781.jpg",
+        "publisher": {
+            "name": "Báo Môi Trường",
+            "logo": "https://example.com/logo4.png"
+        },
+        "categoryId": 4
+    },
+    {
+        "id": 50723806,
+        "title": "Thị trường chứng khoán tăng nhẹ sau tin lãi suất",
+        "date": 1731590780,
+        "url": "/thi-truong-chung-khoan-tang-c50723806.epi",
+        "thumb": "https://soledad.pencidesign.net/soledad-magazine/wp-content/uploads/sites/7/2017/07/featured1-1170x781.jpg",
+        "publisher": {
+            "name": "Báo Kinh Tế",
+            "logo": "https://example.com/logo1.png"
+        },
+        "categoryId": 1
+    },
+    {
+        "id": 50723807,
+        "title": "Châu Âu đối mặt với khủng hoảng năng lượng",
+        "date": 1731590880,
+        "url": "/chau-au-khung-hoang-nang-luong-c50723807.epi",
+        "thumb": "https://soledad.pencidesign.net/soledad-magazine/wp-content/uploads/sites/7/2017/07/featured1-1170x781.jpg",
+        "publisher": {
+            "name": "Báo Kinh Tế",
+            "logo": "https://example.com/logo1.png"
+        },
+        "categoryId": 4
+    },
+    {
+        "id": 50723808,
+        "title": "Công nghệ 5G lan rộng trên toàn cầu",
+        "date": 1731590980,
+        "url": "/cong-nghe-5g-toan-cau-c50723808.epi",
+        "thumb": "https://soledad.pencidesign.net/soledad-magazine/wp-content/uploads/sites/7/2017/07/featured1-1170x781.jpg",
+        "publisher": {
+            "name": "Báo Công Nghệ",
+            "logo": "https://example.com/logo2.png"
+        },
+        "categoryId": 2
+    },
+    {
+        "id": 50723809,
+        "title": "Nghệ thuật đương đại và sự đổi mới",
+        "date": 1731591080,
+        "url": "/nghe-thuat-duong-dai-c50723809.epi",
+        "thumb": "https://soledad.pencidesign.net/soledad-magazine/wp-content/uploads/sites/7/2017/07/featured1-1170x781.jpg",
+        "publisher": {
+            "name": "Báo Văn Hóa",
+            "logo": "https://example.com/logo5.png"
+        },
+        "categoryId": 5
+    },
+    {
+        "id": 50723810,
+        "title": "Hệ thống giao thông thông minh tại Việt Nam",
+        "date": 1731591180,
+        "url": "/giao-thong-thong-minh-vn-c50723810.epi",
+        "thumb": "https://soledad.pencidesign.net/soledad-magazine/wp-content/uploads/sites/7/2017/07/featured1-1170x781.jpg",
+        "publisher": {
+            "name": "Báo Giao Thông",
+            "logo": "https://example.com/logo6.png"
+        },
+        "categoryId": 3
+    },
+    {
+        "id": 50723811,
+        "title": "Ứng dụng của Blockchain trong các lĩnh vực khác nhau",
+        "date": 1731591280,
+        "url": "/blockchain-ung-dung-c50723811.epi",
+        "thumb": "https://soledad.pencidesign.net/soledad-magazine/wp-content/uploads/sites/7/2017/07/featured1-1170x781.jpg",
+        "publisher": {
+            "name": "Báo Công Nghệ",
+            "logo": "https://example.com/logo2.png"
+        },
+        "categoryId": 2
+    },
+    {
+        "id": 50723812,
+        "title": "Giá dầu tiếp tục tăng do căng thẳng khu vực",
+        "date": 1731591380,
+        "url": "/gia-dau-tang-c50723812.epi",
+        "thumb": "https://soledad.pencidesign.net/soledad-magazine/wp-content/uploads/sites/7/2017/07/featured1-1170x781.jpg",
+        "publisher": {
+            "name": "Báo Kinh Tế",
+            "logo": "https://example.com/logo1.png"
+        },
+        "categoryId": 1
+    },
+    {
+        "id": 50723813,
+        "title": "Xu hướng thiết kế nội thất hiện đại năm 2025",
+        "date": 1731591480,
+        "url": "/thiet-ke-noi-that-2025-c50723813.epi",
+        "thumb": "https://soledad.pencidesign.net/soledad-magazine/wp-content/uploads/sites/7/2017/07/featured1-1170x781.jpg",
+        "publisher": {
+            "name": "Báo Nhà Đẹp",
+            "logo": "https://example.com/logo7.png"
+        },
+        "categoryId": 5
+    },
+    {
+        "id": 50723814,
+        "title": "Dự báo tình hình thời tiết cho mùa đông năm nay",
+        "date": 1731591580,
+        "url": "/du-bao-thoi-tiet-dong-c50723814.epi",
+        "thumb": "https://soledad.pencidesign.net/soledad-magazine/wp-content/uploads/sites/7/2017/07/featured1-1170x781.jpg",
+        "publisher": {
+            "name": "Báo Thời Tiết",
+            "logo": "https://example.com/logo8.png"
+        },
+        "categoryId": 4
+    },
+    {
+        "id": 50723815,
+        "title": "Phát triển hệ sinh thái startup tại Đông Nam Á",
+        "date": 1731591680,
+        "url": "/he-sinh-thai-startup-c50723815.epi",
+        "thumb": "https://soledad.pencidesign.net/soledad-magazine/wp-content/uploads/sites/7/2017/07/featured1-1170x781.jpg",
+        "publisher": {
+            "name": "Báo Kinh Doanh",
+            "logo": "https://example.com/logo9.png"
+        },
+        "categoryId": 1
+    },
+    {
+        "id": 50723816,
+        "title": "Sự trở lại của các hội chợ truyền thống sau đại dịch",
+        "date": 1731591780,
+        "url": "/hoi-cho-truyen-thong-c50723816.epi",
+        "thumb": "https://soledad.pencidesign.net/soledad-magazine/wp-content/uploads/sites/7/2017/07/featured1-1170x781.jpg",
+        "publisher": {
+            "name": "Báo Văn Hóa",
+            "logo": "https://example.com/logo5.png"
+        },
+        "categoryId": 5
+    },
+    {
+        "id": 50723817,
+        "title": "Cuộc cách mạng công nghệ xanh trong nông nghiệp",
+        "date": 1731591880,
+        "url": "/cong-nghe-xanh-nong-nghiep-c50723817.epi",
+        "thumb": "https://soledad.pencidesign.net/soledad-magazine/wp-content/uploads/sites/7/2017/07/featured1-1170x781.jpg",
+        "publisher": {
+            "name": "Báo Nông Nghiệp",
+            "logo": "https://example.com/logo10.png"
+        },
+        "categoryId": 3
+    },
+    {
+        "id": 50723818,
+        "title": "Kinh nghiệm du lịch tiết kiệm tại Châu Âu",
+        "date": 1731591980,
+        "url": "/du-lich-chau-au-c50723818.epi",
+        "thumb": "https://soledad.pencidesign.net/soledad-magazine/wp-content/uploads/sites/7/2017/07/featured1-1170x781.jpg",
+        "publisher": {
+            "name": "Báo Du Lịch",
+            "logo": "https://example.com/logo11.png"
+        },
+        "categoryId": 5
+    },
+    {
+        "id": 50723819,
+        "title": "Các xu hướng phát triển bền vững trong sản xuất công nghiệp",
+        "date": 1731592080,
+        "url": "/phat-trien-ben-vung-c50723819.epi",
+        "thumb": "https://soledad.pencidesign.net/soledad-magazine/wp-content/uploads/sites/7/2017/07/featured1-1170x781.jpg",
+        "publisher": {
+            "name": "Báo Công Nghiệp",
+            "logo": "https://example.com/logo12.png"
+        },
+        "categoryId": 3
+    },
+    {
+        "id": 50723820,
+        "title": "Sự bùng nổ của xe điện trên toàn cầu",
+        "date": 1731592180,
+        "url": "/xe-dien-toan-cau-c50723820.epi",
+        "thumb": "https://soledad.pencidesign.net/soledad-magazine/wp-content/uploads/sites/7/2017/07/featured1-1170x781.jpg",
+        "publisher": {
+            "name": "Báo Công Nghệ",
+            "logo": "https://example.com/logo2.png"
+        },
+        "categoryId": 2
+    }
+]
