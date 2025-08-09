@@ -89,8 +89,9 @@ const PackagePlan = () => {
                         created_at: new Date().toISOString()
                     }));
 
-                    // Redirect đến VNPay để thanh toán
                     setTimeout(() => {
+                        // Tắt loading trước khi chuyển trang
+                        setShowPaymentLoading(false);
                         // Hiển thị thông báo về thời gian hết hạn
                         AntNotification.showNotification(
                             'Đang chuyển đến trang thanh toán',
