@@ -13,12 +13,21 @@ class ChapterRepository implements ChapterRepositoryInterface
     {
         $query = Chapter::with(['bookFormatMapping.book', 'user']);
 
+        // Lọc theo format_id
         if (isset($filters['format_id'])) {
             $query->whereHas('bookFormatMapping', function ($q) use ($filters) {
                 $q->where('format_id', $filters['format_id']);
             });
         }
 
+        // Lọc theo book_id
+        if (isset($filters['book_id'])) {
+            $query->whereHas('bookFormatMapping', function ($q) use ($filters) {
+                $q->where('book_id', $filters['book_id']);
+            });
+        }
+
+        // Lọc theo từ khóa
         if (isset($filters['keyword'])) {
             $query->where('title', 'like', '%' . $filters['keyword'] . '%');
         }
