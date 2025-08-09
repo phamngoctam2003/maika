@@ -317,7 +317,7 @@ const Books = () => {
                                             Edit
                                         </Link>
                                         <Link
-                                            to={`/admin/books/chapters/${item.id}`}
+                                            to={`/admin/books/chapters/${item.id}?type=${item.format && item.format.length === 2 ? 'both' : (item.format && item.format[0])}`}
                                             type="button"
                                             data-modal-target="editUserModal"
                                             data-modal-show="editUserModal"

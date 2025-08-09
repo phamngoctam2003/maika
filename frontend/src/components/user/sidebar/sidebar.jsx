@@ -134,7 +134,7 @@ const Logout = () => (
 
 const Sidebar = () => {
     const URL_IMG = import.meta.env.VITE_URL_IMG;
-    const { setIsAuthenticated, isAuthenticated, currentUser, setCurrentUser, setToken, setPermissions, setRoles, isLoginModalOpen, setIsLoginModalOpen } = useAuth();
+    const { setIsAuthenticated, isAuthenticated, currentUser, setCurrentUser, setToken, setPermissions, setRoles, isLoginModalOpen, setIsLoginModalOpen, setIsSupportOpenModal } = useAuth();
 
     const [isOpen, setIsOpen] = useState(false);
     const [isDanhMucOpen, setIsDanhMucOpen] = useState(true);
@@ -209,7 +209,7 @@ const Sidebar = () => {
 
     const profileItems = [
         ...(isAuthenticated ? [{ icon: UsersIcon, text: 'Tài khoản', link: 'profile', hasNew: false }] : []),
-        { icon: Support, text: 'Hỗ trợ', hasNew: false },
+        { icon: Support, text: 'Hỗ trợ', hasNew: false, onClick: () => setIsSupportOpenModal(true) },
         ...(isAuthenticated ? [{ icon: Logout, text: 'Đăng xuất', hasNew: false }] : []),
     ];
     return (
@@ -271,7 +271,6 @@ const Sidebar = () => {
                 {/* Main Menu Items */}
                 <div className="px-4 py-2">
                     {menuItems.map((item, index) => (
-                        console.log(item.link),
                         <Link
                         onClick={toggleSidebar}
                         to={item.link} key={index} className="flex items-center p-3 hover:bg-gray-800 rounded-lg cursor-pointer transition-colors group">
@@ -322,17 +321,37 @@ const Sidebar = () => {
                     ))}
                 </div>
                 <div className="px-4 py-2 border-t border-gray-700">
-                    {profileItems.map((item, index) => (
-                        <Link
-                        to={item.link} key={index}
-                            onClick={item.text === 'Đăng xuất' ? handleLogout : null}
-                            className="flex items-center p-3 hover:bg-gray-800 rounded-lg cursor-pointer transition-colors group">
-                            <div className="mr-3 text-gray-400 group-hover:text-white">
-                                <item.icon />
-                            </div>
-                            <span>{item.text}</span>
-                        </Link>
-                    ))}
+                    {profileItems.map((item, index) => {
+                        // Nếu là Đăng xuất hoặc có onClick custom thì dùng button, còn lại dùng Link
+                        if (item.text === 'Đăng xuất' || item.onClick) {
+                            return (
+                                <button
+                                    key={index}
+                                    type="button"
+                                    onClick={item.text === 'Đăng xuất' ? handleLogout : item.onClick}
+                                    className="flex items-center w-full p-3 hover:bg-gray-800 rounded-lg cursor-pointer transition-colors group bg-transparent border-none outline-none"
+                                >
+                                    <div className="mr-3 text-gray-400 group-hover:text-white">
+                                        <item.icon />
+                                    </div>
+                                    <span>{item.text}</span>
+                                </button>
+                            );
+                        }
+                        return (
+                            <Link
+                                to={item.link}
+                                key={index}
+                                onClick={toggleSidebar}
+                                className="flex items-center p-3 hover:bg-gray-800 rounded-lg cursor-pointer transition-colors group"
+                            >
+                                <div className="mr-3 text-gray-400 group-hover:text-white">
+                                    <item.icon />
+                                </div>
+                                <span>{item.text}</span>
+                            </Link>
+                        );
+                    })}
                 </div>
             </div>
             <LoginModal

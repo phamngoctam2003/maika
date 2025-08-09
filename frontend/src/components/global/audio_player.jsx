@@ -2,12 +2,12 @@ import { useState, useRef, useEffect } from 'react';
 import { useBook } from '@/contexts/book_context';
 import DetailService from '@/services/users/api-detail';
 import { AntNotification } from "@components/global/notification";
+import AddToBookCaseButton from "@components/common/AddToBookCaseButton";
 
 export default function MediaPlayer() {
     const URL_PATH = import.meta.env.VITE_URL_IMG;
     const [currentTime, setCurrentTime] = useState(0);
     const [duration, setDuration] = useState(294); // 4:54 in seconds
-    const [isLiked, setIsLiked] = useState(false);
     const [volume, setVolume] = useState(80);
     const [chapters, setChapters] = useState([]);
     const [currentChapter, setCurrentChapter] = useState(null);
@@ -20,9 +20,8 @@ export default function MediaPlayer() {
     const shouldAutoPlay = useRef(false);
 
     const { openAudioModal, setOpenAudioModal, isAudioPlaying, setIsAudioPlaying, currentBook } = useBook();
-
     // Load chapters khi có book ID
-    useEffect(() => {               
+    useEffect(() => {
         const loadChapters = async () => {
             if (currentBook?.id && openAudioModal) {
                 setIsLoading(true);
@@ -96,7 +95,7 @@ export default function MediaPlayer() {
                             );
                         }
                     } else {
-                        
+
                         AntNotification.showNotification(
                             "Không có nội dung",
                             "Sách này chưa có nội dung audio",
@@ -138,17 +137,17 @@ export default function MediaPlayer() {
                 // Nếu audio đã sẵn sàng thì play luôn
                 if (audioRef.current.readyState >= 3) {
                     audioRef.current.play()
-                    .then(() => {
-                        shouldAutoPlay.current = false;
-                    })
-                    .catch(error => {
-                        AntNotification.showNotification(
-                            "Lỗi phát audio",
-                            "Không thể phát audio. Kiểm tra file audio có tồn tại không.",
-                            "error"
-                        );
-                        shouldAutoPlay.current = false;
-                    });
+                        .then(() => {
+                            shouldAutoPlay.current = false;
+                        })
+                        .catch(error => {
+                            AntNotification.showNotification(
+                                "Lỗi phát audio",
+                                "Không thể phát audio. Kiểm tra file audio có tồn tại không.",
+                                "error"
+                            );
+                            shouldAutoPlay.current = false;
+                        });
                 }
             } else {
                 audioRef.current.pause();
@@ -212,7 +211,7 @@ export default function MediaPlayer() {
         setIsAudioPlaying(!isAudioPlaying);
         // Audio sẽ được control bởi useEffect ở trên
     };
-    
+
     // Handle chapter change
     const changeChapter = async (chapterId) => {
         const selectedChapter = chapters.find(ch => ch.id === chapterId);
@@ -221,6 +220,10 @@ export default function MediaPlayer() {
         setIsLoading(true);
         setLastProgressSaveTime(0); // Reset progress save time khi chuyển chương
         try {
+            // Pause audio trước khi load chương mới
+            if (audioRef.current) {
+                audioRef.current.pause();
+            }
             setCurrentChapter(selectedChapter);
             setCurrentTime(0);
 
@@ -281,7 +284,7 @@ export default function MediaPlayer() {
 
         const newCurrentTime = audioRef.current.currentTime;
         const audioDuration = audioRef.current.duration;
-        
+
         // Kiểm tra giá trị hợp lệ
         if (isNaN(newCurrentTime) || newCurrentTime < 0) {
             console.warn('Invalid currentTime:', newCurrentTime);
@@ -302,26 +305,29 @@ export default function MediaPlayer() {
         if (currentChapter && newCurrentTime > 0 && audioDuration > 0) {
             const currentSeconds = Math.floor(newCurrentTime);
             const shouldSave = currentSeconds % 10 === 0 && currentSeconds !== lastProgressSaveTime;
-            
+
             if (shouldSave) {
                 setLastProgressSaveTime(currentSeconds);
                 const progress = (newCurrentTime / audioDuration) * 100;
-                
+
                 DetailService.updateListeningProgress(currentBook.id, currentChapter.id, {
                     current_time: newCurrentTime,
                     duration: audioDuration,
                     progress_percentage: progress
                 })
-                .catch(error => console.error('Error saving progress:', error));
+                    .catch(error => console.error('Error saving progress:', error));
             }
         }
     };
 
     // Handle next/previous chapter
-    const nextChapter = () => {
+    const nextChapter = async () => {
         const currentIndex = chapters.findIndex(ch => ch.id === currentChapter?.id);
         if (currentIndex < chapters.length - 1) {
-            changeChapter(chapters[currentIndex + 1].id);
+            // Ngăn phát lại chương cũ khi đang tải chương mới
+            setIsAudioPlaying(false);
+            await changeChapter(chapters[currentIndex + 1].id);
+            setIsAudioPlaying(true);
         }
     };
 
@@ -336,7 +342,7 @@ export default function MediaPlayer() {
     const handleProgressClick = (e) => {
         e.preventDefault();
         e.stopPropagation();
-        
+
         if (!progressRef.current || !audioRef.current) {
             console.warn('Progress ref or audio ref not available');
             return;
@@ -354,21 +360,21 @@ export default function MediaPlayer() {
             console.warn('Invalid audio duration:', audioDuration);
             return;
         }
-        
+
         setIsSeeking(true);
-        
+
         const rect = progressRef.current.getBoundingClientRect();
         const clickX = e.clientX - rect.left;
         const width = rect.width;
-        
+
         // Đảm bảo clickX trong phạm vi hợp lệ
         const clampedClickX = Math.max(0, Math.min(clickX, width));
         const percentage = clampedClickX / width;
         const newTime = percentage * audioDuration;
-        
+
         // Đảm bảo newTime trong phạm vi hợp lệ
         const clampedNewTime = Math.max(0, Math.min(newTime, audioDuration - 0.1));
-        
+
         try {
             // Set thời gian mới
             audioRef.current.currentTime = clampedNewTime;
@@ -376,16 +382,16 @@ export default function MediaPlayer() {
             setIsSeeking(false);
             return;
         }
-        
+
         // Kết thúc seeking sau khi audio đã seek xong
         const handleSeekEnd = () => {
             setIsSeeking(false);
             setCurrentTime(audioRef.current.currentTime);
             audioRef.current.removeEventListener('seeked', handleSeekEnd);
         };
-        
+
         audioRef.current.addEventListener('seeked', handleSeekEnd);
-        
+
         // Fallback timeout
         setTimeout(() => {
             if (isSeeking) {
@@ -412,27 +418,27 @@ export default function MediaPlayer() {
             console.warn('Invalid audio duration for seeking:', audioDuration);
             return;
         }
-        
+
         setIsSeeking(true);
-        
+
         const clampedSeconds = Math.max(0, Math.min(seconds, audioDuration - 0.1));
-        
+
         try {
             audioRef.current.currentTime = clampedSeconds;
         } catch (error) {
             setIsSeeking(false);
             return;
         }
-        
+
         // Wait for seeked event
         const handleSeekEnd = () => {
             setIsSeeking(false);
             setCurrentTime(audioRef.current.currentTime);
             audioRef.current.removeEventListener('seeked', handleSeekEnd);
         };
-        
+
         audioRef.current.addEventListener('seeked', handleSeekEnd);
-        
+
         // Fallback
         setTimeout(() => {
             if (isSeeking) {
@@ -444,7 +450,7 @@ export default function MediaPlayer() {
     // Thêm functions tua nhanh 10 giây với validation
     const skip10Forward = () => {
         if (!audioRef.current) return;
-        
+
         const currentPos = audioRef.current.currentTime || 0;
         const audioDuration = audioRef.current.duration || duration;
         const newTime = Math.min(currentPos + 10, audioDuration - 0.1);
@@ -453,7 +459,7 @@ export default function MediaPlayer() {
 
     const skip10Backward = () => {
         if (!audioRef.current) return;
-        
+
         const currentPos = audioRef.current.currentTime || 0;
         const newTime = Math.max(currentPos - 10, 0);
         seekTo(newTime);
@@ -463,7 +469,7 @@ export default function MediaPlayer() {
     const progressPercentage = duration > 0 ? (currentTime / duration) * 100 : 0;
 
     if (!openAudioModal) return null;
-    
+
     return (
         <div className="bg-black text-white w-full flex items-center justify-center fixed bottom-0 left-0 z-50">
             {/* Hidden Audio Element */}
@@ -489,17 +495,17 @@ export default function MediaPlayer() {
                     // Nếu flag auto play đang bật thì play
                     if (shouldAutoPlay.current && isAudioPlaying) {
                         audioRef.current.play()
-                        .then(() => {
-                            shouldAutoPlay.current = false;
-                        })
-                        .catch(error => {
-                            AntNotification.showNotification(
-                                "Lỗi phát audio",
-                                "Không thể phát audio. Kiểm tra file audio có tồn tại không.",
-                                "error"
-                            );
-                            shouldAutoPlay.current = false;
-                        });
+                            .then(() => {
+                                shouldAutoPlay.current = false;
+                            })
+                            .catch(error => {
+                                AntNotification.showNotification(
+                                    "Lỗi phát audio",
+                                    "Không thể phát audio. Kiểm tra file audio có tồn tại không.",
+                                    "error"
+                                );
+                                shouldAutoPlay.current = false;
+                            });
                     }
                 }}
                 onError={(e) => {
@@ -541,13 +547,7 @@ export default function MediaPlayer() {
 
                         {/* Action Buttons */}
                         <div className="flex items-center gap-1">
-                            <button
-                                onClick={() => setIsLiked(!isLiked)}
-                                className={`p-2 rounded-full transition-colors ${isLiked ? 'text-green-500' : 'text-gray-400 hover:text-white'
-                                    }`}
-                            >
-                                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 1024 1024"><path fill="currentColor" d="M287.984 114.16c31.376 0 88.094 15.008 180.094 105.616l45.616 44.912l44.928-45.632c63.872-64.896 131.84-105.2 177.376-105.2c61.408 0 109.809 21.008 157.009 68.096c44.464 44.368 68.992 103.36 68.992 166.112c.032 62.784-24.448 121.824-69.408 166.672c-3.664 3.712-196.992 212.304-358.96 387.104c-7.632 7.248-16.352 8.32-20.991 8.32c-4.576 0-13.2-1.024-20.8-8.096c-39.472-43.905-325.552-362-358.815-395.232C88.497 462.416 64 403.376 64 340.608c.015-62.752 24.511-121.728 69.04-166.144c43.295-43.264 93.984-60.304 154.944-60.304zm-.002-64c-76.528 0-144 22.895-200.176 79.008c-117.072 116.768-117.072 306.128 0 422.96c33.424 33.44 357.855 394.337 357.855 394.337c18.48 18.496 42.753 27.68 66.96 27.68c24.225 0 48.4-9.184 66.912-27.68c0 0 354.88-383.024 358.656-386.85c117.04-116.88 117.04-306.24 0-423.007c-58.112-58-123.024-86.784-202.208-86.784c-75.648 0-160 60.32-223.008 124.32C447.981 110.159 366.237 50.16 287.981 50.16z" /></svg>
-                            </button>
+                            <AddToBookCaseButton bookId={currentBook?.id} isSavedInitially={currentBook?.is_saved_in_bookcase} />
                         </div>
                     </div>
 
@@ -556,7 +556,7 @@ export default function MediaPlayer() {
 
                         {/* Control Buttons */}
                         <div className="flex items-center gap-4">
-                            <button 
+                            <button
                                 onClick={skip10Backward}
                                 className="text-gray-400 hover:text-white transition-colors"
                             >
@@ -600,7 +600,7 @@ export default function MediaPlayer() {
                             </button>
 
                             {/* Forward 10s */}
-                            <button 
+                            <button
                                 onClick={skip10Forward}
                                 className="text-gray-400 hover:text-white transition-colors"
                             >
@@ -640,7 +640,7 @@ export default function MediaPlayer() {
 
                         {/* Volume Control */}
                         <div className=" items-center gap-2 md:flex hidden">
-                            <button 
+                            <button
                                 onClick={() => {
                                     if (audioRef.current) {
                                         audioRef.current.muted = !audioRef.current.muted;

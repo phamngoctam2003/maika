@@ -4,6 +4,8 @@ namespace App\Models;
 
 use App\Traits\HasSlug;
 use Illuminate\Database\Eloquent\Model;
+use \App\Models\BookFormatMapping;
+use \App\Models\Chapter;
 
 class Books extends Model
 {
@@ -26,13 +28,24 @@ class Books extends Model
     {
         return $this->belongsToMany(BookFormat::class, 'book_format_mappings', 'book_id', 'format_id');
     }
+    public function book_format_mappings()
+    {
+        return $this->hasMany(BookFormatMapping::class, 'book_id');
+    }
     public function authors()
     {
         return $this->belongsToMany(Author::class, 'author_book', 'book_id', 'author_id');
     }
     public function chapters()
     {
-        return $this->hasMany(Chapter::class, 'book_id', 'id');
+        return $this->hasManyThrough(
+            Chapter::class,              // Model cuối cùng muốn lấy: chương
+            BookFormatMapping::class,    // Model trung gian: bản định dạng sách
+            'book_id',                   // Khóa ngoại từ BookFormatMapping → Book
+            'book_format_mapping_id',   // Khóa ngoại từ Chapter → BookFormatMapping
+            'id',                        // Khóa chính của Book (model hiện tại)
+            'id'                    // Khóa chính của BookFormatMapping
+        );
     }
     /**
      * The users who have this book in their bookcase.

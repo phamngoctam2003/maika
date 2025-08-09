@@ -2,7 +2,6 @@ import { useState, useRef, useEffect } from 'react';
 import { useNavigate, Link, Form } from 'react-router-dom';
 import { message, notification as Notification } from 'antd';
 import { AuthService } from '@/services/api-auth';
-import { AntNotification } from "@components/global/notification";
 import { useAuth } from '@/contexts/authcontext';
 import { Loading } from '@components/loading/loading';
 import { LoginGoogle } from '@components/LoginGoogle/LoginGoogle';
@@ -29,7 +28,7 @@ export const UserHeader = () => {
     const iconcloseRef = useRef(null);
     const btnCuasoRef = useRef(null);
 
-    const { isAuthenticated, currentUser, setCurrentUser, roles, setRoles, permissions, token, setToken, setPermissions, setIsAuthenticated, setUserPackages, setActivePackage, isPopupActiveLogin, setIsPopupActiveLogin, activePackage } = useAuth();
+    const { isAuthenticated, currentUser, setCurrentUser, roles, setRoles, permissions, token, setToken, setPermissions, setIsAuthenticated, setUserPackages, setActivePackage, isPopupActiveLogin, setIsPopupActiveLogin, activePackage, setIsSupportOpenModal } = useAuth();
 
     const onFinish = async (e) => {
         e.preventDefault();
@@ -352,7 +351,7 @@ export const UserHeader = () => {
                                     activePackage ? (
                                         <Link
                                             to={`/package-plan`}
-                                            class="package-btn mt-2">
+                                            className="package-btn mt-2">
                                             <strong className='package-strong'>
                                                 {activePackage.ends_at && (
                                                     <span className="">
@@ -369,10 +368,9 @@ export const UserHeader = () => {
                                             <div id="container-stars">
                                                 <div id="package-stars"></div>
                                             </div>
-
                                             <div id="package-glow">
-                                                <div class="package-circle"></div>
-                                                <div class="package-circle"></div>
+                                                <div className="package-circle"></div>
+                                                <div className="package-circle"></div>
                                             </div>
                                         </Link>
                                     ) : (
@@ -391,7 +389,7 @@ export const UserHeader = () => {
                                     <div className="icon-flex">
                                         <Link to="/profile/transaction-histories"><svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" color="currentColor"><path d="M13.5 15H6c-1.886 0-2.828 0-3.414-.586S2 12.886 2 11V7c0-1.886 0-2.828.586-3.414S4.114 3 6 3h12c1.886 0 2.828 0 3.414.586S22 5.114 22 7v5c0 .932 0 1.398-.152 1.765a2 2 0 0 1-1.083 1.083C20.398 15 19.932 15 19 15" /><path d="M14 9a2 2 0 1 1-4 0a2 2 0 0 1 4 0m-1 8a3 3 0 0 1 3-3v-2a3 3 0 0 1 3-3v5.5c0 2.335 0 3.502-.472 4.386a4 4 0 0 1-1.642 1.642C16.002 21 14.835 21 12.5 21H12c-1.864 0-2.796 0-3.53-.305a4 4 0 0 1-2.166-2.164C6 17.796 6 16.864 6 15" /></g></svg>
                                             <p>Lịch sử thanh toán</p></Link></div>
-                                    <div className="icon-flex">
+                                    <div onClick={() => setIsSupportOpenModal(true)} className="icon-flex">
                                         <Link to="#"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="25" height="25" fill="currentColor"><path d="M21 8C22.1046 8 23 8.89543 23 10V14C23 15.1046 22.1046 16 21 16H19.9381C19.446 19.9463 16.0796 23 12 23V21C15.3137 21 18 18.3137 18 15V9C18 5.68629 15.3137 3 12 3C8.68629 3 6 5.68629 6 9V16H3C1.89543 16 1 15.1046 1 14V10C1 8.89543 1.89543 8 3 8H4.06189C4.55399 4.05369 7.92038 1 12 1C16.0796 1 19.446 4.05369 19.9381 8H21ZM7.75944 15.7849L8.81958 14.0887C9.74161 14.6662 10.8318 15 12 15C13.1682 15 14.2584 14.6662 15.1804 14.0887L16.2406 15.7849C15.0112 16.5549 13.5576 17 12 17C10.4424 17 8.98882 16.5549 7.75944 15.7849Z"></path></svg>
                                             <p>Hỗ trợ khách hàng</p></Link></div>
                                     <div className="icon-flex">
@@ -441,22 +439,28 @@ export const UserHeader = () => {
             {isPopupActiveLogin && <div onClick={handleCloseClick} className="overlay"></div>}
 
             <div ref={vobocloginRef} className={`voboclogin ${isPopupActiveLogin ? 'active-popup' : ''}`}>
-                <span ref={iconcloseRef} className="icon-close" onClick={handleCloseClick}></span>
+                <span ref={iconcloseRef} className="icon-close" onClick={handleCloseClick}>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 24 24"><path fill="currentColor" d="M12 10.586l4.95-4.95 1.414 1.414L13.414 12l4.95 4.95-1.414 1.414L12 13.414l-4.95 4.95-1.414-1.414L10.586 12 5.636 7.05l1.414-1.414z" /></svg>
+                </span>
                 <div className="from-box login">
                     <h2>Đăng Nhập</h2>
                     <div className="form-logo1">
                         <div className="code-qr">
-                            <img src="img/qr.png" alt="" />
+                            <img src="./images/png/maika-1024.png" alt="" />
                         </div>
                         {isPopupLogin && (
                             <form className="form-var" method="post" onSubmit={onFinish}>
                                 <div className="input-box">
-                                    <span className="icon"></span>
+                                    <span className="icon">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 42 42"><path fill="currentColor" d="M40.5 31.5v-18S22.3 26.2 20.53 26.859C18.79 26.23.5 13.5.5 13.5v18c0 2.5.53 3 3 3h34c2.529 0 3-.439 3-3zm-.029-21.529c0-1.821-.531-2.471-2.971-2.471h-34c-2.51 0-3 .78-3 2.6l.03.28s18.069 12.44 20 13.12c2.04-.79 19.97-13.4 19.97-13.4l-.029-.129z" /></svg>
+                                    </span>
                                     <input type="email" name="email" />
                                     <label>Email</label>
                                 </div>
                                 <div className="input-box">
-                                    <span className="icon"></span>
+                                    <span className="icon">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 15 15"><path fill="currentColor" d="M11 11h-1v-1h1v1Zm-3 0h1v-1H8v1Zm5 0h-1v-1h1v1Z" /><path fill="currentColor" fillRule="evenodd" d="M3 6V3.5a3.5 3.5 0 1 1 7 0V6h1.5A1.5 1.5 0 0 1 13 7.5v.55a2.5 2.5 0 0 1 0 4.9v.55a1.5 1.5 0 0 1-1.5 1.5h-10A1.5 1.5 0 0 1 0 13.5v-6A1.5 1.5 0 0 1 1.5 6H3Zm1-2.5a2.5 2.5 0 0 1 5 0V6H4V3.5ZM8.5 9a1.5 1.5 0 1 0 0 3h4a1.5 1.5 0 0 0 0-3h-4Z" clipRule="evenodd" /></svg>
+                                    </span>
                                     <input type="password" name="password" />
                                     <label>Password</label>
                                 </div>
@@ -484,32 +488,42 @@ export const UserHeader = () => {
                 <div className="from-box register">
                     <h2 className="h2">Đăng Ký</h2>
                     <div className="form-logo1">
-                        <div className="code-qr"><img src="img/qr.png" alt="" /></div>
+                        <div className="code-qr">
+                            <img src="./images/png/maika-1024.png" alt="" />
+                        </div>
                         {!isPopupLogin && (
                             <form onSubmit={onFinish}>
                                 <div className="input-box">
-                                    <span className="icon"></span>
+                                    <span className="icon">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="25" height="25" fill="currentColor"><path d="M4 22C4 17.5817 7.58172 14 12 14C16.4183 14 20 17.5817 20 22H4ZM12 13C8.685 13 6 10.315 6 7C6 3.685 8.685 1 12 1C15.315 1 18 3.685 18 7C18 10.315 15.315 13 12 13Z"></path></svg>
+                                    </span>
                                     <input type="text" name="fullName" />
                                     <label>Họ Tên</label>
                                 </div>
                                 <div className="input-box">
-                                    <span className="icon"></span>
+                                    <span className="icon">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 42 42"><path fill="currentColor" d="M40.5 31.5v-18S22.3 26.2 20.53 26.859C18.79 26.23.5 13.5.5 13.5v18c0 2.5.53 3 3 3h34c2.529 0 3-.439 3-3zm-.029-21.529c0-1.821-.531-2.471-2.971-2.471h-34c-2.51 0-3 .78-3 2.6l.03.28s18.069 12.44 20 13.12c2.04-.79 19.97-13.4 19.97-13.4l-.029-.129z" /></svg>
+                                    </span>
                                     <input type="email" name="email" />
                                     <label>Email</label>
                                 </div>
                                 <div className="input-box">
-                                    <span className="icon"></span>
+                                    <span className="icon">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 15 15"><path fill="currentColor" d="M11 11h-1v-1h1v1Zm-3 0h1v-1H8v1Zm5 0h-1v-1h1v1Z" /><path fill="currentColor" fillRule="evenodd" d="M3 6V3.5a3.5 3.5 0 1 1 7 0V6h1.5A1.5 1.5 0 0 1 13 7.5v.55a2.5 2.5 0 0 1 0 4.9v.55a1.5 1.5 0 0 1-1.5 1.5h-10A1.5 1.5 0 0 1 0 13.5v-6A1.5 1.5 0 0 1 1.5 6H3Zm1-2.5a2.5 2.5 0 0 1 5 0V6H4V3.5ZM8.5 9a1.5 1.5 0 1 0 0 3h4a1.5 1.5 0 0 0 0-3h-4Z" clipRule="evenodd" /></svg>
+                                    </span>
                                     <input type="password" name="password" />
                                     <label>Password</label>
                                 </div>
                                 <div className="input-box">
-                                    <span className="icon"></span>
+                                    <span className="icon">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 15 15"><path fill="currentColor" d="M11 11h-1v-1h1v1Zm-3 0h1v-1H8v1Zm5 0h-1v-1h1v1Z" /><path fill="currentColor" fillRule="evenodd" d="M3 6V3.5a3.5 3.5 0 1 1 7 0V6h1.5A1.5 1.5 0 0 1 13 7.5v.55a2.5 2.5 0 0 1 0 4.9v.55a1.5 1.5 0 0 1-1.5 1.5h-10A1.5 1.5 0 0 1 0 13.5v-6A1.5 1.5 0 0 1 1.5 6H3Zm1-2.5a2.5 2.5 0 0 1 5 0V6H4V3.5ZM8.5 9a1.5 1.5 0 1 0 0 3h4a1.5 1.5 0 0 0 0-3h-4Z" clipRule="evenodd" /></svg>
+                                    </span>
                                     <input type="password" name="password_confirmation" />
                                     <label>Nhập lại password</label>
                                 </div>
-                                <div className="remember-forgot">
+                                {/* <div className="remember-forgot">
                                     <label><input type="checkbox" />Tôi đồng ý với tất cả điều khoản</label>
-                                </div>
+                                </div> */}
                                 <button type="submit" className="btn">Đăng Ký</button>
                                 <div className="login-register mt-2">
                                     <p>Bạn đã có tài khoản? <Link to="#" ref={linkdangnhapRef} className="linkdangnhap" onClick={handleLoginClick}>Đăng Nhập</Link></p>

@@ -31,17 +31,16 @@ const AddToBookCaseButton = ({ bookId, isSavedInitially = false }) => {
             } else {
                 // Nếu sách đã được lưu, gọi API để xóa
                 const response = await BookCaseService.removeFromBookCase(bookId);
-                message.success(response.message || 'Đã bỏ lưu sách!');
                 setIsSaved(false);
             }
         } catch (error) {
-            const errorMessage = error.response?.message || 'Có lỗi xảy ra. Vui lòng thử lại.';
-            message.error(errorMessage);
+            // const errorMessage = error.response?.message || 'Có lỗi xảy ra. Vui lòng thử lại.';
+            // message.error(errorMessage);
+            setIsSaved(false);
         } finally {
             setIsLoading(false);
         }
     };
-
     return (
         <button
             onClick={handleToggleSave}

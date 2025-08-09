@@ -7,6 +7,11 @@ import { DynamicCategoryAudio } from '@/components/user/sach_noi/DynamicCategory
 const SachNoi = () => {
     const [categoryOptions, setCategoryOptions] = useState([]);
     const [books, setBooks] = useState([]);
+
+    useEffect(() => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, []);
+
     useEffect(() => {
         const fetchCategories = async () => {
             try {

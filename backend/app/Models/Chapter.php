@@ -17,15 +17,31 @@ class Chapter extends Model
         'audio_path',
         'expected_chapters',
         'chapter_order',
-        'status'
+        'status',
+        'book_format_mapping_id',
+
     ];
 
-    public function book()
-    {
-        return $this->belongsTo(Books::class);
-    }
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function bookFormatMapping()
+    {
+        return $this->belongsTo(BookFormatMapping::class, 'book_format_mapping_id');
+    }
+
+    // Lấy book thông qua mapping
+    public function book()
+    {
+        return $this->hasOneThrough(
+            Books::class,
+            BookFormatMapping::class,
+            'id', // local key on book_format_mappings
+            'id', // local key on books
+            'book_format_mapping_id', // foreign key on chapters
+            'book_id' // foreign key on book_format_mappings
+        );
     }
 }

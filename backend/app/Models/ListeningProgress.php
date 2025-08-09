@@ -103,17 +103,23 @@ class ListeningProgress extends Model
      */
     public static function getBookCompletionPercentage($userId, $bookId)
     {
-        $totalChapters = Chapter::where('book_id', $bookId)->count();
-        
-        if ($totalChapters === 0) {
+        // Lấy tất cả mapping id của sách này
+        $mappingIds = \App\Models\BookFormatMapping::where('book_id', $bookId)->pluck('id')->toArray();
+
+        // Lấy tất cả chapter id thuộc sách này
+        $chapterIds = \App\Models\Chapter::whereIn('book_format_mapping_id', $mappingIds)->pluck('id')->toArray();
+
+        if (empty($chapterIds)) {
             return 0;
         }
 
-        $completedChapters = self::where('user_id', $userId)
-                                ->where('book_id', $bookId)
-                                ->where('is_completed', true)
-                                ->count();
+        // Đếm số chương đã hoàn thành
+        $completed = self::where('user_id', $userId)
+            ->whereIn('chapter_id', $chapterIds)
+            ->where('is_completed', 1)
+            ->count();
 
-        return round(($completedChapters / $totalChapters) * 100, 2);
+        // Tính phần trăm hoàn thành
+        return round(($completed / count($chapterIds)) * 100, 2);
     }
 }

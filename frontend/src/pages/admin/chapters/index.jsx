@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import ChapterService from "@/services/api-chapters";
 import { AntNotification } from "@components/global/notification";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useLocation } from "react-router-dom";
 import DeleteConfirmationModal from "@components/admin/delete_comfirm";
 import Breadcrumb from "@components/admin/breadcrumb";
 import { Loading } from "@components/loading/loading";
@@ -11,16 +11,20 @@ import { Pagination } from 'antd';
 const Chapters = () => {
     const URL_API = import.meta.env.VITE_URL_IMG;
     const [loading, setLoading] = useState(false);
+    const [formatId, setFormatId] = useState('1');
     const [chapters, setChapters] = useState([]);
     const [selectedChapter, setSelectedchapter] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [pageSize, setPageSize] = useState(10);
     const [totalItems, setTotalItems] = useState(0);
     const [sort_order, setSortOrder] = useState(null);
+    const location = useLocation();
     const [keyword, setKeyword] = useState("");
     const [inputValue, setInputValue] = useState('');
 
     const { bookId } = useParams();
+    const queryType = new URLSearchParams(location.search).get('type');
+
     const breadcrumbItems = [
         { label: "Quản Trị", path: "/admin" },
         { label: "Quản Lý Sách", path: "/admin/books" },
@@ -75,6 +79,7 @@ const Chapters = () => {
                 per_page: pageSize,
                 sort_order: sort_order,
                 keyword: keyword,
+                format_id: formatId,
             });
             if (res) {
                 setChapters(Array.isArray(res.data) ? res.data : []);
@@ -94,7 +99,7 @@ const Chapters = () => {
     };
     useEffect(() => {
         fetchData();
-    }, [currentPage, pageSize, sort_order, keyword]);
+    }, [currentPage, pageSize, sort_order, keyword, formatId]);
 
     useEffect(() => {
         const debounceTimer = setTimeout(() => {
@@ -117,6 +122,15 @@ const Chapters = () => {
         const sortOrder = value === "asc" ? "asc" : "desc";
         setSortOrder(sortOrder);
     };
+    const handleFilterChangeFormat = async (e) => {
+        const value = e.target.value;
+        setFormatId(value);
+    };
+    useEffect(() => {
+        if (queryType) {
+            setFormatId(queryType === "audio" ? "2" : "1");
+        }
+    }, [queryType]);
     return (
         <div className="pt-16 px-4 lg:ml-64">
             <Breadcrumb items={breadcrumbItems} />
@@ -125,15 +139,28 @@ const Chapters = () => {
                     <h5 className="text-xl font-medium leading-tight text-primary">
                         Quản Lý Chương Sách
                     </h5>
-                    <Link
-                        to={'/admin/books/chapters/create/' + bookId}
-                        className="inline-block rounded px-6 pb-2 pt-2.5 text-xs font-medium uppercase leading-normal text-white bg-indigo-600 w-auto"
-                    >
-                        Thêm chương
-                    </Link>
+                    <div className="flex gap-2">
+                        {
+                            formatId === "1" ? (
+                                <Link
+                                    to={`/admin/books/chapters/create/${bookId}?type=ebook`}
+                                    className="inline-block rounded px-4 pb-2 pt-2.5 text-xs font-medium uppercase leading-normal text-white bg-indigo-600 w-auto"
+                                >
+                                    Thêm chương sách
+                                </Link>
+                            ) : formatId === "2" && (
+                                <Link
+                                    to={`/admin/books/chapters/create/${bookId}?type=audio`}
+                                    className="inline-block rounded px-4 pb-2 pt-2.5 text-xs font-medium uppercase leading-normal text-white bg-green-600 w-auto"
+                                >
+                                    Thêm chương audio
+                                </Link>
+                            )
+                        }
+                    </div>
                 </div>
                 <div className="flex items-center justify-between flex-column md:flex-row flex-wrap space-y-4 md:space-y-0 py-2 px-4 bg-white">
-                    <div>
+                    <div className="gap-2 flex">
                         <select
                             className="cursor-pointer items-center text-black bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 font-medium rounded-lg text-sm px-3 py-1.5 "
                             onChange={handleFilterChange}
@@ -143,6 +170,18 @@ const Chapters = () => {
                             </option>
                             <option value="asc">
                                 Cũ Nhất
+                            </option>
+                        </select>
+                        <select
+                            className="cursor-pointer items-center text-black bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 font-medium rounded-lg text-sm px-3 py-1.5 "
+                            onChange={handleFilterChangeFormat}
+                            value={formatId}
+                        >
+                            <option value="1">
+                                Sách điện tử
+                            </option>
+                            <option value="2">
+                                Sách nói
                             </option>
                         </select>
                     </div>
@@ -204,7 +243,7 @@ const Chapters = () => {
                                         }}
                                         id="checkbox-all-search"
                                         type="checkbox"
-                                        className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                                        className="cursor-pointer w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
                                     />
                                     <label htmlFor="checkbox-all-search" className="sr-only">
                                         checkbox
@@ -257,7 +296,7 @@ const Chapters = () => {
                                                 onChange={(e) => checkChapterType(e, chapter.id)}
                                                 checked={selectedChapter.includes(chapter.id)}
                                                 type="checkbox"
-                                                className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                                                className="cursor-pointer w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
                                             />
                                             <label
                                                 htmlFor="checkbox-table-search-1"
@@ -276,7 +315,7 @@ const Chapters = () => {
                                         </div>
                                     </th>
                                     <td className="px-6 py-4 text-gray-800 dark:text-slate-650 font-semibold truncate">
-                                        {chapter.book ? chapter.book.title : "Không có sách"}
+                                        {chapter.book_format_mapping ? chapter.book_format_mapping.book.title : "Không có sách"}
                                     </td>
                                     {
                                         chapter.audio_path && (

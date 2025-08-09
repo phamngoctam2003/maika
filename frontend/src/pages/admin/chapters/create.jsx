@@ -1,17 +1,20 @@
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { AntNotification } from "@components/global/notification";
 import { QuillEditor } from "@components/editor/quilleditor";
 import ChapterService from "@/services/api-chapters";
 import BooksService from "@/services/api-books";
 import Breadcrumb from "@components/admin/breadcrumb";
-import { Select, Upload, Radio, Checkbox } from "antd";
+import { Select, Upload } from "antd";
 const Create_Chapter = () => {
     const navigate = useNavigate();
     const [editorData, setEditorData] = useState('');
     const [bookInfo, setBookInfo] = useState(null);
     const { bookId } = useParams();
     const [audioFile, setAudioFile] = useState('');
+    const location = useLocation();
+    const [selectedFormatMappingId, setSelectedFormatMappingId] = useState(null);
+    const [bookFormatMappings, setBookFormatMappings] = useState([]);
     // Breadcrumb items
     console.log('audio', audioFile);
     const breadcrumbItems = [
@@ -25,26 +28,62 @@ const Create_Chapter = () => {
         setEditorData(data);
     };
 
+    // Lấy type từ query param (?type=audio hoặc ?type=ebook)
+    const queryType = new URLSearchParams(location.search).get('type');
+
     useEffect(() => {
         const fetchData = async () => {
             try {
                 const res = await BooksService.getById(bookId);
+                console.log('bookInfo', res);
                 setBookInfo(res);
+                // Lấy danh sách mapping format cho sách này
+                if (res && res.book_format_mappings) {
+                    // Map thêm format_type dựa vào format_id
+                    const mappingsWithType = res.book_format_mappings.map(m => ({
+                        ...m,
+                        format_type: m.format_id === 1 ? 'ebook' : (m.format_id === 2 ? 'audio' : '')
+                    }));
+                    setBookFormatMappings(mappingsWithType);
+                    // Nếu có type trên url, chọn mapping phù hợp
+                    if (queryType) {
+                        const found = mappingsWithType.find(m => m.format_type === queryType);
+                        if (found) setSelectedFormatMappingId(found.id);
+                    } else if (mappingsWithType.length === 1) {
+                        setSelectedFormatMappingId(mappingsWithType[0].id);
+                    }
+                }
             } catch (error) {
                 AntNotification.handleError(error);
             }
         }
         fetchData();
-    }, [bookId]);
+    }, [bookId, location.search]);
 
     const isAudioBook = bookInfo?.formats?.some(f => f.id === 2);
     const isReadableBook = bookInfo?.formats?.some(f => f.id === 1);
 
+    // Xác định loại chương đang chọn (sửa lỗi selectedFormatId)
+    const selectedFormatId = bookFormatMappings.find(m => m.id === selectedFormatMappingId)?.format_id;
     const handSubmit = async (e) => {
         e.preventDefault();
+
+        // Kiểm tra bắt buộc chọn loại chương
+        if (!selectedFormatMappingId) {
+            AntNotification.showNotification("Thiếu thông tin", "Vui lòng chọn loại chương (sách nói hoặc sách điện tử)", "error");
+            return;
+        }
+
         const form = e.target;
         const data = new FormData(form);
 
+        if (selectedFormatId === 2) {
+            data.append("audio_path", audioFile);
+        }
+        if (selectedFormatId === 1) {
+            data.append("content", editorData);
+        }
+        data.append("book_format_mapping_id", selectedFormatMappingId);
         // if (imageFile) {
         //     data.append("file_path", imageFile);
         // }
@@ -59,7 +98,7 @@ const Create_Chapter = () => {
             const res = await ChapterService.create(data);
             if (res) {
                 AntNotification.showNotification("Thêm thành công", "Chương đã được thêm thành công!" || res.message, "success");
-                navigate("/admin/books/chapters/" + bookId);
+                navigate("/admin/books/chapters/" + bookId + "?type=" + (audioFile ? "audio" : "ebook"));
             } else {
                 AntNotification.showNotification("Có lỗi xảy ra", "Thêm chương thất bại!" || res.message, "error");
 
@@ -115,21 +154,23 @@ const Create_Chapter = () => {
                             className="shadow-sm border border-gray-300 text-gray-900 text-sm focus:ring-blue-500 focus:border-blue-500 w-full"
                         />
                     </div>
-                    {isReadableBook && (
+                    {/* Hiển thị phần nhập nội dung nếu là ebook */}
+                    {selectedFormatId === 1 && (
                         <div className="mb-5">
                             <label htmlFor="description" className="block mb-2 text-sm font-medium text-gray-900 dark:text-black">Nội dung chương</label>
                             <QuillEditor onChange={handleEditorChange} />
                         </div>
                     )}
-
-                    {isAudioBook && (
+                    {/* Hiển thị phần upload audio nếu là audio */}
+                    {selectedFormatId === 2 && (
                         <div className="mb-5">
                             <label htmlFor="audio_file" className="block mb-2 text-sm font-medium text-gray-900 dark:text-black">File Audio</label>
                             <Upload
                                 {...uploadFile}
-                            ><div className="flex items-center px-4 py-2 text-sm font-medium cursor-pointer text-white bg-blue-600 rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                            >
+                                <div className="flex items-center px-4 py-2 text-sm font-medium cursor-pointer text-white bg-blue-600 rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M12 4.5v10m0-10c-.7 0-2.008 1.994-2.5 2.5M12 4.5c.7 0 2.008 1.994 2.5 2.5m5.5 9.5c0 2.482-.518 3-3 3H7c-2.482 0-3-.518-3-3" color="currentColor" /></svg>
-                                    <span className="ml-2">Tải lên hình ảnh</span>
+                                    <span className="ml-2">Tải lên audio</span>
                                 </div>
                             </Upload>
                         </div>

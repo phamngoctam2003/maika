@@ -34,7 +34,7 @@ class BookRepository implements BookRepositoryInterface
 
     public function getById(int $id): ?Books
     {
-        return Books::with('formats', 'authors', 'categories')->where('id', $id)->first();
+        return Books::with('formats', 'authors', 'categories', 'book_format_mappings')->where('id', $id)->first();
     }
 
 public function create(array $data): Books 

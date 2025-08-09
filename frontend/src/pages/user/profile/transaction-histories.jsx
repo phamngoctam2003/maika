@@ -89,7 +89,8 @@ const TransactionHistories = () => {
                                                     {item.status === 'failed' && <span className="text-red-500">Thất bại</span>}
                                                     {item.status === 'pending' && <span className="text-red-500">Thất bại</span>}
                                                     {item.status === 'cancelled' && <span className="text-gray-400">Đã hủy</span>}
-                                                    {!['active', 'failed', 'pending', 'cancelled'].includes(item.status) && (
+                                                    {item.status === 'expired' && <span className="text-yellow-500">Đã hết hạn</span>}
+                                                    {!['active', 'failed', 'pending', 'cancelled', 'expired'].includes(item.status) && (
                                                         <span className="text-gray-400">{item.status}</span>
                                                     )}
                                                 </td>
