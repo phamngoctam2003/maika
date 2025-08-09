@@ -233,13 +233,13 @@ export const UserHeader = () => {
                                 <div className="explore-section">
                                     <h3 className="explore-title">Khám phá ngay</h3>
                                     <div className="explore-grid">
-                                        <Link to="sach-moi-nhat" className="explore-item">
+                                        <Link to="#" className="explore-item">
                                             <svg className="explore-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
                                                 <path d="M12 2L13.09 8.26L20 9L13.09 9.74L12 16L10.91 9.74L4 9L10.91 8.26L12 2Z" />
                                             </svg>
                                             Sách mới nhất
                                         </Link>
-                                        <Link to="sach-yeu-thich" className="explore-item">
+                                        <Link to="#" className="explore-item">
                                             <svg className="explore-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
                                                 <path d="M12 21.35L10.55 20.03C5.4 15.36 2 12.28 2 8.5C2 5.42 4.42 3 7.5 3C9.24 3 10.91 3.81 12 5.09C13.09 3.81 14.76 3 16.5 3C19.58 3 22 5.42 22 8.5C22 12.28 18.6 15.36 13.45 20.04L12 21.35Z" />
                                             </svg>
@@ -282,13 +282,13 @@ export const UserHeader = () => {
                                 <div className="explore-section">
                                     <h3 className="explore-title">Nghe ngay</h3>
                                     <div className="explore-grid">
-                                        <Link to="sach-noi-moi" className="explore-item">
+                                        <Link to="#" className="explore-item">
                                             <svg className="explore-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
                                                 <path d="M8 5.14V19.14L19 12.14L8 5.14Z" />
                                             </svg>
                                             Sách nói mới
                                         </Link>
-                                        <Link to="sach-noi-hay" className="explore-item">
+                                        <Link to="#" className="explore-item">
                                             <svg className="explore-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
                                                 <path d="M3 9V15H7L12 20V4L7 9H3Z" />
                                             </svg>
