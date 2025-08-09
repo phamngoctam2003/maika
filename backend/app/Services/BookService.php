@@ -62,6 +62,13 @@ class BookService
                 Storage::disk('public')->delete($chapter->audio_path);
             }
         }
+        // Xóa file hình ảnh của sách
+        $books = Books::whereIn('id', $ids)->get();
+        foreach ($books as $book) {
+            if ($book->file_path && Storage::disk('public')->exists($book->file_path)) {
+                Storage::disk('public')->delete($book->file_path);
+            }
+        }
         // Xóa sách
         Books::whereIn('id', $ids)->delete();
         return true;
