@@ -143,7 +143,7 @@ public function createPaymentUrl(array $data): string
         $vnp_TxnRef = $data['order_id'];
         $vnp_OrderInfo = $data['order_info'];
         $vnp_OrderType = $data['order_type'] ?? config('vnpay.order_type', 'billpayment');
-        $timeoutMinutes = (int) config('vnpay.timeout_minutes', 60);
+        $timeoutMinutes = (int) config('vnpay.timeout_minutes', 15);
         $vnp_Amount = round($data['amount']) * 100; // VNPay yêu cầu số tiền x100
         $vnp_Locale = $data['locale'] ?? config('vnpay.locale', 'vn');
         $vnp_IpAddr = request()->header('X-Forwarded-For') ?? request()->ip();
