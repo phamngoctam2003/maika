@@ -11,7 +11,13 @@ class ChapterRepository implements ChapterRepositoryInterface
 {
     public function getAll(array $filters = []): LengthAwarePaginator
     {
-        $query = Chapter::with('book', 'user')->where('book_id', $filters['book_id'] ?? null);
+        $query = Chapter::with(['bookFormatMapping.book', 'user']);
+
+        if (isset($filters['format_id'])) {
+            $query->whereHas('bookFormatMapping', function ($q) use ($filters) {
+                $q->where('format_id', $filters['format_id']);
+            });
+        }
 
         if (isset($filters['keyword'])) {
             $query->where('title', 'like', '%' . $filters['keyword'] . '%');
@@ -30,7 +36,7 @@ class ChapterRepository implements ChapterRepositoryInterface
 
     public function getById(int $id): ?Chapter
     {
-        return Chapter::where('id', $id)->first();
+        return Chapter::with(['bookFormatMapping.book', 'user'])->where('id', $id)->first();
     }
 
     public function create(array $data): Chapter
@@ -40,7 +46,12 @@ class ChapterRepository implements ChapterRepositoryInterface
             throw new \Exception('User not authenticated');
         }
         $data['user_id'] = $user->id;
-        
+
+        // Đảm bảo có book_format_mapping_id
+        if (!isset($data['book_format_mapping_id'])) {
+            throw new \Exception('book_format_mapping_id is required');
+        }
+
         // Chỉ xử lý audio_path nếu nó tồn tại và là file upload
         if (isset($data['audio_path']) && $data['audio_path'] && is_object($data['audio_path'])) {
             $path = $data['audio_path']->storePublicly('audio', 'public');
@@ -49,16 +60,20 @@ class ChapterRepository implements ChapterRepositoryInterface
             // Nếu không có file hoặc file rỗng, set null
             $data['audio_path'] = null;
         }
-        
+
         return Chapter::create($data);
     }
 
     public function update(int $id, array $data): ?Chapter
     {
-        $Chapter = $this->getById($id);
-        if ($Chapter) {
-            $Chapter->update($data);
-            return $Chapter;
+        $chapter = $this->getById($id);
+        if ($chapter) {
+            // Đảm bảo có book_format_mapping_id khi update nếu cần
+            if (!isset($data['book_format_mapping_id'])) {
+                throw new \Exception('book_format_mapping_id is required');
+            }
+            $chapter->update($data);
+            return $chapter;
         }
         return null;
     }
@@ -69,13 +84,13 @@ class ChapterRepository implements ChapterRepositoryInterface
             foreach ($ids as $id) {
                 $chapter = Chapter::find($id);
                 if ($chapter && $chapter->comment()->count() > 0) {
-                    return false; 
+                    return false;
                 }
             }
             Chapter::whereIn('id', $ids)->delete();
             return true;
         }
-        return false; 
+        return false;
     }
 
 

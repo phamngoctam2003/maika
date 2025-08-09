@@ -31,7 +31,14 @@ class UserRepository implements UserRepositoryInterface
     }
     public function getEbookReader(string $slug): ?Books
     {
-        return Books::with('chapters', 'authors')->where('slug', $slug)->first();
+        return Books::with([
+            'chapters' => function ($query) {
+                $query->whereHas('bookFormatMapping', function ($q) {
+                    $q->where('format_id', 1);
+                });
+            },
+            'authors'
+        ])->where('slug', $slug)->first();
     }
 
     public function increaseView($slug)

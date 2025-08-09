@@ -18,9 +18,9 @@ const apiGet = async (url, options = {}) => {
 };
 
 const ChapterService = {
-  getChapters: async ({book_id , page, per_page, sort_order, keyword }) => {
+  getChapters: async ({book_id , page, per_page, sort_order, keyword, format_id }) => {
     return apiGet("/chapters", {
-      params: { book_id, page, per_page, sort_order, keyword },
+      params: { book_id, page, per_page, sort_order, keyword, format_id },
     });
   },
 

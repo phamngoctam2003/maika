@@ -34,7 +34,8 @@ class BookDetaiController extends Controller
                 $isSaved = $user->bookCase()->where('book_id', $ebook->id)->exists();
                 $ebook->is_saved_in_bookcase = $isSaved;
             }
-
+            $averageRating = app(\App\Services\BookCommentService::class)->getAverageRatingByBook($ebook->id);
+            $ebook->average_rating = $averageRating;
             return response()->json($ebook, 200);
         } catch (\Exception $e) {
             return response()->json([
@@ -55,7 +56,7 @@ class BookDetaiController extends Controller
             if ($ebook->access_type === 'member') {
                 /** @var \App\Models\User|null $user */
                 $user = auth('api')->user();
-                
+
                 if (!$user) {
                     return response()->json([
                         'message' => 'Sách này dành cho hội viên. Vui lòng đăng nhập để tiếp tục.',
@@ -76,7 +77,7 @@ class BookDetaiController extends Controller
                         ]
                     ], 403);
                 }
-                
+
                 // Log successful access for member book
                 \Illuminate\Support\Facades\Log::info('Member book access granted', [
                     'user_id' => $user->id,
@@ -94,6 +95,4 @@ class BookDetaiController extends Controller
             ], 500);
         }
     }
-
-    
 }

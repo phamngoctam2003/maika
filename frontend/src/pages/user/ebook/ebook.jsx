@@ -6,7 +6,12 @@ import EbookService from '@/services/users/api-ebook';
 
 const Ebook = () => {
     const [categoryOptions, setCategoryOptions] = useState([]);
-        const [books, setBooks] = useState([]);
+    const [books, setBooks] = useState([]);
+
+    useEffect(() => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, []);
+
     useEffect(() => {
         const fetchCategories = async () => {
             try {
@@ -44,6 +49,7 @@ const Ebook = () => {
         };
         fetchBooks();
     }, []);
+
 
     return (
         <>

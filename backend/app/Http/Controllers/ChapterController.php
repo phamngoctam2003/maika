@@ -22,7 +22,7 @@ class ChapterController extends Controller
     public function index(Request $request)
     {
         try {
-            $filters = $request->only(['book_id', 'page', 'keyword', 'sort_order', 'per_page']);
+            $filters = $request->only(['book_id', 'page', 'keyword', 'sort_order', 'per_page', 'format_id']);
             $chapters = $this->chapterService->getAllChapters($filters);
             return response()->json($chapters);
         } catch (\Exception $e) {
@@ -36,7 +36,7 @@ class ChapterController extends Controller
     public function create(Request $request)
     {
         $validatedData = $request->validate([
-            'book_id' => 'required|exists:books,id',
+            'book_format_mapping_id' => 'required|exists:book_format_mappings,id',
             'title' => 'required|string|max:255',
             'content' => 'nullable|string',
             'audio_path' => 'nullable',
@@ -108,8 +108,12 @@ class ChapterController extends Controller
                 return response()->json(['message' => 'Sách không tồn tại.'], 404);
             }
 
-            $chapters = Chapter::where('book_id', $bookId)
-                ->where('status', 1) // Chỉ lấy chapters đã active
+            // Lấy tất cả mapping id của sách này
+            $mappingIds = $book->book_format_mappings()->pluck('id')->toArray();
+
+            $chapters = Chapter::whereIn('book_format_mapping_id', $mappingIds)
+                ->where('status', 1)
+                ->where('audio_path', '!=', null) // Chỉ lấy những chương có audio
                 ->orderBy('chapter_order', 'asc')
                 ->select('id', 'title', 'chapter_order', 'audio_path', 'content')
                 ->get();
@@ -153,8 +157,14 @@ class ChapterController extends Controller
     public function getChapterAudio($bookId, $chapterId)
     {
         try {
-            $chapter = Chapter::where('id', $chapterId)
-                ->where('book_id', $bookId)
+            $book = Books::find($bookId);
+            if (!$book) {
+                return response()->json(['message' => 'Sách không tồn tại.'], 404);
+            }
+            $mappingIds = $book->book_format_mappings()->pluck('id')->toArray();
+
+            $chapter = Chapter::whereIn('book_format_mapping_id', $mappingIds)
+                ->where('id', $chapterId)
                 ->where('status', 1)
                 ->first();
 
@@ -228,9 +238,16 @@ class ChapterController extends Controller
                 'progress_percentage' => 'nullable|numeric|min:0|max:100'
             ]);
 
-            // Kiểm tra chapter có tồn tại không
+            // Lấy tất cả mapping id của sách này
+            $book = Books::find($bookId);
+            if (!$book) {
+                return response()->json(['message' => 'Sách không tồn tại.'], 404);
+            }
+            $mappingIds = $book->book_format_mappings()->pluck('id')->toArray();
+
+            // Kiểm tra chapter có tồn tại không (theo mapping id)
             $chapter = Chapter::where('id', $chapterId)
-                ->where('book_id', $bookId)
+                ->whereIn('book_format_mapping_id', $mappingIds)
                 ->first();
 
             if (!$chapter) {

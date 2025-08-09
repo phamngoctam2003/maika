@@ -21,9 +21,12 @@ export default function ProfileManagement() {
   const navigate = useNavigate();
 
   useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
+
+  useEffect(() => {
     if (loading) return;
     if (!isAuthenticated) {
-      message.error('Bạn cần đăng nhập để truy cập trang này.');
       navigate('/');
     } else {
       setFormData(currentUser);

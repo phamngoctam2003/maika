@@ -135,4 +135,15 @@ class BookCommentService {
             ->where('user_id', $userId)
             ->exists();
     }
+
+    /**
+     * Lấy trung bình rating của một sách.
+     *
+     * @param int $bookId
+     * @return float|null
+     */
+    public function getAverageRatingByBook(int $bookId): ?float
+    {
+        return BookComment::where('book_id', $bookId)->avg('rating');
+    }
 }

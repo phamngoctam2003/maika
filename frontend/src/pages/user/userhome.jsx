@@ -8,6 +8,9 @@ import { DynamicCategoryBooks } from "@components/user/home/category/dynamic_cat
 
 
 const UserHome = () => {
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
 
   return (
     <>

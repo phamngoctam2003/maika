@@ -19,6 +19,7 @@ const SachNoiDetail = () => {
     const [book, setBook] = useState(null);
     const [loading, setLoading] = useState(true);
     const [showFullDescription, setShowFullDescription] = useState(false);
+    const [averageRating, setAverageRating] = useState(0);
 
     // Lấy thông tin user từ AuthContext để kiểm tra quyền truy cập
     const {
@@ -67,7 +68,6 @@ const SachNoiDetail = () => {
     useEffect(() => {
         const checkListeningHistory = async () => {
             if (!book?.id || !isAuthenticated) return;
-
             try {
                 const progress = await ListeningHistoryService.getLastProgressByBook(book.id);
                 if (progress && progress.current_time > 0) {
@@ -273,7 +273,8 @@ const SachNoiDetail = () => {
             setLoading(true);
             try {
                 const response = await DetailtService.getBook(slug);
-                setBook(response);
+                setBook(response.book || response);
+                setAverageRating(response.average_rating || 0);
                 // Reset pagination when book changes
                 setCurrentPage(1);
                 setComments([]);
@@ -608,33 +609,26 @@ const SachNoiDetail = () => {
                                 <h1 className="lg:text-3xl font-bold text-xl lg:block hidden">{book?.title || ""}</h1>
                                 <div className="flex mt-4">
                                     <div className="flex items-center mr-6">
-                                        <span className="text-white-50 block mr-1">4.2</span>
+                                        <span className="text-white-50 block mr-1">
+                                            {averageRating ? averageRating.toFixed(1) : "0.0"}
+                                        </span>
                                         <div className="flex items-center justify-center">
-                                            <img
-                                                src="https://waka.vn/svgs/icon-star.svg"
-                                                alt="icon-star"
-                                                className="cursor-pointer w-4 h-6"
-                                            />
-                                            <img
-                                                src="https://waka.vn/svgs/icon-star.svg"
-                                                alt="icon-star"
-                                                className="cursor-pointer w-4 h-6"
-                                            />
-                                            <img
-                                                src="https://waka.vn/svgs/icon-star.svg"
-                                                alt="icon-star"
-                                                className="cursor-pointer w-4 h-6"
-                                            />
-                                            <img
-                                                src="https://waka.vn/svgs/icon-star.svg"
-                                                alt="icon-star"
-                                                className="cursor-pointer w-4 h-6"
-                                            />
-                                            <img
-                                                src="https://waka.vn/svgs/icon-star-empty.svg"
-                                                alt="icon-star-empty"
-                                                className="cursor-pointer w-4 h-6"
-                                            />
+                                            {/* Hiển thị số sao dựa trên averageRating (làm tròn xuống) */}
+                                            {Array.from({ length: 5 }).map((_, idx) => {
+                                                const rounded = Math.round(averageRating);
+                                                return (
+                                                    <img
+                                                        key={idx}
+                                                        src={
+                                                            idx < rounded
+                                                                ? "https://waka.vn/svgs/icon-star.svg"
+                                                                : "https://waka.vn/svgs/icon-star-empty.svg"
+                                                        }
+                                                        alt={idx < rounded ? "icon-star" : "icon-star-empty"}
+                                                        className="cursor-pointer w-4 h-6"
+                                                    />
+                                                );
+                                            })}
                                         </div>
                                     </div>
                                     <p className="text-white-50">
