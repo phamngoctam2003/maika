@@ -52,7 +52,7 @@ const SachNoi = () => {
     }, []);
     return (
         <>
-            <BookSlider books={books} categoryOptions={categoryOptions} />
+            <BookSlider books={books} categoryOptions={categoryOptions} bookType="audiobook" />
             <DynamicCategoryAudio />
         </>
     );
