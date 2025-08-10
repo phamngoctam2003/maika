@@ -70,101 +70,101 @@ export const AdminSidebar = () => {
                 },
             ]
         },
-        {
-            id: "4",
-            name: "Chương sách",
-            link: "/admin/chapters",
-            svg: <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 32 32"><g fill="currentColor"><path d="M9.5 12a.5.5 0 0 0 0 1h13a.5.5 0 0 0 0-1h-13Zm0 3a.5.5 0 0 0 0 1h13a.5.5 0 0 0 0-1h-13ZM9 18.5a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 0 1h-13a.5.5 0 0 1-.5-.5Zm.5 2.5a.5.5 0 0 0 0 1h8a.5.5 0 0 0 0-1h-8Z"/><path d="M4 4a3 3 0 0 1 3-3h13.05a1 1 0 0 1 .707.293l6.95 6.95A1 1 0 0 1 28 8.95V28a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3V4Zm3-1a1 1 0 0 0-1 1v24a1 1 0 0 0 1 1h18a1 1 0 0 0 1-1V9.364L25.636 9h-4.643A.997.997 0 0 1 20 8V3.364L19.636 3H7Z"/></g></svg>,
-            sub_menu: [
-                {
-                    id: "4.1",
-                    name: "Thêm",
-                    link: "/admin/chapters/create"
-                },
-                {
-                    id: "4.2",
-                    name: "Danh sách",
-                    link: "/admin/chapters"
-                },
-                {
-                    id: "4.3",
-                    name: "Danh sách đã xóa",
-                    link: "/admin/chapters/trash"
-                },
-            ]
-        },
-        {
-            id: "5",
-            name: "Danh mục tin tức",
-            link: "/admin/category-news",
-            svg: <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 32 32"><path fill="currentColor" d="M14 25h14v2H14zm-6.83 1l-2.58 2.58L6 30l4-4l-4-4l-1.42 1.41L7.17 26zM14 15h14v2H14zm-6.83 1l-2.58 2.58L6 20l4-4l-4-4l-1.42 1.41L7.17 16zM14 5h14v2H14zM7.17 6L4.59 8.58L6 10l4-4l-4-4l-1.42 1.41L7.17 6z" /></svg>,
-            sub_menu: [
-                {
-                    id: "5.1",
-                    name: "Thêm",
-                    link: "/admin/category-news/create",
-                },
-                {
-                    id: "5.2",
-                    name: "Danh sách",
-                    link: "/admin/category-news",
-                },
-                {
-                    id: "5.3",
-                    name: "Danh sách đã xóa",
-                    link: "/admin/category-news/trash",
-                },
-            ]
-        },
-        {
-            id: "6",
-            name: "Tin tức",
-            link: "/admin/news",
-            svg: <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24"><path fill="currentColor" d="M13.03 10c-.122 0-.255 0-.37.01c-.13.01-.3.036-.478.126a1.25 1.25 0 0 0-.546.547c-.09.176-.116.348-.127.478c-.01.114-.009.247-.009.369v1.19c0 .122 0 .255.01.37c.01.13.036.3.126.478c.12.235.311.426.547.546c.176.09.348.116.478.127c.114.01.247.009.369.009h1.94c.122 0 .255 0 .37-.01c.13-.01.3-.036.478-.126a1.25 1.25 0 0 0 .546-.546c.09-.177.116-.349.127-.479c.01-.114.009-.247.009-.369v-1.19c0-.122 0-.255-.01-.37a1.3 1.3 0 0 0-.126-.478a1.25 1.25 0 0 0-.546-.546a1.3 1.3 0 0 0-.479-.127A5 5 0 0 0 14.97 10zm-4.78.25a.75.75 0 0 0 0 1.5h1.5a.75.75 0 0 0 0-1.5zm0 2.25a.75.75 0 0 0 0 1.5h1.5a.75.75 0 0 0 0-1.5zm0 2.75a.75.75 0 0 0 0 1.5h7.5a.75.75 0 0 0 0-1.5zm0 2.5a.75.75 0 0 0 0 1.5h7.5a.75.75 0 0 0 0-1.5z" opacity=".5" /><path fill="currentColor" d="M17.83 2.25H6.17c-.535 0-.98 0-1.345.03c-.38.03-.736.098-1.073.27A2.75 2.75 0 0 0 2.55 3.752c-.172.337-.24.693-.27 1.073c-.03.365-.03.81-.03 1.345V21a.75.75 0 0 0 1.5 0V6.2c0-.572 0-.957.025-1.253c.023-.287.065-.424.111-.514a1.25 1.25 0 0 1 .547-.547c.09-.046.227-.088.514-.111c.296-.024.68-.025 1.253-.025h11.6c.572 0 .957 0 1.252.025c.288.023.425.065.515.111c.236.12.427.311.547.547c.046.09.088.227.111.514c.024.296.025.68.025 1.253V21a.75.75 0 0 0 1.5 0V6.17c0-.535 0-.98-.03-1.345c-.03-.38-.098-.736-.27-1.073a2.75 2.75 0 0 0-1.2-1.202c-.338-.172-.694-.24-1.074-.27c-.365-.03-.81-.03-1.345-.03" /><path fill="currentColor" d="M7.5 6.5a1 1 0 0 0 0 2h9a1 1 0 1 0 0-2z" /></svg>,
-            sub_menu: [
-                {
-                    id: "6.1",
-                    name: "Thêm",
-                    link: "/admin/news",
-                },
-                {
-                    id: "6.2",
-                    name: "Danh sách",
-                    link: "/admin/news",
-                },
-                {
-                    id: "6.3",
-                    name: "Danh sách đã xóa",
-                    link: "/admin/news/trash",
-                },
-            ]
-        },
-        {
-            id: "7",
-            name: "Bình luận tin tức",
-            link: "/admin/comment-news",
-            svg: <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M14 22.5L11.2 19H6C5.44772 19 5 18.5523 5 18V7.10256C5 6.55028 5.44772 6.10256 6 6.10256H22C22.5523 6.10256 23 6.55028 23 7.10256V18C23 18.5523 22.5523 19 22 19H16.8L14 22.5ZM15.8387 17H21V8.10256H7V17H11.2H12.1613L14 19.2984L15.8387 17ZM2 2H19V4H3V15H1V3C1 2.44772 1.44772 2 2 2Z"></path></svg>,
-            sub_menu: [
-                {
-                    id: "7.2",
-                    name: "Danh sách",
-                    link: "/admin/comment-news",
-                },
-            ]
-        },
-        {
-            id: "8",
-            name: "Bình luận sản phẩm",
-            link: "/admin/comment-products",
-            svg: <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M8 13.5h8m-8-5h4M6.099 19q-1.949-.192-2.927-1.172C2 16.657 2 14.771 2 11v-.5c0-3.771 0-5.657 1.172-6.828S6.229 2.5 10 2.5h4c3.771 0 5.657 0 6.828 1.172S22 6.729 22 10.5v.5c0 3.771 0 5.657-1.172 6.828S17.771 19 14 19c-.56.012-1.007.055-1.445.155c-1.199.276-2.309.89-3.405 1.424c-1.563.762-2.344 1.143-2.834.786c-.938-.698-.021-2.863.184-3.865" color="currentColor" /></svg>,
-            sub_menu: [
-                {
-                    id: "8.2",
-                    name: "Danh sách",
-                    link: "/admin/comment-products",
-                },
-            ]
-        },
+        // {
+        //     id: "4",
+        //     name: "Chương sách",
+        //     link: "/admin/chapters",
+        //     svg: <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 32 32"><g fill="currentColor"><path d="M9.5 12a.5.5 0 0 0 0 1h13a.5.5 0 0 0 0-1h-13Zm0 3a.5.5 0 0 0 0 1h13a.5.5 0 0 0 0-1h-13ZM9 18.5a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 0 1h-13a.5.5 0 0 1-.5-.5Zm.5 2.5a.5.5 0 0 0 0 1h8a.5.5 0 0 0 0-1h-8Z"/><path d="M4 4a3 3 0 0 1 3-3h13.05a1 1 0 0 1 .707.293l6.95 6.95A1 1 0 0 1 28 8.95V28a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3V4Zm3-1a1 1 0 0 0-1 1v24a1 1 0 0 0 1 1h18a1 1 0 0 0 1-1V9.364L25.636 9h-4.643A.997.997 0 0 1 20 8V3.364L19.636 3H7Z"/></g></svg>,
+        //     sub_menu: [
+        //         {
+        //             id: "4.1",
+        //             name: "Thêm",
+        //             link: "/admin/chapters/create"
+        //         },
+        //         {
+        //             id: "4.2",
+        //             name: "Danh sách",
+        //             link: "/admin/chapters"
+        //         },
+        //         {
+        //             id: "4.3",
+        //             name: "Danh sách đã xóa",
+        //             link: "/admin/chapters/trash"
+        //         },
+        //     ]
+        // },
+        // {
+        //     id: "5",
+        //     name: "Danh mục tin tức",
+        //     link: "/admin/category-news",
+        //     svg: <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 32 32"><path fill="currentColor" d="M14 25h14v2H14zm-6.83 1l-2.58 2.58L6 30l4-4l-4-4l-1.42 1.41L7.17 26zM14 15h14v2H14zm-6.83 1l-2.58 2.58L6 20l4-4l-4-4l-1.42 1.41L7.17 16zM14 5h14v2H14zM7.17 6L4.59 8.58L6 10l4-4l-4-4l-1.42 1.41L7.17 6z" /></svg>,
+        //     sub_menu: [
+        //         {
+        //             id: "5.1",
+        //             name: "Thêm",
+        //             link: "/admin/category-news/create",
+        //         },
+        //         {
+        //             id: "5.2",
+        //             name: "Danh sách",
+        //             link: "/admin/category-news",
+        //         },
+        //         {
+        //             id: "5.3",
+        //             name: "Danh sách đã xóa",
+        //             link: "/admin/category-news/trash",
+        //         },
+        //     ]
+        // },
+        // {
+        //     id: "6",
+        //     name: "Tin tức",
+        //     link: "/admin/news",
+        //     svg: <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24"><path fill="currentColor" d="M13.03 10c-.122 0-.255 0-.37.01c-.13.01-.3.036-.478.126a1.25 1.25 0 0 0-.546.547c-.09.176-.116.348-.127.478c-.01.114-.009.247-.009.369v1.19c0 .122 0 .255.01.37c.01.13.036.3.126.478c.12.235.311.426.547.546c.176.09.348.116.478.127c.114.01.247.009.369.009h1.94c.122 0 .255 0 .37-.01c.13-.01.3-.036.478-.126a1.25 1.25 0 0 0 .546-.546c.09-.177.116-.349.127-.479c.01-.114.009-.247.009-.369v-1.19c0-.122 0-.255-.01-.37a1.3 1.3 0 0 0-.126-.478a1.25 1.25 0 0 0-.546-.546a1.3 1.3 0 0 0-.479-.127A5 5 0 0 0 14.97 10zm-4.78.25a.75.75 0 0 0 0 1.5h1.5a.75.75 0 0 0 0-1.5zm0 2.25a.75.75 0 0 0 0 1.5h1.5a.75.75 0 0 0 0-1.5zm0 2.75a.75.75 0 0 0 0 1.5h7.5a.75.75 0 0 0 0-1.5zm0 2.5a.75.75 0 0 0 0 1.5h7.5a.75.75 0 0 0 0-1.5z" opacity=".5" /><path fill="currentColor" d="M17.83 2.25H6.17c-.535 0-.98 0-1.345.03c-.38.03-.736.098-1.073.27A2.75 2.75 0 0 0 2.55 3.752c-.172.337-.24.693-.27 1.073c-.03.365-.03.81-.03 1.345V21a.75.75 0 0 0 1.5 0V6.2c0-.572 0-.957.025-1.253c.023-.287.065-.424.111-.514a1.25 1.25 0 0 1 .547-.547c.09-.046.227-.088.514-.111c.296-.024.68-.025 1.253-.025h11.6c.572 0 .957 0 1.252.025c.288.023.425.065.515.111c.236.12.427.311.547.547c.046.09.088.227.111.514c.024.296.025.68.025 1.253V21a.75.75 0 0 0 1.5 0V6.17c0-.535 0-.98-.03-1.345c-.03-.38-.098-.736-.27-1.073a2.75 2.75 0 0 0-1.2-1.202c-.338-.172-.694-.24-1.074-.27c-.365-.03-.81-.03-1.345-.03" /><path fill="currentColor" d="M7.5 6.5a1 1 0 0 0 0 2h9a1 1 0 1 0 0-2z" /></svg>,
+        //     sub_menu: [
+        //         {
+        //             id: "6.1",
+        //             name: "Thêm",
+        //             link: "/admin/news",
+        //         },
+        //         {
+        //             id: "6.2",
+        //             name: "Danh sách",
+        //             link: "/admin/news",
+        //         },
+        //         {
+        //             id: "6.3",
+        //             name: "Danh sách đã xóa",
+        //             link: "/admin/news/trash",
+        //         },
+        //     ]
+        // },
+        // {
+        //     id: "7",
+        //     name: "Bình luận tin tức",
+        //     link: "/admin/comment-news",
+        //     svg: <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M14 22.5L11.2 19H6C5.44772 19 5 18.5523 5 18V7.10256C5 6.55028 5.44772 6.10256 6 6.10256H22C22.5523 6.10256 23 6.55028 23 7.10256V18C23 18.5523 22.5523 19 22 19H16.8L14 22.5ZM15.8387 17H21V8.10256H7V17H11.2H12.1613L14 19.2984L15.8387 17ZM2 2H19V4H3V15H1V3C1 2.44772 1.44772 2 2 2Z"></path></svg>,
+        //     sub_menu: [
+        //         {
+        //             id: "7.2",
+        //             name: "Danh sách",
+        //             link: "/admin/comment-news",
+        //         },
+        //     ]
+        // },
+        // {
+        //     id: "8",
+        //     name: "Bình luận sản phẩm",
+        //     link: "/admin/comment-products",
+        //     svg: <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M8 13.5h8m-8-5h4M6.099 19q-1.949-.192-2.927-1.172C2 16.657 2 14.771 2 11v-.5c0-3.771 0-5.657 1.172-6.828S6.229 2.5 10 2.5h4c3.771 0 5.657 0 6.828 1.172S22 6.729 22 10.5v.5c0 3.771 0 5.657-1.172 6.828S17.771 19 14 19c-.56.012-1.007.055-1.445.155c-1.199.276-2.309.89-3.405 1.424c-1.563.762-2.344 1.143-2.834.786c-.938-.698-.021-2.863.184-3.865" color="currentColor" /></svg>,
+        //     sub_menu: [
+        //         {
+        //             id: "8.2",
+        //             name: "Danh sách",
+        //             link: "/admin/comment-products",
+        //         },
+        //     ]
+        // },
         {
             id: "9",
             name: "Tài khoản",
@@ -211,83 +211,83 @@ export const AdminSidebar = () => {
                 },
             ]
         },
-        {
-            id: "11",
-            name: "Quyền hạn",
-            link: "/admin/permissions",
-            svg: <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" strokeLinecap="round" strokeWidth="4"><path strokeLinejoin="round" d="M20 10H6a2 2 0 0 0-2 2v26a2 2 0 0 0 2 2h36a2 2 0 0 0 2-2v-2.5" /><path d="M10 23h8m-8 8h24" /><circle cx="34" cy="16" r="6" strokeLinejoin="round" /><path strokeLinejoin="round" d="M44 28.419C42.047 24.602 38 22 34 22s-5.993 1.133-8.05 3" /></g></svg>,
-            sub_menu: [
-                {
-                    id: "11.1",
-                    name: "Thêm",
-                    link: "/admin/permissions/create",
-                },
-                {
-                    id: "11.2",
-                    name: "Danh sách",
-                    link: "/admin/permissions",
-                },
-                {
-                    id: "11.3",
-                    name: "Danh sách dã xóa",
-                    link: "/admin/permissions/trash",
-                },
-            ]
-        },
-        {
-            id: "12",
-            name: "Thống kê",
-            link: "/admin/statisticals/revenue",
-            svg: <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" strokeWidth="1.5"><path strokeLinecap="round" d="M22 22H2" /><path d="M21 22v-7.5a1.5 1.5 0 0 0-1.5-1.5h-3a1.5 1.5 0 0 0-1.5 1.5V22" /><path strokeLinecap="round" strokeLinejoin="round" d="M15 22V9M9 22V5c0-1.414 0-2.121.44-2.56C9.878 2 10.585 2 12 2c1.414 0 2.121 0 2.56.44C15 2.878 15 3.585 15 5v0" /><path strokeLinecap="round" d="M9 22V9.5A1.5 1.5 0 0 0 7.5 8h-3A1.5 1.5 0 0 0 3 9.5V16m0 6v-2.25" /></g></svg>,
-            sub_menu: [
-                {
-                    id: "12.1",
-                    name: "Thống kê doanh thu",
-                    link: "/admin/statisticals/revenue",
-                },
-                {
-                    id: "12.2",
-                    name: "Hiệu suất sản phẩm theo danh mục",
-                    link: "/admin/statisticals/productper",
-                },
-            ]
-        },
-        {
-            id: "13",
-            name: "Banner",
-            link: "/admin/banners",
-            svg: <svg height={28} width={28} viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg"><rect fill="none" /><polygon opacity="0.2" points="40 48 40 48 224 48 176 108 224 168 40 168 40 48" /><polyline fill="none" points="40 216 40 48 40 48 224 48 176 108 224 168 40 168" stroke="#000" strokeLinecap="round" strokeLinejoin="round" strokeWidth="16" /></svg>,
-            sub_menu: [
-                {
-                    id: "13.1",
-                    name: "Thêm",
-                    link: "/admin/banners/create",
-                },
-                {
-                    id: "13.2",
-                    name: "Danh sách",
-                    link: "/admin/banners",
-                },
-            ]
-        },
-        {
-            id: "14",
-            name: "Phiếu giảm giá",
-            link: "/admin/vouchers",
-            svg: <svg id="Glyph" width="28" height="28" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"><g data-name="Glyph" id="Glyph-2"><path d="M23,45a1,1,0,0,0-1,1v5a1,1,0,0,0,2,0V46A1,1,0,0,0,23,45Z" /><path d="M23,35a1,1,0,0,0-1,1v5a1,1,0,0,0,2,0V36A1,1,0,0,0,23,35Z" /><path d="M61,37a1,1,0,0,0,1-1V30a2.931,2.931,0,0,0-.61-1.79,3.625,3.625,0,0,0,.11-3.82l-2.22-3.85a1,1,0,0,0-1.37-.37,5.663,5.663,0,1,1-5.66-9.81,1.007,1.007,0,0,0,.36-1.37L49.95,4.37a2.8,2.8,0,0,0-3.8-1.02L5.2,27H5a3.009,3.009,0,0,0-3,3v6a1,1,0,0,0,1,1A6.5,6.5,0,0,1,3,50a1,1,0,0,0-1,1v5a4,4,0,0,0,4,4H58a4,4,0,0,0,4-4V51a1,1,0,0,0-1-1,6.5,6.5,0,0,1,0-13Zm-8.5,6.5A8.5,8.5,0,0,0,60,51.94V56a2.006,2.006,0,0,1-2,2H24V56a1,1,0,0,0-2,0v2H6a2.006,2.006,0,0,1-2-2V51.94A8.5,8.5,0,0,0,4,35.06V30a1,1,0,0,1,1-1H22v2a1,1,0,0,0,2,0V29H59a1,1,0,0,1,1,1v5.06A8.5,8.5,0,0,0,52.5,43.5Z" /><circle cx="34" cy="38" r="4" /><circle cx="46" cy="50" r="4" /><path d="M48.12,40.12,36.2,52.19a3.132,3.132,0,0,1-4.41.02A3.169,3.169,0,0,1,30.88,50a3.047,3.047,0,0,1,.93-2.2L43.88,35.87a3.1,3.1,0,0,1,4.24.01A3.027,3.027,0,0,1,48.12,40.12Z" /></g></svg>,
-            sub_menu: [
-                {
-                    id: "14.1",
-                    name: "Thêm",
-                    link: "/admin/vouchers/create",
-                },
-                {
-                    id: "14.2",
-                    name: "Danh sách",
-                    link: "/admin/vouchers",
-                },
-            ]
-        },
+        // {
+        //     id: "11",
+        //     name: "Quyền hạn",
+        //     link: "/admin/permissions",
+        //     svg: <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" strokeLinecap="round" strokeWidth="4"><path strokeLinejoin="round" d="M20 10H6a2 2 0 0 0-2 2v26a2 2 0 0 0 2 2h36a2 2 0 0 0 2-2v-2.5" /><path d="M10 23h8m-8 8h24" /><circle cx="34" cy="16" r="6" strokeLinejoin="round" /><path strokeLinejoin="round" d="M44 28.419C42.047 24.602 38 22 34 22s-5.993 1.133-8.05 3" /></g></svg>,
+        //     sub_menu: [
+        //         {
+        //             id: "11.1",
+        //             name: "Thêm",
+        //             link: "/admin/permissions/create",
+        //         },
+        //         {
+        //             id: "11.2",
+        //             name: "Danh sách",
+        //             link: "/admin/permissions",
+        //         },
+        //         {
+        //             id: "11.3",
+        //             name: "Danh sách dã xóa",
+        //             link: "/admin/permissions/trash",
+        //         },
+        //     ]
+        // },
+        // {
+        //     id: "12",
+        //     name: "Thống kê",
+        //     link: "/admin/statisticals/revenue",
+        //     svg: <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" strokeWidth="1.5"><path strokeLinecap="round" d="M22 22H2" /><path d="M21 22v-7.5a1.5 1.5 0 0 0-1.5-1.5h-3a1.5 1.5 0 0 0-1.5 1.5V22" /><path strokeLinecap="round" strokeLinejoin="round" d="M15 22V9M9 22V5c0-1.414 0-2.121.44-2.56C9.878 2 10.585 2 12 2c1.414 0 2.121 0 2.56.44C15 2.878 15 3.585 15 5v0" /><path strokeLinecap="round" d="M9 22V9.5A1.5 1.5 0 0 0 7.5 8h-3A1.5 1.5 0 0 0 3 9.5V16m0 6v-2.25" /></g></svg>,
+        //     sub_menu: [
+        //         {
+        //             id: "12.1",
+        //             name: "Thống kê doanh thu",
+        //             link: "/admin/statisticals/revenue",
+        //         },
+        //         {
+        //             id: "12.2",
+        //             name: "Hiệu suất sản phẩm theo danh mục",
+        //             link: "/admin/statisticals/productper",
+        //         },
+        //     ]
+        // },
+        // {
+        //     id: "13",
+        //     name: "Banner",
+        //     link: "/admin/banners",
+        //     svg: <svg height={28} width={28} viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg"><rect fill="none" /><polygon opacity="0.2" points="40 48 40 48 224 48 176 108 224 168 40 168 40 48" /><polyline fill="none" points="40 216 40 48 40 48 224 48 176 108 224 168 40 168" stroke="#000" strokeLinecap="round" strokeLinejoin="round" strokeWidth="16" /></svg>,
+        //     sub_menu: [
+        //         {
+        //             id: "13.1",
+        //             name: "Thêm",
+        //             link: "/admin/banners/create",
+        //         },
+        //         {
+        //             id: "13.2",
+        //             name: "Danh sách",
+        //             link: "/admin/banners",
+        //         },
+        //     ]
+        // },
+        // {
+        //     id: "14",
+        //     name: "Phiếu giảm giá",
+        //     link: "/admin/vouchers",
+        //     svg: <svg id="Glyph" width="28" height="28" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"><g data-name="Glyph" id="Glyph-2"><path d="M23,45a1,1,0,0,0-1,1v5a1,1,0,0,0,2,0V46A1,1,0,0,0,23,45Z" /><path d="M23,35a1,1,0,0,0-1,1v5a1,1,0,0,0,2,0V36A1,1,0,0,0,23,35Z" /><path d="M61,37a1,1,0,0,0,1-1V30a2.931,2.931,0,0,0-.61-1.79,3.625,3.625,0,0,0,.11-3.82l-2.22-3.85a1,1,0,0,0-1.37-.37,5.663,5.663,0,1,1-5.66-9.81,1.007,1.007,0,0,0,.36-1.37L49.95,4.37a2.8,2.8,0,0,0-3.8-1.02L5.2,27H5a3.009,3.009,0,0,0-3,3v6a1,1,0,0,0,1,1A6.5,6.5,0,0,1,3,50a1,1,0,0,0-1,1v5a4,4,0,0,0,4,4H58a4,4,0,0,0,4-4V51a1,1,0,0,0-1-1,6.5,6.5,0,0,1,0-13Zm-8.5,6.5A8.5,8.5,0,0,0,60,51.94V56a2.006,2.006,0,0,1-2,2H24V56a1,1,0,0,0-2,0v2H6a2.006,2.006,0,0,1-2-2V51.94A8.5,8.5,0,0,0,4,35.06V30a1,1,0,0,1,1-1H22v2a1,1,0,0,0,2,0V29H59a1,1,0,0,1,1,1v5.06A8.5,8.5,0,0,0,52.5,43.5Z" /><circle cx="34" cy="38" r="4" /><circle cx="46" cy="50" r="4" /><path d="M48.12,40.12,36.2,52.19a3.132,3.132,0,0,1-4.41.02A3.169,3.169,0,0,1,30.88,50a3.047,3.047,0,0,1,.93-2.2L43.88,35.87a3.1,3.1,0,0,1,4.24.01A3.027,3.027,0,0,1,48.12,40.12Z" /></g></svg>,
+        //     sub_menu: [
+        //         {
+        //             id: "14.1",
+        //             name: "Thêm",
+        //             link: "/admin/vouchers/create",
+        //         },
+        //         {
+        //             id: "14.2",
+        //             name: "Danh sách",
+        //             link: "/admin/vouchers",
+        //         },
+        //     ]
+        // },
     ]
     return (
         <>

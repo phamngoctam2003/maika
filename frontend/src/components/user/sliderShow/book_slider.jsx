@@ -1,22 +1,114 @@
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, EffectCoverflow, Autoplay } from 'swiper/modules';
 import AddToBookCaseButton from "@components/common/AddToBookCaseButton";
-
+import { useAuth } from '@/contexts/authcontext'
+import { useBook } from "@/contexts/book_context.jsx";
 import { Select } from 'antd';
 import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/effect-coverflow';
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-export default function BookSlider({ books, categoryId, categoryOptions }) {
+export default function BookSlider({ books, categoryId, categoryOptions, bookType = "" }) {
     const [activeIndex, setActiveIndex] = useState(0);
     const [isLargeScreen, setIsLargeScreen] = useState(false);
     const navigate = useNavigate();
     const URL_IMG = import.meta.env.VITE_URL_IMG;
+    const [currentFormat, setCurrentFormat] = useState('Sách nói');
+
+    const {
+        currentUser,
+        isAuthenticated,
+        hasMembership,
+        setIsLoginModalOpen,
+
+    } = useAuth();
+    const { openAudioModal, setOpenAudioModal, isAudioPlaying, setIsAudioPlaying, setCurrentBook, currentBook, setIsPopupActiveLogin } = useBook();
+
+    useEffect(() => {
+        const pathname = window.location.pathname;
+        if (pathname.includes('/ebook')) {
+            setCurrentFormat('Sách điện tử');
+        } else if (pathname.includes('/sach-noi')) {
+            setCurrentFormat('Sách nói');
+        }
+    }, [window.location.pathname]);
+
+    const canReadMemberBook = () => {
+        // Kiểm tra xem người dùng đã đăng nhập chưa
+        if (!isAuthenticated || !currentUser) {
+            return false;
+        }
+
+        const hasActiveMembership = hasMembership();
+        return hasActiveMembership;
+    };
+
+    const isBookRequireMembership = () => {
+        // Chỉ có 2 loại: 'member' (sách hội viên) và 'free' (sách miễn phí)
+        const accessType = books?.access_type?.toLowerCase();
+
+        // Sách member yêu cầu hội viên, còn lại là free
+        const requireMembership = accessType === 'member';
+
+        return requireMembership;
+    };
+
+    const handleListenBook = async (book) => {
+        const requireMembership = isBookRequireMembership();
+        const canRead = canReadMemberBook();
+
+        if (!isAuthenticated) {
+            message.info("Vui lòng đăng nhập để nghe sách");
+            setIsPopupActiveLogin(true);
+            setIsLoginModalOpen(true);
+            return;
+        }
+
+        // Kiểm tra xem sách có yêu cầu hội viên không
+        if (requireMembership) {
+            // Nếu sách yêu cầu hội viên, kiểm tra quyền của user
+            if (!canRead) {
+
+                AntNotification.showNotification(
+                    "Yêu cầu hội viên",
+                    "Sách này dành cho hội viên. Vui lòng nâng cấp tài khoản để nghe",
+                    "warning"
+                );
+                navigate('/package-plan', { replace: true });
+                return;
+            }
+        }
+        if (currentFormat === 'Sách nói') {
+            try {
+                if (book?.id) {
+                    setCurrentBook(book);
+                }
+            } catch (error) {
+                AntNotification.showNotification(
+                    "Lỗi tải audio",
+                    "Không thể tải nội dung audio. Vui lòng thử lại",
+                    "error"
+                );
+                return;
+            }
+
+            setOpenAudioModal(true);
+            if (!isAudioPlaying) {
+                // Nếu modal đã mở, toggle trạng thái audio
+                setIsAudioPlaying(true);
+            } else {
+                setIsAudioPlaying(pre => !pre);
+            }
+        } else {
+            navigate(`/reader/${book?.slug}`);
+        }
+    };
+
+
     const handleCategoryChange = (value, option) => {
         navigate(`${option.link}`);
     };
-    const [currentFormat, setCurrentFormat] = useState('Sách');
 
     useEffect(() => {
         const checkScreenSize = () => {
@@ -27,14 +119,7 @@ export default function BookSlider({ books, categoryId, categoryOptions }) {
         return () => window.removeEventListener('resize', checkScreenSize);
     }, []);
 
-    useEffect(() => {
-        const pathname = window.location.pathname;
-        if (pathname.includes('/ebook')) {
-            setCurrentFormat('Sách điện tử');
-        } else if (pathname.includes('/sach-noi')) {
-            setCurrentFormat('Sách nói');
-        }
-    }, [window.location.pathname]);
+
 
     return (
         <div
@@ -95,12 +180,31 @@ export default function BookSlider({ books, categoryId, categoryOptions }) {
                         {books[activeIndex]?.description}
                     </p>
                     <div className="mt-4 gap-4 flex items-center">
-                        <Link
-                            to={`/ebook/${books[activeIndex]?.slug}`}
-                            className="flex items-center justify-center my-4 py-3 rounded-full cursor-pointer text-white-default text-16-16 whitespace-nowrap w-[150px] px-4 button-col bg-maika-500">
-                            <img src="https://waka.vn/svgs/icon-book-blank.svg" alt="icon-book-blank" className="cursor-pointer mr-2" />
-                            <span>Đọc sách</span>
-                        </Link>
+                        {
+                            bookType === "audiobook" ? (
+                                <Link
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        if (isBookRequireMembership() && !canReadMemberBook()) {
+                                            isAuthenticated ? navigate('/package-plan', { replace: true }) : setIsLoginModalOpen(true);
+                                        } else {
+                                            handleListenBook(books[activeIndex]);
+                                        }
+                                    }}
+                                    className="flex items-center justify-center my-4 py-3 rounded-full cursor-pointer text-white-default text-16-16 whitespace-nowrap w-[150px] px-4 button-col bg-maika-500">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 20 20"><path fill="currentColor" fillRule="evenodd" d="M10 18a8 8 0 1 0 0-16a8 8 0 0 0 0 16ZM9.555 7.168A1 1 0 0 0 8 8v4a1 1 0 0 0 1.555.832l3-2a1 1 0 0 0 0-1.664l-3-2Z" clipRule="evenodd" /></svg>
+                                    <span>Nghe sách</span>
+                                </Link>
+                            ) : (
+                                <Link
+                                    to={`/ebook/${books[activeIndex]?.slug}`}
+                                    className="flex items-center justify-center my-4 py-3 rounded-full cursor-pointer text-white-default text-16-16 whitespace-nowrap w-[150px] px-4 button-col bg-maika-500">
+                                    <img src="https://waka.vn/svgs/icon-book-blank.svg" alt="icon-book-blank" className="cursor-pointer mr-2" />
+                                    <span>Đọc sách</span>
+                                </Link>
+                            )
+                        }
+
                         <AddToBookCaseButton bookId={books[activeIndex]?.id} isSavedInitially={books[activeIndex]?.is_saved_in_bookcase} />
                     </div>
                 </div>

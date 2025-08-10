@@ -96,7 +96,7 @@ export default function PersonalInfoForm({
                             className="w-24 h-24 rounded-full bg-gradient-to-br from-green-400 to-cyan-400 mb-3 flex-shrink-0 object-cover"
                         />
                     ) : (
-                        <img src="./images/png/image_user.png" className="w-24 h-24 rounded-full bg-gradient-to-br from-green-400 to-cyan-400 mb-3 flex-shrink-0" />
+                        <img src="/images/png/image_user.png" className="w-24 h-24 rounded-full bg-gradient-to-br from-green-400 to-cyan-400 mb-3 flex-shrink-0" />
                     )
                 }
                 <input

@@ -326,7 +326,7 @@ export const UserHeader = () => {
                                     src={
                                         currentUser?.image
                                             ? URL_IMG + currentUser.image
-                                            : './images/png/image_user.png'
+                                            : '/images/png/image_user.png'
                                     } />
                                 <button className="down"></button>
                             </Link>
@@ -342,7 +342,7 @@ export const UserHeader = () => {
                                         src={
                                             currentUser?.image
                                                 ? URL_IMG + currentUser.image
-                                                : './images/png/image_user.png'
+                                                : '/images/png/image_user.png'
                                         }
                                         alt="Hình ảnh khách hàng"
                                     />
@@ -446,7 +446,7 @@ export const UserHeader = () => {
                     <h2>Đăng Nhập</h2>
                     <div className="form-logo1">
                         <div className="code-qr">
-                            <img src="./images/png/maika-1024.png" alt="" />
+                            <img src="/images/png/maika-1024.png" alt="" />
                         </div>
                         {isPopupLogin && (
                             <form className="form-var" method="post" onSubmit={onFinish}>
@@ -489,7 +489,7 @@ export const UserHeader = () => {
                     <h2 className="h2">Đăng Ký</h2>
                     <div className="form-logo1">
                         <div className="code-qr">
-                            <img src="./images/png/maika-1024.png" alt="" />
+                            <img src="/images/png/maika-1024.png" alt="" />
                         </div>
                         {!isPopupLogin && (
                             <form onSubmit={onFinish}>
