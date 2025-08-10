@@ -25,6 +25,12 @@ const Chapters = () => {
     const { bookId } = useParams();
     const queryType = new URLSearchParams(location.search).get('type');
 
+    useEffect(() => {
+        if (queryType) {
+            setFormatId(queryType === "audio" ? "2" : "1");
+        }
+    }, [queryType]);
+    
     const breadcrumbItems = [
         { label: "Quản Trị", path: "/admin" },
         { label: "Quản Lý Sách", path: "/admin/books" },
@@ -126,11 +132,6 @@ const Chapters = () => {
         const value = e.target.value;
         setFormatId(value);
     };
-    useEffect(() => {
-        if (queryType) {
-            setFormatId(queryType === "audio" ? "2" : "1");
-        }
-    }, [queryType]);
     return (
         <div className="pt-16 px-4 lg:ml-64">
             <Breadcrumb items={breadcrumbItems} />
