@@ -16,6 +16,8 @@ use App\Http\Controllers\User\BookCommentController;
 use App\Http\Controllers\PackageController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\Api\VnpayController;
+use App\Http\Controllers\Auth\ForgotPasswordController;
+use App\Http\Controllers\Auth\ResetPasswordController;
 
 Route::get('test-api', function () {
     return response()->json([
@@ -104,6 +106,9 @@ Route::group([
     // });
 });
 
+Route::post('auth/forgot-password', [ForgotPasswordController::class, 'sendResetLinkEmail']);
+Route::post('auth/reset-password', [ResetPasswordController::class, 'reset']);
+
 route::group(['prefix' => 'users'], function () {
     route::post('{slug}/increase-view', [HomeController::class, 'increaseView']);
     Route::post('profile', [AuthController::class, 'updateProfile']);
@@ -115,7 +120,6 @@ route::group(['prefix' => 'users'], function () {
         route::get('get-proposed', [HomeController::class, 'getProposed']);
         route::get('get-category-book', [CategoryController::class, 'getBookCategories']);
         route::get('get-books-by-category/{categorySlug}', [HomeController::class, 'getBooksByCategory']);
-
     });
 
     route::group(['prefix' => 'ebook'], function () {
@@ -207,7 +211,7 @@ Route::group(['prefix' => 'payment'], function () {
 
 Route::group(['prefix' => 'users', 'middleware' => 'auth:api'], function () {
     // ... các route khác của bạn
-    
+
     // Route để thêm sách vào tủ sách
     Route::post('book-case/add', [App\Http\Controllers\User\BookCaseController::class, 'store']);
     Route::delete('book-case/{book}', [App\Http\Controllers\User\BookCaseController::class, 'destroy']);

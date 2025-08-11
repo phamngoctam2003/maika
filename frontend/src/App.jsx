@@ -11,6 +11,9 @@ import AudioCategory from "./pages/user/sach_noi/category";
 import UserHome from "./pages/user/userhome";
 // router admin
 import { Home, User, Categories, Create_category, Roles, Update_Role, Create_role, Accounts, Set_Role_Account } from "./pages/admin/router";
+
+import ResetPassword from "./components/auth/resetPassword";
+
 import { Notfound404 } from "./components/global/notfound404";
 import EbookDetail from "./pages/user/book_detail/ebook";
 import SachNoiDetail from "./pages/user/book_detail/sach_noi";
@@ -116,6 +119,10 @@ function App() {
         },
         ...userRoutes,
       ]
+    },
+    {
+      path: "reset-password",
+      element: <ResetPassword />,
     }
   ]);
   return <RouterProvider router={router} />;

@@ -13,8 +13,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 use Spatie\Permission\Traits\HasRoles;
-use Spatie\Permission\Models\Permission;
-use Spatie\Permission\Models\Role;
+use App\Notifications\ResetPasswordNotification;
 
 class User extends Authenticatable implements JWTSubject
 {
@@ -33,6 +32,7 @@ class User extends Authenticatable implements JWTSubject
             'role' => $this->role
         ];
     }
+
     protected $fillable = [
         'fullName',
         'email',
@@ -132,6 +132,10 @@ class User extends Authenticatable implements JWTSubject
         return $this->activePackages()->first();
     }
 
+    public function sendPasswordResetNotification($token)
+    {
+        $this->notify(new ResetPasswordNotification($token));
+    }
     /**
      * Kiểm tra gói hội viên có sắp hết hạn không (trong 7 ngày)
      */

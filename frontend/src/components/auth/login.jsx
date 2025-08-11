@@ -6,6 +6,7 @@ import { AntNotification } from "@components/global/notification";
 import { message } from 'antd';
 import { AuthService } from '@/services/api-auth';
 import { useAuth } from '@/contexts/authcontext';
+import ForgotPassword from '@components/auth/handleForgotPassword';
 
 export const LoginModal = ({
     onLoginSuccess,
@@ -17,6 +18,7 @@ export const LoginModal = ({
 }) => {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
+    const [isPopupActiveForgotPassword, setIsPopupActiveForgotPassword] = useState(false);
     const { setCurrentUser, setToken, setPermissions, setRoles, setIsAuthenticated, setUserPackages, setActivePackage } = useAuth();
 
     const logoGoogle = (<svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
@@ -83,6 +85,10 @@ export const LoginModal = ({
             return navigate('/');
         }
     }
+    const handleCloseClickForgotPassword = () => {
+        setIsPopupActiveForgotPassword(false);
+    };
+
     if (!isOpen) return null;
     return (
         <div className={`z-[21] fixed left-0 top-0 h-full w-full bg-gray-900 text-white transform transition-transform duration-300 ease-in-out overflow-y-auto ${isOpen ? 'translate-x-0' : '-translate-x-full'
@@ -163,9 +169,12 @@ export const LoginModal = ({
                         >
                             Đăng ký ngay
                         </button>
-                        <a href="#" className="text-green-400 hover:text-green-300 transition-colors">
+                        <ForgotPassword isOpen={isPopupActiveForgotPassword} onClose={handleCloseClickForgotPassword} />
+                        <p
+                        onClick={() => setIsPopupActiveForgotPassword(true)}
+                        className="text-green-400 hover:text-green-300 transition-colors">
                             Quên mật khẩu?
-                        </a>
+                        </p>
                     </div>
 
                     {/* Divider */}
@@ -177,18 +186,18 @@ export const LoginModal = ({
 
                     {/* Social Login */}
                     <div className="flex gap-4">
-                        <button className="flex-1 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg flex items-center justify-center gap-2 transition-colors">
+                        {/* <button className="flex-1 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg flex items-center justify-center gap-2 transition-colors">
                             <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
                                 <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
                             </svg>
-                        </button>
-                        <button className="flex-1 py-3 bg-white hover:bg-gray-100 text-gray-900 rounded-lg flex items-center justify-center gap-2 transition-colors">
+                        </button> */}
+                        <div className="flex-1 py-3 bg-white hover:bg-gray-100 text-gray-900 rounded-lg flex items-center justify-center gap-2 transition-colors">
                             <LoginGoogle
                                 onSuccess={setLoginGoogle}
                                 setLoading={setLoading}
                                 logoGoogle={logoGoogle}
                             > </LoginGoogle>
-                        </button>
+                        </div>
                     </div>
                 </div>
             </div>

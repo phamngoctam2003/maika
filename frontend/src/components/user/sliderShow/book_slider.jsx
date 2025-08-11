@@ -3,7 +3,7 @@ import { Navigation, EffectCoverflow, Autoplay } from 'swiper/modules';
 import AddToBookCaseButton from "@components/common/AddToBookCaseButton";
 import { useAuth } from '@/contexts/authcontext'
 import { useBook } from "@/contexts/book_context.jsx";
-import { Select } from 'antd';
+import { Select, message } from 'antd';
 import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/effect-coverflow';
@@ -21,9 +21,9 @@ export default function BookSlider({ books, categoryId, categoryOptions, bookTyp
         isAuthenticated,
         hasMembership,
         setIsLoginModalOpen,
-
+        setIsPopupActiveLogin 
     } = useAuth();
-    const { openAudioModal, setOpenAudioModal, isAudioPlaying, setIsAudioPlaying, setCurrentBook, currentBook, setIsPopupActiveLogin } = useBook();
+    const { openAudioModal, setOpenAudioModal, isAudioPlaying, setIsAudioPlaying, setCurrentBook, currentBook } = useBook();
 
     useEffect(() => {
         const pathname = window.location.pathname;
