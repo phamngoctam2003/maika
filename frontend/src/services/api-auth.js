@@ -19,6 +19,19 @@ const AuthService = {
     return apiPost("/auth/login", { email, password });
   },
 
+  forgotPassword: async (email) => {
+    return apiPost("/auth/forgot-password", { email });
+  },
+
+  resetPassword: async ({ email, token, password, password_confirmation }) => {
+    return apiPost("/auth/reset-password", {
+      email,
+      token,
+      password,
+      password_confirmation,
+    });
+  },
+
   logout: async () => {
     try {
       const response = await apiPost("/auth/logout", {}, true);
@@ -42,7 +55,7 @@ const AuthService = {
   Login_Google: async (accessToken) => {
     return apiPost("/auth/login-google", { access_token: accessToken });
   },
-  
+
   isTokenExpired: () => {
     const token = localStorage.getItem("token");
     if (!token) return true;

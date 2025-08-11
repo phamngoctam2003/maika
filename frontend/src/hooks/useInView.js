@@ -45,7 +45,7 @@ const useInView = (callback, options = {}) => {
       handleIntersection,
       {
         threshold: 0.1,
-        rootMargin: '-180px',
+        rootMargin: '-160px',
         ...options
       }
     );

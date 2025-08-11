@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { AntNotification } from "@components/global/notification";
 import DetailtService from "@/services/users/api-detail";
-import { Dropdown } from "antd";
+import { Dropdown, message } from "antd";
 import { useAuth } from "@/contexts/authcontext";
 import { useBook } from "@/contexts/book_context.jsx";
 import { Loading } from "@components/loading/loading";
@@ -30,9 +30,10 @@ const SachNoiDetail = () => {
         isMembershipExpiringSoon,
         activePackage,
         setIsLoginModalOpen,
+        setIsPopupActiveLogin,
 
     } = useAuth();
-    const { openAudioModal, setOpenAudioModal, isAudioPlaying, setIsAudioPlaying, setCurrentBook, currentBook, setIsPopupActiveLogin } = useBook();
+    const { openAudioModal, setOpenAudioModal, isAudioPlaying, setIsAudioPlaying, setCurrentBook, currentBook } = useBook();
 
     const [currentPage, setCurrentPage] = useState(1);
     const [comments, setComments] = useState([]);
@@ -575,8 +576,9 @@ const SachNoiDetail = () => {
                             >
                                 {
                                     isBookRequireMembership() && !canReadMemberBook()
-                                        ? (isAuthenticated ? "Nâng cấp" : "Đăng nhập")
-                                        : (currentFormat === 'Sách nói' ? "Nghe sách" : "Đọc sách")
+                                        ? (isAuthenticated ? "Nâng cấp để nghe sách" : "Đăng nhập để nghe sách")
+                                        : (isAudioPlaying && openAudioModal ? "Tạm dừng" : "Nghe sách")
+
                                 }
                             </button>
                         </div>
