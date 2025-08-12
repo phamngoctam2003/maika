@@ -353,7 +353,7 @@ const Chapters = () => {
                                     </td>
                                     <td className="px-6 py-4">
                                         <Link
-                                            to={`/admin/books/chapters/update/${chapter.id}`}
+                                            to={`/admin/books/chapters/update/${chapter.id}?format_id=${chapter.book_format_mapping.format_id}&book_id=${chapter.book_format_mapping.book_id}`}
                                             type="button"
                                             data-modal-target="editUserModal"
                                             data-modal-show="editUserModal"

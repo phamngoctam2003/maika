@@ -36,8 +36,8 @@ const ChapterService = {
     return apiPost(`/chapters/update/${id}`, data);
   },
 
-  destroy: async (id) => {
-    return apiPost(`/chapters/${id}/delete`, {});
+  destroy: async (ids) => {
+    return apiPost(`/chapters/destroy`, { ids });
   },
 };
 export default ChapterService;

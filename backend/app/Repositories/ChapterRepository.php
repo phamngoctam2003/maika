@@ -6,6 +6,8 @@ use App\Contracts\ChapterRepositoryInterface;
 use App\Models\Chapter;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Storage;
+
 
 class ChapterRepository implements ChapterRepositoryInterface
 {
@@ -90,10 +92,10 @@ class ChapterRepository implements ChapterRepositoryInterface
     public function delete(array $ids): ?bool
     {
         if (is_array($ids) && !empty($ids)) {
-            foreach ($ids as $id) {
-                $chapter = Chapter::find($id);
-                if ($chapter && $chapter->comment()->count() > 0) {
-                    return false;
+            $chapters = Chapter::whereIn('id', $ids)->get();
+            foreach ($chapters as $chapter) {
+                if ($chapter->audio_path && Storage::disk('public')->exists($chapter->audio_path)) {
+                    Storage::disk('public')->delete($chapter->audio_path);
                 }
             }
             Chapter::whereIn('id', $ids)->delete();

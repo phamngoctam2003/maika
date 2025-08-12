@@ -52,25 +52,6 @@ class BookService
 
     public function deleteBooks(array $ids): bool
     {
-        if (empty($ids)) return false;
-        // Lấy tất cả các mapping id của sách cần xóa
-        $mappingIds = \App\Models\BookFormatMapping::whereIn('book_id', $ids)->pluck('id')->toArray();
-        // Lấy tất cả các chương thuộc các mapping này
-        $chapters = Chapter::whereIn('book_format_mapping_id', $mappingIds)->get();
-        foreach ($chapters as $chapter) {
-            if ($chapter->audio_path && Storage::disk('public')->exists($chapter->audio_path)) {
-                Storage::disk('public')->delete($chapter->audio_path);
-            }
-        }
-        // Xóa file hình ảnh của sách
-        $books = Books::whereIn('id', $ids)->get();
-        foreach ($books as $book) {
-            if ($book->file_path && Storage::disk('public')->exists($book->file_path)) {
-                Storage::disk('public')->delete($book->file_path);
-            }
-        }
-        // Xóa sách
-        Books::whereIn('id', $ids)->delete();
-        return true;
+        return $this->bookRepository->delete($ids);
     }
 }
