@@ -26,6 +26,9 @@ import Update_Book from "./pages/admin/books/update";
 
 import Chapters from "./pages/admin/chapters";
 import Create_Chapter from "./pages/admin/chapters/create";
+import Update_Chapter from "./pages/admin/chapters/update";
+
+
 import Update_Category from "./pages/admin/categories/update";
 
 import BookFree from "./pages/user/book_free/index";
@@ -57,6 +60,7 @@ function App() {
 
     { path: 'books/chapters/:bookId', element: < Chapters /> },
     { path: 'books/chapters/create/:bookId', element: < Create_Chapter /> },
+    { path: 'books/chapters/update/:chapterId', element: < Update_Chapter /> },
 
     { path: 'roles', element: < Roles /> },
     { path: 'roles/update/:roleId', element: < Update_Role /> },

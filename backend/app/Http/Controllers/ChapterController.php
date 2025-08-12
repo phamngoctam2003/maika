@@ -60,14 +60,14 @@ class ChapterController extends Controller
     public function show($id)
     {
         try {
-            $book = $this->chapterService->getBookById($id);
-            if (!$book) {
-                return response()->json(['message' => 'Sách không tồn tại.'], 404);
+            $chapter = $this->chapterService->getChapterById($id);
+            if (!$chapter) {
+                return response()->json(['message' => 'Chương không tồn tại.'], 404);
             }
-            return response()->json($book);
+            return response()->json($chapter);
         } catch (\Exception $e) {
             return response()->json([
-                'message' => 'Có lỗi xảy ra khi lấy thông tin sách.',
+                'message' => 'Có lỗi xảy ra khi lấy thông tin chương.',
                 'error' => $e->getMessage()
             ], 500);
         }
@@ -80,18 +80,42 @@ class ChapterController extends Controller
             'category_id' => 'required|exists:categories,id',
         ]);
         try {
-            $book = $this->chapterService->getBookById($id);
-            if (!$book) {
-                return response()->json(['message' => 'Sách không tồn tại.'], 404);
+            $chapter = $this->chapterService->getChapterById($id);
+            if (!$chapter) {
+                return response()->json(['message' => 'Chương không tồn tại.'], 404);
             }
-            $updatedBook = $this->chapterService->updateBook($id, $validatedData);
+            $updatedChapter = $this->chapterService->updateChapter($id, $validatedData);
             return response()->json([
-                'message' => 'Sách đã được cập nhật thành công.',
-                'book' => $updatedBook
+                'message' => 'Chương đã được cập nhật thành công.',
+                'chapter' => $updatedChapter
             ]);
         } catch (\Exception $e) {
             return response()->json([
-                'message' => 'Có lỗi xảy ra khi cập nhật sách.',
+                'message' => 'Có lỗi xảy ra khi cập nhật chương.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function delete(Request $request)
+    {
+        $ids = $request->ids;
+        try {
+            foreach ($ids as $id) {
+                $chapter = $this->chapterService->getChapterById($id);
+                if (!$chapter) {
+                    return response()->json(['message' => 'Chương không tồn tại.'], 404);
+                }
+            }
+            $result = $this->chapterService->deleteChapters($ids);
+            if ($result) {
+                return response()->json(['message' => 'Xóa thành công', 'status' => 200]);
+            } else {
+                return response()->json(['message' => 'Xóa thất bại', 'status' => 'error'], 400);
+            }
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Có lỗi xảy ra khi xóa sách.',
                 'error' => $e->getMessage()
             ], 500);
         }

@@ -317,7 +317,11 @@ const Books = () => {
                                             Edit
                                         </Link>
                                         <Link
-                                            to={`/admin/books/chapters/${item.id}?type=${item.formats.length === 2 ? 'ebook' : 'audio'}`}
+                                            to={`/admin/books/chapters/${item.id}?type=${
+                                                item.formats.some(cat => cat.name === 'Sách điện tử')
+                                                    ? 'ebook'
+                                                    : 'audio'
+                                            }`}
                                             type="button"
                                             data-modal-target="editUserModal"
                                             data-modal-show="editUserModal"

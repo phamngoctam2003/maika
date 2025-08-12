@@ -69,6 +69,7 @@ route::group(['prefix' => 'chapters'], function () {
     route::post('create', [ChapterController::class, 'create']);
     route::get('/{id}', [ChapterController::class, 'show']);
     route::post('/update/{id}', [ChapterController::class, 'update']);
+    route::post('/destroy', [ChapterController::class, 'delete']);
 });
 
 Route::resource('roles', RoleController::class)->except(['create', 'show', 'destroy', 'update']);

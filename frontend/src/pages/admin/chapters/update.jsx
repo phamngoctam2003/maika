@@ -3,24 +3,25 @@ import { useState, useEffect } from "react";
 import { AntNotification } from "@components/global/notification";
 import { QuillEditor } from "@components/editor/quilleditor";
 import ChapterService from "@/services/api-chapters";
-import BooksService from "@/services/api-books";
 import Breadcrumb from "@components/admin/breadcrumb";
-import { Select, Upload } from "antd";
-const Create_Chapter = () => {
+import { Upload } from "antd";
+const Update_Chapter = () => {
     const navigate = useNavigate();
     const [editorData, setEditorData] = useState('');
-    const [bookInfo, setBookInfo] = useState(null);
-    const { bookId } = useParams();
+    const [chapter, setChapter] = useState(null);
+    const { chapterId } = useParams();
     const [audioFile, setAudioFile] = useState('');
     const location = useLocation();
-    const [selectedFormatMappingId, setSelectedFormatMappingId] = useState(null);
     const [bookFormatMappings, setBookFormatMappings] = useState([]);
     // Breadcrumb items
+    const book_id = new URLSearchParams(location.search).get('book_id');
+    const format_id = new URLSearchParams(location.search).get('format_id');
+
     const breadcrumbItems = [
         { label: "Quản Trị", path: "/admin" },
         { label: "Quản Lý Sách", path: "/admin/books" },
-        { label: "Quản Lý Chương Sách", path: `/admin/books/chapters/` + bookId },
-        { label: "Thêm Chương", path: null },
+        { label: "Quản Lý Chương Sách", path: `/admin/books/chapters/${book_id}` },
+        { label: "Cập Nhật Chương", path: null },
     ];
 
     const handleEditorChange = (data) => {
@@ -28,59 +29,34 @@ const Create_Chapter = () => {
     };
 
     // Lấy type từ query param (?type=audio hoặc ?type=ebook)
-    const queryType = new URLSearchParams(location.search).get('type');
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const res = await BooksService.getById(bookId);
-                setBookInfo(res);
-                // Lấy danh sách mapping format cho sách này
-                if (res && res.book_format_mappings) {
-                    // Map thêm format_type dựa vào format_id
-                    const mappingsWithType = res.book_format_mappings.map(m => ({
-                        ...m,
-                        format_type: m.format_id === 1 ? 'ebook' : (m.format_id === 2 ? 'audio' : '')
-                    }));
-                    setBookFormatMappings(mappingsWithType);
-                    // Nếu có type trên url, chọn mapping phù hợp
-                    if (queryType) {
-                        const found = mappingsWithType.find(m => m.format_type === queryType);
-                        if (found) setSelectedFormatMappingId(found.id);
-                    } else if (mappingsWithType.length === 1) {
-                        setSelectedFormatMappingId(mappingsWithType[0].id);
-                    }
+                const res = await ChapterService.getById(chapterId);
+                if (res) {
+                    setEditorData(res.content);
+                    console.log(res);
+                    setChapter(res);
+                    setSelectedFormatMappingId(res.book_format_mapping_id);
                 }
             } catch (error) {
                 AntNotification.handleError(error);
             }
         }
         fetchData();
-    }, [bookId, location.search]);
+    }, [chapterId, location.search]);
 
-    const isAudioBook = bookInfo?.formats?.some(f => f.id === 2);
-    const isReadableBook = bookInfo?.formats?.some(f => f.id === 1);
 
-    // Xác định loại chương đang chọn (sửa lỗi selectedFormatId)
-    const selectedFormatId = bookFormatMappings.find(m => m.id === selectedFormatMappingId)?.format_id;
     const handSubmit = async (e) => {
         e.preventDefault();
 
-        // Kiểm tra bắt buộc chọn loại chương
-        if (!selectedFormatMappingId) {
-            AntNotification.showNotification("Thiếu thông tin", "Vui lòng chọn loại chương (sách nói hoặc sách điện tử)", "error");
-            return;
-        }
 
         const form = e.target;
         const data = new FormData(form);
 
-        if (selectedFormatId === 2) {
-            data.append("audio_path", audioFile);
-        }
-        if (selectedFormatId === 1) {
-            data.append("content", editorData);
-        }
+        data.append("audio_path", audioFile);
+        data.append("content", editorData);
         data.append("book_format_mapping_id", selectedFormatMappingId);
         // if (imageFile) {
         //     data.append("file_path", imageFile);
@@ -130,7 +106,7 @@ const Create_Chapter = () => {
             <div className="bg-white shadow rounded-lg mb-4 p-4 h-full">
                 <div className="flex justify-between items-center my-2">
                     <h5 className="text-xl font-medium leading-tight text-primary">
-                        Thêm Chương Sách
+                        Cập nhật chương sách
                     </h5>
                 </div>
                 <form className="max-w-lg mt-5" onSubmit={handSubmit}>
@@ -153,26 +129,22 @@ const Create_Chapter = () => {
                         />
                     </div>
                     {/* Hiển thị phần nhập nội dung nếu là ebook */}
-                    {selectedFormatId === 1 && (
-                        <div className="mb-5">
-                            <label htmlFor="description" className="block mb-2 text-sm font-medium text-gray-900 dark:text-black">Nội dung chương</label>
-                            <QuillEditor onChange={handleEditorChange} />
-                        </div>
-                    )}
+                    <div className="mb-5">
+                        <label htmlFor="description" className="block mb-2 text-sm font-medium text-gray-900 dark:text-black">Nội dung chương</label>
+                        <QuillEditor onChange={handleEditorChange} dataEditor={editorData} />
+                    </div>
                     {/* Hiển thị phần upload audio nếu là audio */}
-                    {selectedFormatId === 2 && (
-                        <div className="mb-5">
-                            <label htmlFor="audio_file" className="block mb-2 text-sm font-medium text-gray-900 dark:text-black">File Audio</label>
-                            <Upload
-                                {...uploadFile}
-                            >
-                                <div className="flex items-center px-4 py-2 text-sm font-medium cursor-pointer text-white bg-blue-600 rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M12 4.5v10m0-10c-.7 0-2.008 1.994-2.5 2.5M12 4.5c.7 0 2.008 1.994 2.5 2.5m5.5 9.5c0 2.482-.518 3-3 3H7c-2.482 0-3-.518-3-3" color="currentColor" /></svg>
-                                    <span className="ml-2">Tải lên audio</span>
-                                </div>
-                            </Upload>
-                        </div>
-                    )}
+                    <div className="mb-5">
+                        <label htmlFor="audio_file" className="block mb-2 text-sm font-medium text-gray-900 dark:text-black">File Audio</label>
+                        <Upload
+                            {...uploadFile}
+                        >
+                            <div className="flex items-center px-4 py-2 text-sm font-medium cursor-pointer text-white bg-blue-600 rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M12 4.5v10m0-10c-.7 0-2.008 1.994-2.5 2.5M12 4.5c.7 0 2.008 1.994 2.5 2.5m5.5 9.5c0 2.482-.518 3-3 3H7c-2.482 0-3-.518-3-3" color="currentColor" /></svg>
+                                <span className="ml-2">Tải lên audio</span>
+                            </div>
+                        </Upload>
+                    </div>
                     <button type="submit" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Submit</button>
                 </form>
             </div>
@@ -180,4 +152,4 @@ const Create_Chapter = () => {
     );
 }
 
-export default Create_Chapter;
+export default Update_Chapter;
