@@ -37,6 +37,7 @@ route::group(['prefix' => 'categories'], function () {
     route::get('/{id}', [CategoryController::class, 'show']);
     route::post('create', [CategoryController::class, 'create']);
     route::post('/update/{id}', [CategoryController::class, 'update']);
+    route::post('/destroy', [CategoryController::class, 'delete']);
 });
 route::group(['prefix' => 'accounts'], function () {
     route::get('/', [AccountController::class, 'index']);
@@ -51,8 +52,13 @@ route::group(['prefix' => 'accounts'], function () {
 //     route::get('/{id}', [BooktypeController::class, 'show']);
 //     route::post('/update/{id}', [BooktypeController::class, 'update']);
 // });
-
-
+route::group(['prefix' => 'packages'], function () {
+    route::get('/', [PackageController::class, 'index']);
+    route::post('/create', [PackageController::class, 'create']);
+    route::get('/{id}', [PackageController::class, 'show']);
+    route::post('/update/{id}', [PackageController::class, 'update']);
+    route::post('/delete', [PackageController::class, 'delete']);
+});
 
 route::group(['prefix' => 'books'], function () {
     route::get('formats', [BookController::class, 'getAllFormats']);
@@ -199,7 +205,13 @@ Route::group(['prefix' => 'vnpay'], function () {
 });
 
 // Legacy payment routes (for other payment methods if needed)
-Route::group(['prefix' => 'payment'], function () {
+Route::group(['prefix' => 'payments'], function () {
+    Route::get('/', [PaymentController::class, 'getAllPayments'])
+        ->middleware('auth:api');
+    Route::post('/update/{id}', [PaymentController::class, 'updatePayment'])
+        ->middleware('auth:api');
+    Route::get('/getbyid/{id}', [PaymentController::class, 'getPaymentById'])
+        ->middleware('auth:api');
     Route::get('/status', [PaymentController::class, 'checkPaymentStatus'])
         ->middleware('auth:api');
     Route::post('/cancel', [PaymentController::class, 'cancelPayment'])
@@ -208,7 +220,6 @@ Route::group(['prefix' => 'payment'], function () {
         ->middleware('auth:api');
 });
 
-// trong file routes/api.php
 
 Route::group(['prefix' => 'users', 'middleware' => 'auth:api'], function () {
     // ... các route khác của bạn

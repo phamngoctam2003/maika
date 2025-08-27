@@ -68,7 +68,6 @@ class ChapterRepository implements ChapterRepositoryInterface
             $path = $data['audio_path']->storePublicly('audio', 'public');
             $data['audio_path'] = $path;
         } else {
-            // Nếu không có file hoặc file rỗng, set null
             $data['audio_path'] = null;
         }
 
@@ -77,11 +76,23 @@ class ChapterRepository implements ChapterRepositoryInterface
 
     public function update(int $id, array $data): ?Chapter
     {
+        $user = auth('api')->user();
+        if (!$user) {
+            throw new \Exception('User not authenticated');
+        }
         $chapter = $this->getById($id);
         if ($chapter) {
-            // Đảm bảo có book_format_mapping_id khi update nếu cần
             if (!isset($data['book_format_mapping_id'])) {
                 throw new \Exception('book_format_mapping_id is required');
+            }
+            if (isset($data['audio_path']) && $data['audio_path'] && is_object($data['audio_path'])) {
+                if ($chapter->audio_path && Storage::disk('public')->exists($chapter->audio_path)) {
+                    Storage::disk('public')->delete($chapter->audio_path);
+                }
+                $path = $data['audio_path']->storePublicly('audio', 'public');
+                $data['audio_path'] = $path;
+            } else {
+                unset($data['audio_path']);
             }
             $chapter->update($data);
             return $chapter;

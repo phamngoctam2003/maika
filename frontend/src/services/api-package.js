@@ -17,31 +17,28 @@ const apiGet = async (url, options = {}) => {
   return response;
 };
 
-const CategoriesService = {
-  getCategories: async ({ page, per_page, sort_order, keyword }) => {
-    return apiGet("/categories", {
+const PackageService = {
+  getPackages: async ({ page, per_page, sort_order, keyword }) => {
+    return apiGet("/packages", {
       params: { page, per_page, sort_order, keyword },
     });
   },
 
-  getAll: async () => {
-    return apiGet("/categories");
-  },
 
-  getCategoryById: async (id) => {
-    return apiGet(`/categories/${id}`);
+  getById: async (id) => {
+    return apiGet(`/packages/${id}`);
   },
 
   create: async (data) => {
-    return apiPost("/categories/create", data);
+    return apiPost("/packages/create", data);
   },
 
   update: async (id, data) => {
-    return apiPost(`/categories/update/${id}`, data);
+    return apiPost(`/packages/update/${id}`, data);
   },
 
   destroy: async (ids) => {
-    return apiPost(`/categories/destroy`, { ids });
+    return apiPost(`/packages/delete`, { ids });
   },
 };
-export default CategoriesService ;
+export default PackageService;

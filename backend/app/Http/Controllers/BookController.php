@@ -130,6 +130,12 @@ class BookController extends Controller
         try {
             foreach ($ids as $id) {
                 $book = $this->bookService->getBookById($id);
+                if ($book->chapters()->exists()) {
+                    return response()->json([
+                        'message' => "Không thể xóa sách '{$book->title}' vì đang có chương thuộc sách này.",
+                        'error' => 'Sách có chương liên kết'
+                    ], 400);
+                }
                 if (!$book) {
                     return response()->json(['message' => 'Sách không tồn tại.'], 404);
                 }

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import CategoriesService from "@/services/api-categories";
+import PackageService from "@/services/api-package";
 import { AntNotification } from "@components/global/notification";
 import { Link } from "react-router-dom";
 import DeleteConfirmationModal from "@components/admin/delete_comfirm";
@@ -8,47 +8,38 @@ import { Loading } from "@components/loading/loading";
 import { Pagination } from 'antd';
 
 
-export const Categories = () => {
-    const [loading, setLoading] = useState(false);
-    const [categories, setCategories] = useState([]);
-    const [selectedCategories, setSelectedCategories] = useState([]);
+const Packages = () => {
+    const [isLoading, setIsLoading] = useState(false);
+    const [packageList, setPackageList] = useState([]);
+    const [selectedPackageIds, setSelectedPackageIds] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [pageSize, setPageSize] = useState(10);
-    const [totalItems, setTotalItems] = useState(0);
-    const [sort_order, setSortOrder] = useState(null);
-    const [keyword, setKeyword] = useState("");
-    const [inputValue, setInputValue] = useState('');
+    const [totalPackages, setTotalPackages] = useState(0);
+    const [sortOrder, setSortOrder] = useState(null);
+    const [searchKeyword, setSearchKeyword] = useState("");
+    const [searchInput, setSearchInput] = useState('');
 
-        const breadcrumbItems = [
-        { label: "Quản trị", path: "/admin" },
-        { label: "Quản Lý Danh Mục", path: null },
+    const breadcrumbItems = [
+        { label: "Quản Trị", path: "/admin" },
+        { label: "Quản Lý Gói Cước", path: null },
     ];
 
-    const checkCategory = (e, id) => {
-        setSelectedCategories((prevSelectedCategories) => {
-            if (e.target.checked) {
-                return [...prevSelectedCategories, id];
-            } else {
-                return prevSelectedCategories.filter((item) => item !== id);
-            }
-        });
-    };
-    const hanDleDelete = async () => {
-        if (selectedCategories.length === 0) {
+    const handleDelete = async () => {
+        if (selectedPackageIds.length === 0) {
             AntNotification.showNotification(
-                "Không có danh mục nào được chọn",
-                "Vui lòng chọn ít nhất một danh mục để xóa",
+                "Không có gói cước nào được chọn",
+                "Vui lòng chọn ít nhất một gói cước để xóa",
                 "error"
             );
             return;
         }
         try {
-            const res = await CategoriesService.destroy(selectedCategories);
-            if (res) {
-                setSelectedCategories([]);
+            const res = await PackageService.destroy(selectedPackageIds);
+            if (res?.status === 200) {
+                setSelectedPackageIds([]);
                 AntNotification.showNotification(
-                    "Xóa danh mục thành công",
-                    res?.message || "Xóa danh mục thành công",
+                    "Xóa gói cước thành công",
+                    res?.message || "Xóa gói cước thành công",
                     "success"
                 );
                 fetchData();
@@ -65,16 +56,16 @@ export const Categories = () => {
     };
     const fetchData = async () => {
         try {
-            setLoading(true);
-            const res = await CategoriesService.getCategories({
+            setIsLoading(true);
+            const res = await PackageService.getPackages({
                 page: currentPage,
                 per_page: pageSize,
-                sort_order: sort_order,
-                keyword: keyword,
+                sort_order: sortOrder,
+                keyword: searchKeyword,
             });
             if (res) {
-                setCategories(Array.isArray(res.data) ? res.data : []);
-                setTotalItems(res.total || 0);
+                setPackageList(Array.isArray(res.data) ? res.data : []);
+                setTotalPackages(res.total || 0);
             } else {
                 AntNotification.showNotification(
                     "Có lỗi xảy ra",
@@ -85,24 +76,24 @@ export const Categories = () => {
         } catch (error) {
             AntNotification.handleError(error);
         } finally {
-            setLoading(false);
+            setIsLoading(false);
         }
     };
     useEffect(() => {
         fetchData();
-    }, [currentPage, pageSize, sort_order, keyword]);
+    }, [currentPage, pageSize, sortOrder, searchKeyword]);
 
     useEffect(() => {
         const debounceTimer = setTimeout(() => {
-            if (inputValue !== "") {
+            if (searchInput !== "") {
                 setCurrentPage(1);
-                setKeyword(inputValue);
+                setSearchKeyword(searchInput);
             } else {
-                setKeyword("");
+                setSearchKeyword("");
             }
         }, 400);
         return () => clearTimeout(debounceTimer);
-    }, [inputValue]);
+    }, [searchInput]);
 
     const handlePageChange = async (page, size) => {
         setCurrentPage(page);
@@ -113,19 +104,27 @@ export const Categories = () => {
         const sortOrder = value === "asc" ? "asc" : "desc";
         setSortOrder(sortOrder);
     };
+    const checkPackage = (e, id) => {
+        if (e.target.checked) {
+            setSelectedPackageIds([...selectedPackageIds, id]);
+        } else {
+            setSelectedPackageIds(selectedPackageIds.filter((packageId) => packageId !== id));
+        }
+    };
+
     return (
         <div className="pt-16 px-4 lg:ml-64">
-            <Breadcrumb items={breadcrumbItems}/>
+            <Breadcrumb items={breadcrumbItems} />
             <div className="relative overflow-x-auto shadow-md my-4 sm:rounded-lg bg-white">
                 <div className="flex justify-between items-center p-4">
                     <h5 className="text-xl font-medium leading-tight text-primary">
-                        Quản Lý Danh Mục
+                        Quản Lý Gói Cước
                     </h5>
                     <Link
-                        to="/admin/categories/create"
+                        to="/admin/packages/create"
                         className="inline-block rounded px-6 pb-2 pt-2.5 text-xs font-medium uppercase leading-normal text-white bg-indigo-600 w-auto"
                     >
-                        Thêm Danh Mục
+                        Thêm Gói Cước
                     </Link>
                 </div>
                 <div className="flex items-center justify-between flex-column md:flex-row flex-wrap space-y-4 md:space-y-0 py-2 px-4 bg-white">
@@ -143,10 +142,10 @@ export const Categories = () => {
                         </select>
                     </div>
                     <div className="py-1 flex flex-wrap-reverse">
-                        {(selectedCategories.length > 0) ?
+                        {(selectedPackageIds.length > 0) ?
                             <DeleteConfirmationModal
-                                data={`Bạn có chắc chắn muốn xóa ${selectedCategories.length} danh mục này không?`}
-                                onDelete={hanDleDelete}
+                                data={`Bạn có chắc chắn muốn xóa ${selectedPackageIds.length} gói cước này không?`}
+                                onDelete={handleDelete}
                             /> : null
                         }
 
@@ -173,11 +172,11 @@ export const Categories = () => {
                             </div>
                             <input
                                 type="text"
-                                id="table-search-users"
+                                id="table-search-packages"
                                 className="block pt-2 ps-10 py-2 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:border-gray-600 dark:placeholder-gray-400 dark:text-slate-950 dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                placeholder="Tìm kiếm theo tên danh mục"
-                                value={inputValue}
-                                onChange={(e) => setInputValue(e.target.value)}
+                                placeholder="Tìm kiếm theo tên gói cước"
+                                value={searchInput}
+                                onChange={(e) => setSearchInput(e.target.value)}
                             />
                         </div>
                     </div>
@@ -188,14 +187,14 @@ export const Categories = () => {
                             <th scope="col" className="p-4">
                                 <div className="flex items-center">
                                     <input
-                                        checked={selectedCategories.length === categories.length}
+                                        checked={selectedPackageIds.length === packageList.length}
                                         onChange={() => {
-                                            if (selectedCategories.length === categories.length) {
-                                                setSelectedCategories([]); // bo chon tat ca
+                                            if (selectedPackageIds.length === packageList.length) {
+                                                setSelectedPackageIds([]);
                                             } else {
-                                                setSelectedCategories(
-                                                    categories.map((category) => category.id)
-                                                ); // chon tat ca
+                                                setSelectedPackageIds(
+                                                    packageList.map((pkg) => pkg.id)
+                                                );
                                             }
                                         }}
                                         id="checkbox-all-search"
@@ -208,10 +207,28 @@ export const Categories = () => {
                                 </div>
                             </th>
                             <th scope="col" className="px-6 py-3">
-                                Tên
+                                Tên gói cước
                             </th>
                             <th scope="col" className="px-6 py-3">
-                                Thời gian tạo
+                                Thời hạn (tháng)
+                            </th>
+                            <th scope="col" className="px-6 py-3">
+                                Giá gốc
+                            </th>
+                            <th scope="col" className="px-6 py-3">
+                                Giá khuyến mãi
+                            </th>
+                            <th scope="col" className="px-6 py-3">
+                                % giảm giá
+                            </th>
+                            <th scope="col" className="px-6 py-3">
+                                Nhãn nổi bật
+                            </th>
+                            <th scope="col" className="px-6 py-3">
+                                Người thêm
+                            </th>
+                            <th scope="col" className="px-6 py-3">
+                                Ngày tạo
                             </th>
                             <th scope="col" className="px-6 py-3">
                                 Action
@@ -220,61 +237,77 @@ export const Categories = () => {
                     </thead>
                     <tbody>
                         {
-                            categories.length === 0 ? (
+                            packageList.length === 0 ? (
                                 <tr className="">
-                                    <td colSpan={5} className="text-center py-4 text-gray-500">
-                                        Không có danh mục nào
+                                    <td colSpan={10} className="text-center py-4 text-gray-500">
+                                        Không có gói cước nào
                                     </td>
                                 </tr>
-                            ) : categories.map((category) => (
+                            ) : packageList.map((item) => (
                                 <tr
-                                    key={category.id}
+                                    key={item.id}
                                     className="bg-white border-b  dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-200"
                                 >
                                     <td className="w-4 p-4">
                                         <div className="flex items-center">
                                             <input
-                                                id="checkbox-table-search-1"
-                                                onChange={(e) => checkCategory(e, category.id)}
-                                                checked={selectedCategories.includes(category.id)}
+                                                id={`checkbox-table-search-${item.id}`}
+                                                onChange={(e) => checkPackage(e, item.id)}
+                                                checked={selectedPackageIds.includes(item.id)}
                                                 type="checkbox"
                                                 className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
                                             />
                                             <label
-                                                htmlFor="checkbox-table-search-1"
+                                                htmlFor={`checkbox-table-search-${item.id}`}
                                                 className="sr-only"
                                             >
                                                 checkbox
                                             </label>
                                         </div>
                                     </td>
-                                    <th
-                                        scope="row"
-                                        className="flex items-center px-6 py-4 text-gray-900 whitespace-nowrap dark:text-slate-950"
-                                    >
-                                        <div className="ps-3">
-                                            <div className="text-base font-semibold">
-                                                {category.name}
-                                            </div>
-                                        </div>
-                                    </th>
+                                    <td className="px-6 py-4 text-gray-900 dark:text-slate-950 font-semibold">
+                                        {item?.name}
+                                    </td>
+                                    <td className="px-6 py-4 text-gray-900 dark:text-slate-950 font-semibold">
+                                        {item?.duration_months}
+                                    </td>
+                                    <td className="px-6 py-4 text-gray-900 dark:text-slate-950 font-semibold">
+                                        {new Intl.NumberFormat('vi-VN', { currency: 'VND' }).format(item?.original_price)}đ
+                                    </td>
+                                    <td className="px-6 py-4 text-gray-900 dark:text-slate-950 font-semibold">
+                                        {new Intl.NumberFormat('vi-VN', { currency: 'VND' }).format(item?.discounted_price)}đ
+                                    </td>
+                                    <td className="px-6 py-4 text-gray-900 dark:text-slate-950 font-semibold">
+                                        {item?.discount_percent}%
+                                    </td>
+                                    <td className="px-6 py-4 text-gray-900 dark:text-slate-950 font-semibold">
+                                        {item?.highlight_label}
+                                    </td>
+                                    <td className="px-6 py-4 text-gray-900 dark:text-slate-950 font-semibold">
+                                        {item?.user?.fullName || "Không xác định"}
+                                    </td>
                                     <td className="px-6 py-4">
-                                        {new Date(category.created_at).toLocaleDateString("vi-VN", {
+                                        {item.created_at ? new Date(item.created_at).toLocaleDateString("vi-VN", {
                                             year: "numeric",
                                             month: "2-digit",
                                             day: "2-digit",
-                                        })}
+                                        }) : ""}
                                     </td>
-                                    <td className="px-6 py-4">
+                                    <td className="px-6 py-4 gap-6 flex items-center">
                                         <Link
-                                            to={`/admin/categories/update/${category.id}`}
+                                            to={`/admin/packages/update/${item?.id}`}
                                             type="button"
-                                            data-modal-target="editUserModal"
-                                            data-modal-show="editUserModal"
                                             className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
                                         >
                                             Edit
                                         </Link>
+                                        {/* <Link
+                                            to={`/admin/packages/detail/${item.id}`}
+                                            type="button"
+                                            className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+                                        >
+                                            Chi tiết
+                                        </Link> */}
                                     </td>
                                 </tr>
                             ))}
@@ -284,12 +317,14 @@ export const Categories = () => {
                     <Pagination className=""
                         current={currentPage}
                         defaultCurrent={1}
-                        total={totalItems}
+                        total={totalPackages}
                         onShowSizeChange={handlePageChange}
                         onChange={handlePageChange} />
                 </div>
             </div>
-            <Loading isLoading={loading} />
+            <Loading isLoading={isLoading} />
         </div>
     );
 };
+
+export default Packages;

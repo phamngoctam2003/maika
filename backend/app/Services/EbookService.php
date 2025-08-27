@@ -75,7 +75,7 @@ class EbookService
      */
     public function getEbook($slug)
     {
-        return $this->userService->getEbook($slug);
+        return $this->userService->getBook($slug);
     }
     public function getEbookCategorySlug(string $slug, int $page = 1, int $limit = 12)
     {

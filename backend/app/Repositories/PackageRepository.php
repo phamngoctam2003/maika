@@ -14,8 +14,7 @@ class PackageRepository implements PackageRepositoryInterface
 
     public function getAll(array $filters = []): LengthAwarePaginator
     {
-
-        $query = Package::with('users');
+        $query = Package::with('user');
 
         if (isset($filters['keyword'])) {
             $query->where('name', 'like', '%' . $filters['keyword'] . '%');
@@ -42,20 +41,85 @@ class PackageRepository implements PackageRepositoryInterface
         }
         $data['user_id'] = $user->id;
 
-        return Package::create($data);
+        // Nếu có discount_percent và original_price, luôn tính discounted_price nếu chưa có hoặc null
+        if (
+            isset($data['discount_percent']) && $data['discount_percent'] !== null
+            && isset($data['original_price']) && $data['original_price'] > 0
+        ) {
+            $data['discounted_price'] = round(
+                $data['original_price'] * (1 - $data['discount_percent'] / 100)
+            );
+        }
+
+        // Nếu vẫn chưa có discounted_price, nhưng có original_price, gán discounted_price = original_price
+        if (!isset($data['discounted_price']) || $data['discounted_price'] === null) {
+            if (isset($data['original_price'])) {
+                $data['discounted_price'] = $data['original_price'];
+            } else {
+                $data['discounted_price'] = 0;
+            }
+        }
+
+        // Nếu chưa có discount_percent thì tính discount_percent như trước
+        if (
+            (!isset($data['discount_percent']) || $data['discount_percent'] === null)
+            && isset($data['original_price']) && isset($data['discounted_price'])
+            && $data['original_price'] > 0
+        ) {
+            $data['discount_percent'] = round(
+                (1 - ($data['discounted_price'] / $data['original_price'])) * 100
+            );
+        }
+
+        $package = Package::create($data);
+
+        // Load lại quan hệ user để trả về đầy đủ thông tin
+        return Package::with('user')->find($package->id);
     }
     public function update(int $id, array $data): ?Package
     {
         $package = $this->getById($id);
         if ($package) {
+            // Nếu có discount_percent và original_price, luôn tính discounted_price nếu chưa có hoặc null
+            if (
+                isset($data['discount_percent']) && $data['discount_percent'] !== null
+                && isset($data['original_price']) && $data['original_price'] > 0
+            ) {
+                $data['discounted_price'] = round(
+                    $data['original_price'] * (1 - $data['discount_percent'] / 100)
+                );
+            }
+
+            // Nếu vẫn chưa có discounted_price, nhưng có original_price, gán discounted_price = original_price
+            if (!isset($data['discounted_price']) || $data['discounted_price'] === null) {
+                if (isset($data['original_price'])) {
+                    $data['discounted_price'] = $data['original_price'];
+                } else {
+                    $data['discounted_price'] = 0;
+                }
+            }
+
+            // Nếu chưa có discount_percent thì tính discount_percent như trước
+            if (
+                (!isset($data['discount_percent']) || $data['discount_percent'] === null)
+                && isset($data['original_price']) && isset($data['discounted_price'])
+                && $data['original_price'] > 0
+            ) {
+                $data['discount_percent'] = round(
+                    (1 - ($data['discounted_price'] / $data['original_price'])) * 100
+                );
+            }
+
             $package->update($data);
-            return $package;
+            // Trả về package kèm thông tin user
+            return Package::with('user')->find($package->id);
         }
         return null;
     }
-    public function delete(array $ids): ?bool
+   public function delete(array $ids): ?bool
     {
         if (is_array($ids) && !empty($ids)) {
+            if (empty($ids)) return false;
             Package::whereIn('id', $ids)->delete();
             return true;
         }
@@ -87,9 +151,9 @@ class PackageRepository implements PackageRepositoryInterface
 
         return Package::with(['users' => function ($query) use ($userId) {
             $query->where('user_packages.user_id', $userId)
-                  ->where('user_packages.status', 'active')           // Chỉ lấy gói đang active
-                  ->where('user_packages.payment_status', 'completed') // Chỉ lấy gói đã thanh toán thành công
-                  ->where('user_packages.ends_at', '>', now());        // Chỉ lấy gói chưa hết hạn
+                ->where('user_packages.status', 'active')           // Chỉ lấy gói đang active
+                ->where('user_packages.payment_status', 'completed') // Chỉ lấy gói đã thanh toán thành công
+                ->where('user_packages.ends_at', '>', now());        // Chỉ lấy gói chưa hết hạn
         }])->get()->map(function ($package) {
             $package->is_purchased = $package->users->isNotEmpty();
             unset($package->users); // Remove users data, only keep is_purchased flag
@@ -116,23 +180,23 @@ class PackageRepository implements PackageRepositoryInterface
     public function setUserPackage(int $packageId): UserPackage
     {
         $userId = auth('api')->id();
-        
+
         if (!$userId) {
             throw new \Exception('User not authenticated');
         }
-        
+
         return DB::transaction(function () use ($userId, $packageId) {
             if ($this->hasActivePackage($userId)) {
                 throw new \Exception('Bạn đã có gói cước đang hoạt động');
             }
 
             $package = Package::findOrFail($packageId);
-            
+
             // Kiểm tra package có active không
             if (!isset($package->duration_months) || $package->duration_months <= 0) {
                 throw new \Exception('Gói không hợp lệ');
             }
-            
+
             $startsAt = now();
             $endsAt = now()->addMonths($package->duration_months);
 
@@ -149,27 +213,27 @@ class PackageRepository implements PackageRepositoryInterface
     public function purchasePackageWithVnpay(int $packageId, array $paymentData = []): array
     {
         $userId = auth('api')->id();
-        
+
         if (!$userId) {
             throw new \Exception('User not authenticated');
         }
-        
+
         // Kiểm tra user có thể mua gói không
         if (!$this->canUserPurchasePackage($userId)) {
             throw new \Exception('Bạn đã có gói cước đang hoạt động');
         }
-        
+
         $package = Package::findOrFail($packageId);
-        
+
         // Validate amount
         if (!isset($package->discounted_price) || $package->discounted_price <= 0) {
             throw new \Exception('Giá gói không hợp lệ');
         }
-        
+
         return DB::transaction(function () use ($userId, $package, $paymentData) {
             // Tạo order ID
             $orderId = 'PKG_' . now()->format('YmdHis') . '_' . $userId . '_' . $package->id;
-            
+
             // Tạo UserPackage với trạng thái pending - KHÔNG active ngay
             $userPackage = UserPackage::create([
                 'user_id' => $userId,
@@ -183,7 +247,7 @@ class PackageRepository implements PackageRepositoryInterface
                 'amount' => $package->discounted_price, // Sử dụng discounted_price
                 'payment_data' => json_encode($paymentData),
             ]);
-            
+
             // Tạo VNPay payment URL
             $vnpayService = app(\App\Services\VnpayService::class);
             $paymentUrl = $vnpayService->createPaymentUrl([
@@ -192,7 +256,7 @@ class PackageRepository implements PackageRepositoryInterface
                 'order_info' => 'Thanh toan goi cuoc: ' . $package->name,
                 'order_type' => 'billpayment',
             ]);
-            
+
             return [
                 'success' => true,
                 'payment_url' => $paymentUrl,
@@ -212,27 +276,27 @@ class PackageRepository implements PackageRepositoryInterface
     {
         $vnpayService = app(\App\Services\VnpayService::class);
         $result = $vnpayService->handlePaymentResult($callbackData);
-        
+
         if (!$result['success']) {
             return $result;
         }
-        
+
         $orderId = $result['data']['order_id'];
         $transactionId = $result['data']['transaction_id'];
         $amount = $result['data']['amount'];
-        
+
         return DB::transaction(function () use ($orderId, $transactionId, $amount, $result) {
             // Tìm UserPackage theo order_id
             $userPackage = UserPackage::where('order_id', $orderId)->first();
-            
+
             if (!$userPackage) {
                 throw new \Exception('Không tìm thấy đơn hàng');
             }
-            
+
             // Cập nhật trạng thái thanh toán
             $startsAt = now();
             $endsAt = now()->addMonths($userPackage->package->duration_months);
-            
+
             $userPackage->update([
                 'payment_status' => 'completed',
                 'status' => 'active',
@@ -242,7 +306,7 @@ class PackageRepository implements PackageRepositoryInterface
                 'payment_at' => now(),
                 'payment_data' => json_encode($result['data']),
             ]);
-            
+
             return [
                 'success' => true,
                 'message' => 'Thanh toán thành công',
@@ -263,23 +327,28 @@ class PackageRepository implements PackageRepositoryInterface
     {
         return DB::transaction(function () use ($orderId, $reason) {
             $userPackage = UserPackage::where('order_id', $orderId)->first();
-            
+
             if (!$userPackage) {
                 throw new \Exception('Không tìm thấy đơn hàng');
             }
-            
+
             $userPackage->update([
                 'payment_status' => 'failed',
                 'status' => 'cancelled',
                 'payment_data' => json_encode(['failure_reason' => $reason]),
             ]);
-            
+
             return [
                 'success' => true,
                 'message' => 'Đã cập nhật trạng thái thanh toán thất bại',
                 'data' => $userPackage
             ];
         });
+    }
+
+    public function getPaymentById(int $id): ?UserPackage
+    {
+        return UserPackage::with(['package', 'user'])->where('id', $id)->first();
     }
 
     /**
@@ -304,17 +373,17 @@ class PackageRepository implements PackageRepositoryInterface
             $userPackage = UserPackage::where('order_id', $orderId)
                 ->where('status', 'pending')
                 ->first();
-            
+
             if (!$userPackage) {
                 throw new \Exception('Không tìm thấy đơn hàng hoặc đơn hàng đã được xử lý');
             }
-            
+
             $userPackage->update([
                 'status' => 'cancelled',
                 'payment_status' => 'cancelled',
                 'payment_data' => json_encode(['cancelled_at' => now()]),
             ]);
-            
+
             return [
                 'success' => true,
                 'message' => 'Đã hủy đơn hàng thành công',

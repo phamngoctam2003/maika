@@ -38,6 +38,10 @@ class CategoryService {
         return Category::whereHas('books.formats')->get();
     }
 
+    public function deleteCategories(array $ids): bool {
+        return $this->categoryRepository->delete($ids);
+    }
+
     /**
      * Lấy categories cho sách điện tử
      */

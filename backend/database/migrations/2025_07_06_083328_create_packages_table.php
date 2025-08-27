@@ -20,6 +20,7 @@ class CreatePackagesTable extends Migration
 
             $table->string('highlight_label')->nullable(); // VD: 'TIẾT KIỆM 10%', 'HOT'
             $table->boolean('is_best_offer')->default(false); // đánh dấu gói nổi bật
+            $table->unsignedBigInteger('user_id')->nullable()->after('is_best_offer'); // Người thêm gói
 
             $table->timestamps(); // created_at, updated_at
         });

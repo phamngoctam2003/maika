@@ -20,9 +20,26 @@ class PackageService
     {
         return $this->packageRepository->getAll($filters);
     }
+    public function getPackageById(int $id): ?Package
+    {
+        return $this->packageRepository->getById($id);
+    }
+    public function createPackage(array $data): Package
+    {
+        return $this->packageRepository->create($data);
+    }
     public function getAllPackagesWithUserPurchaseStatus(?int $userId = null): \Illuminate\Support\Collection
     {
         return $this->packageRepository->getAllPackagesWithUserPurchaseStatus($userId);
+    }
+
+    public function updatePackage(int $id, array $data): ?Package
+    {
+        return $this->packageRepository->update($id, $data);
+    }
+    public function deletePackages(array $ids): bool
+    {
+        return $this->packageRepository->delete($ids);
     }
 
     public function setUserPackage(int $packageId): UserPackage

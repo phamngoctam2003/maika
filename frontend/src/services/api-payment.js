@@ -17,31 +17,31 @@ const apiGet = async (url, options = {}) => {
   return response;
 };
 
-const CategoriesService = {
-  getCategories: async ({ page, per_page, sort_order, keyword }) => {
-    return apiGet("/categories", {
+const PaymentService = {
+  getPayments: async ({ page, per_page, sort_order, keyword }) => {
+    return apiGet("/payments", {
       params: { page, per_page, sort_order, keyword },
     });
   },
 
   getAll: async () => {
-    return apiGet("/categories");
+    return apiGet("/payments");
   },
 
-  getCategoryById: async (id) => {
-    return apiGet(`/categories/${id}`);
+  getById: async (id) => {
+    return apiGet(`/payments/getbyid/${id}`);
   },
 
   create: async (data) => {
-    return apiPost("/categories/create", data);
+    return apiPost("/payments/create", data);
   },
 
   update: async (id, data) => {
-    return apiPost(`/categories/update/${id}`, data);
+    return apiPost(`/payments/update/${id}`, data);
   },
 
-  destroy: async (ids) => {
-    return apiPost(`/categories/destroy`, { ids });
+  destroy: async (id) => {
+    return apiPost(`/payments/${id}/delete`, {});
   },
 };
-export default CategoriesService ;
+export default PaymentService;

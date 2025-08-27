@@ -12,6 +12,13 @@ import UserHome from "./pages/user/userhome";
 // router admin
 import { Home, User, Categories, Create_category, Roles, Update_Role, Create_role, Accounts, Set_Role_Account } from "./pages/admin/router";
 
+import Payment from "./pages/admin/payment";
+import Update_Payment from "./pages/admin/payment/update";
+
+import Packages from "./pages/admin/packages";
+import CreatePackage from "./pages/admin/packages/create";
+import UpdatePackage from "./pages/admin/packages/update";
+
 import ResetPassword from "./components/auth/resetPassword";
 
 import { Notfound404 } from "./components/global/notfound404";
@@ -46,6 +53,13 @@ function App() {
 
   const adminRoutes = [
     { path: 'user', element: < User /> },
+
+    { path: 'payments', element: < Payment /> },
+    { path: 'payments/update/:id', element: < Update_Payment /> },
+
+    { path: 'packages', element: < Packages /> },
+    { path: 'packages/create', element: < CreatePackage /> },
+    { path: 'packages/update/:id', element: < UpdatePackage /> },
 
     { path: 'accounts', element: < Accounts /> },
     { path: 'accounts/rolelevel/:userId', element: < Set_Role_Account /> },
@@ -105,7 +119,6 @@ function App() {
         ...adminRoutes,
       ]
     },
-    { path: "test-audio", element: <AudioPlayer /> },
 
     {
       path: "/",

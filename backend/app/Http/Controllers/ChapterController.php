@@ -64,7 +64,7 @@ class ChapterController extends Controller
             if (!$chapter) {
                 return response()->json(['message' => 'Chương không tồn tại.'], 404);
             }
-            return response()->json($chapter);
+            return response()->json($chapter, 200);
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Có lỗi xảy ra khi lấy thông tin chương.',
@@ -76,8 +76,13 @@ class ChapterController extends Controller
     public function update(Request $request, $id)
     {
         $validatedData = $request->validate([
-            'name' => 'required|string|max:255|unique:book_types,name,' . $id,
-            'category_id' => 'required|exists:categories,id',
+            'book_format_mapping_id' => 'required',
+            'title' => 'required|string|max:255',
+            'content' => 'nullable|string',
+            'audio_path' => 'nullable',
+            'chapter_order' => 'required|integer',
+            'expected_chapters' => 'nullable|integer',
+            'status' => 'nullable|integer',
         ]);
         try {
             $chapter = $this->chapterService->getChapterById($id);
