@@ -40,7 +40,7 @@ const Update_Book = () => {
                 const res = await BooksService.getById(id);
                 if (res) {
                     const book = res;
-                    setBookData(book); // lưu lại book để dùng cho các useEffect khác
+                    setBookData(book);
                     setFormValues({
                         title: book.title || "",
                         publication_year: book.publication_year || "",
@@ -54,7 +54,6 @@ const Update_Book = () => {
                         value: String(a.id),
                         label: a.name,
                     })) || []);
-                    // Không setCategoryId ở đây nữa
                 } else {
                     AntNotification.showNotification("Có lỗi xảy ra", "Không thể tải dữ liệu sách!", "error");
                 }

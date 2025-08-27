@@ -70,29 +70,52 @@ export const AdminSidebar = () => {
                 },
             ]
         },
-        // {
-        //     id: "4",
-        //     name: "Chương sách",
-        //     link: "/admin/chapters",
-        //     svg: <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 32 32"><g fill="currentColor"><path d="M9.5 12a.5.5 0 0 0 0 1h13a.5.5 0 0 0 0-1h-13Zm0 3a.5.5 0 0 0 0 1h13a.5.5 0 0 0 0-1h-13ZM9 18.5a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 0 1h-13a.5.5 0 0 1-.5-.5Zm.5 2.5a.5.5 0 0 0 0 1h8a.5.5 0 0 0 0-1h-8Z"/><path d="M4 4a3 3 0 0 1 3-3h13.05a1 1 0 0 1 .707.293l6.95 6.95A1 1 0 0 1 28 8.95V28a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3V4Zm3-1a1 1 0 0 0-1 1v24a1 1 0 0 0 1 1h18a1 1 0 0 0 1-1V9.364L25.636 9h-4.643A.997.997 0 0 1 20 8V3.364L19.636 3H7Z"/></g></svg>,
-        //     sub_menu: [
-        //         {
-        //             id: "4.1",
-        //             name: "Thêm",
-        //             link: "/admin/chapters/create"
-        //         },
-        //         {
-        //             id: "4.2",
-        //             name: "Danh sách",
-        //             link: "/admin/chapters"
-        //         },
-        //         {
-        //             id: "4.3",
-        //             name: "Danh sách đã xóa",
-        //             link: "/admin/chapters/trash"
-        //         },
-        //     ]
-        // },
+        {
+            id: "4",
+            name: "Gói hội viên",
+            link: "/admin/packages",
+            svg: <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" strokeLinejoin="round" strokeWidth="4"><path d="M9 40L4 17l10 5L24 8l10 14l10-5l-5 23H9Z"/><path d="M24 33a4 4 0 1 0 0-8a4 4 0 0 0 0 8Z"/></g></svg>,
+            sub_menu: [
+                {
+                    id: "4.1",
+                    name: "Thêm",
+                    link: "/admin/packages/create"
+                },
+                {
+                    id: "4.2",
+                    name: "Danh sách",
+                    link: "/admin/packages"
+                },
+                {
+                    id: "4.3",
+                    name: "Danh sách đã xóa",
+                    link: "/admin/packages/trash"
+                },
+            ]
+        },
+        {
+            id: "5",
+            name: "Thanh toán",
+            link: "/admin/payments",
+            svg: <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" color="currentColor"><path d="M13.5 15H6c-1.886 0-2.828 0-3.414-.586S2 12.886 2 11V7c0-1.886 0-2.828.586-3.414S4.114 3 6 3h12c1.886 0 2.828 0 3.414.586S22 5.114 22 7v5c0 .932 0 1.398-.152 1.765a2 2 0 0 1-1.083 1.083C20.398 15 19.932 15 19 15"/><path d="M14 9a2 2 0 1 1-4 0a2 2 0 0 1 4 0m-1 8a3 3 0 0 1 3-3v-2a3 3 0 0 1 3-3v5.5c0 2.335 0 3.502-.472 4.386a4 4 0 0 1-1.642 1.642C16.002 21 14.835 21 12.5 21H12c-1.864 0-2.796 0-3.53-.305a4 4 0 0 1-2.166-2.164C6 17.796 6 16.864 6 15"/></g></svg>,
+            sub_menu: [
+                // {
+                //     id: "4.1",
+                //     name: "Thêm",
+                //     link: "/admin/payment/create"
+                // },
+                {
+                    id: "5.2",
+                    name: "Danh sách",
+                    link: "/admin/payments"
+                },
+                // {
+                //     id: "4.3",
+                //     name: "Danh sách đã xóa",
+                //     link: "/admin/payment/trash"
+                // },
+            ]
+        },
         // {
         //     id: "5",
         //     name: "Danh mục tin tức",

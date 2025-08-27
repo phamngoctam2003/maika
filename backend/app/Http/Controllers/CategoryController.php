@@ -88,6 +88,28 @@ class CategoryController extends Controller
             ], 500);
         }
     }
+    public function delete(Request $request)
+    {
+        $ids = $request->ids;
+        try {
+            $categories = Category::whereIn('id', $ids)->get();
+            foreach ($categories as $category) {
+                if ($category->books()->exists()) {
+                    return response()->json([
+                        'message' => "Không thể xóa danh mục '{$category->name}' vì đang có sách thuộc danh mục này.",
+                        'error' => 'Danh mục có sách liên kết'
+                    ], 400);
+                }
+            }
+            $this->categoryService->deleteCategories($ids);
+            return response()->json(['message' => 'Danh mục đã được xóa thành công.'], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Có lỗi xảy ra khi xóa danh mục.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
 
     /**
      * Lấy categories với formats tối ưu
@@ -201,6 +223,4 @@ class CategoryController extends Controller
             ], 500);
         }
     }
-
-    
 }

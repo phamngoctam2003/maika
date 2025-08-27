@@ -15,6 +15,7 @@ class Package extends Model
         'discount_percent',
         'highlight_label',
         'is_best_offer',
+        'user_id', 
     ];
 
     protected $casts = [
@@ -30,8 +31,13 @@ class Package extends Model
         return $this->discounted_price;
     }
 
-public function users()
-{
-    return $this->belongsToMany(User::class, 'user_packages');
-}
+    public function users()
+    {
+        return $this->belongsToMany(User::class, 'user_packages');
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
 }

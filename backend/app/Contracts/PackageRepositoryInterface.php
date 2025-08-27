@@ -4,6 +4,7 @@ namespace App\Contracts;
 
 use Illuminate\Support\Collection;
 use App\Models\UserPackage;
+use Illuminate\Pagination\LengthAwarePaginator;
 interface PackageRepositoryInterface extends BaseRepositoryInterface
 {
     /**
@@ -21,7 +22,7 @@ interface PackageRepositoryInterface extends BaseRepositoryInterface
     public function handleVnpayFailure(string $orderId, string $reason = ''): array;
     public function cleanupPendingPackages(): int;
     public function cancelPendingPackage(string $orderId): array;
-
+    public function getPaymentById(int $id): ?UserPackage;
     /**
      * Get the count of packages purchased by a user.
      *
