@@ -153,4 +153,16 @@ class BookController extends Controller
             ], 500);
         }
     }
+    public function getAllCategories()
+    {
+        try {
+            $categories = $this->bookService->getAllCategories();
+            return response()->json($categories);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Có lỗi xảy ra khi lấy danh sách thể loại sách.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
 }

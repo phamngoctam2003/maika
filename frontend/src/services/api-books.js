@@ -24,6 +24,10 @@ const BooksService = {
     });
   },
 
+  getAllCategories: async () => {
+    return apiGet("/books//categories/all");
+  },
+
   bookFormat: async () => {
     return apiGet("/books/formats");
   },
