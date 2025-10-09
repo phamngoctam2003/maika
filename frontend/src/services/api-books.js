@@ -25,7 +25,7 @@ const BooksService = {
   },
 
   getAllCategories: async () => {
-    return apiGet("/books//categories/all");
+    return apiGet("/books/categories/all");
   },
 
   bookFormat: async () => {

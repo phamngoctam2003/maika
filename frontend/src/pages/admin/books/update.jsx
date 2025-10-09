@@ -2,7 +2,6 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { AntNotification } from "@components/global/notification";
 import BooksService from "@/services/api-books";
-import CategoriesService from "@/services/api-categories";
 import Breadcrumb from "@components/admin/breadcrumb";
 import { Select, Upload, Radio, Checkbox } from "antd";
 
@@ -70,7 +69,7 @@ const Update_Book = () => {
             try {
                 const res = await BooksService.getAllCategories();
                 if (res) {
-                    const options = res.data.map((category) => ({
+                    const options = res.map((category) => ({
                         value: category.id,
                         label: category.name,
                     }));
