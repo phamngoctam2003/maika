@@ -68,6 +68,7 @@ route::group(['prefix' => 'books'], function () {
     route::get('/{id}', [BookController::class, 'show']);
     route::post('/update/{id}', [BookController::class, 'update']);
     route::post('/destroy', [BookController::class, 'delete']);
+    route::get('/categories/all', [BookController::class, 'getAllCategories']);
 });
 
 route::group(['prefix' => 'chapters'], function () {

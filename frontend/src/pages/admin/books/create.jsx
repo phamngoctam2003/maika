@@ -2,7 +2,6 @@ import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { AntNotification } from "@components/global/notification";
 import BooksService from "@/services/api-books";
-import CategoriesService from "@/services/api-categories";
 import Breadcrumb from "@components/admin/breadcrumb";
 import { Select, Upload, Radio, Checkbox } from "antd";
 const Create_Book = () => {
@@ -57,7 +56,7 @@ const Create_Book = () => {
     useEffect(() => {
         const fetchCategories = async () => {
             try {
-                const res = await CategoriesService.getAll();
+                const res = await BooksService.getAllCategories();
                 if (res) {
                     const options = res.data.map((category) => ({
                         value: category.id,

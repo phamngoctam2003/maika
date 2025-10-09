@@ -68,7 +68,7 @@ const Update_Book = () => {
     useEffect(() => {
         const fetchCategories = async () => {
             try {
-                const res = await CategoriesService.getAll();
+                const res = await BooksService.getAllCategories();
                 if (res) {
                     const options = res.data.map((category) => ({
                         value: category.id,

@@ -7,6 +7,7 @@ use App\Models\BookFormat;
 use App\Models\Author;
 use App\Models\Books;
 use App\Models\Chapter;
+use App\Models\Category;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Storage;
@@ -49,6 +50,10 @@ class BookService
         return Author::all();
     }
 
+    public function getAllCategories(): Collection
+    {
+        return Category::all();
+    }
 
     public function deleteBooks(array $ids): bool
     {
