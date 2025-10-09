@@ -58,10 +58,11 @@ const Create_Book = () => {
             try {
                 const res = await BooksService.getAllCategories();
                 if (res) {
-                    const options = res.data.map((category) => ({
+                    const options = res.map((category) => ({
                         value: category.id,
                         label: category.name,
                     }));
+                    console.log("Category Options:", options);
                     setCategoryOptions(options);
                     // setCategoryId(options[0]?.value || '');
                 } else {
