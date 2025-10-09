@@ -21,7 +21,7 @@ use App\Http\Controllers\Auth\ResetPasswordController;
 
 Route::get('test-api', function () {
     return response()->json([
-        'message' => 'Api đã hoạt động rồi!',
+        'message' => 'ok',
         'data' => [
             'name' => 'Laravel API',
             'version' => '12.0.0',
