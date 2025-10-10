@@ -285,7 +285,7 @@ const PackagePlan = () => {
             </p>
             <ul className="text-yellow-300 text-xs md:text-sm space-y-1 text-left">
               <li>
-                • Bạn có <strong>60 phút</strong> để hoàn thành thanh toán sau
+                • Bạn có <strong>15 phút</strong> để hoàn thành thanh toán sau
                 khi nhấn "MUA GÓI"
               </li>
               <li>
