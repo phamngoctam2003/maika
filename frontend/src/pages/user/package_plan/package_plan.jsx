@@ -44,7 +44,7 @@ const PackagePlan = () => {
                     fetchPackages();
                     setPaymentData(res.data);
                     setIsOpenModalPayment(true);
-                    setActivePackage(true); 
+                    // setActivePackage(true); 
                     setShowPaymentLoading(false); 
                 })
                 .catch((err) => {
