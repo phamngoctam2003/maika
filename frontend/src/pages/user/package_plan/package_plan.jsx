@@ -40,9 +40,11 @@ const PackagePlan = () => {
         if (paymentData?.vnp_TxnRef) {
             VnpayService.vnpReturn(paymentData)
                 .then((res) => {
+                    console.log("VNPay return response:", res);
                     fetchPackages();
                     setPaymentData(res.data);
                     setIsOpenModalPayment(true);
+                    setActivePackage(true); 
                     setShowPaymentLoading(false); 
                 })
                 .catch((err) => {
@@ -50,7 +52,7 @@ const PackagePlan = () => {
                     setShowPaymentLoading(false); 
                 });
 
-            // ✅ Xóa các query params khỏi URL để tránh gọi lại khi reload
+            // Xóa các query params khỏi URL để tránh gọi lại khi reload
             const cleanUrl = window.location.origin + window.location.pathname;
             window.history.replaceState({}, document.title, cleanUrl);
         } else {
