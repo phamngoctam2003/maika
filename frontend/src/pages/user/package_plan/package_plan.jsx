@@ -263,7 +263,6 @@ const PackagePlan = () => {
                     : "MUA GÓI VIA VNPAY"}
                 </button>
               </div>
-
               {plan.is_best_offer === 1 && (
                 <div className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full animate-pulse">
                   HOT
