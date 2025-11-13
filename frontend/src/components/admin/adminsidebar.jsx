@@ -116,29 +116,24 @@ export const AdminSidebar = () => {
                 // },
             ]
         },
-        // {
-        //     id: "5",
-        //     name: "Danh mục tin tức",
-        //     link: "/admin/category-news",
-        //     svg: <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 32 32"><path fill="currentColor" d="M14 25h14v2H14zm-6.83 1l-2.58 2.58L6 30l4-4l-4-4l-1.42 1.41L7.17 26zM14 15h14v2H14zm-6.83 1l-2.58 2.58L6 20l4-4l-4-4l-1.42 1.41L7.17 16zM14 5h14v2H14zM7.17 6L4.59 8.58L6 10l4-4l-4-4l-1.42 1.41L7.17 6z" /></svg>,
-        //     sub_menu: [
-        //         {
-        //             id: "5.1",
-        //             name: "Thêm",
-        //             link: "/admin/category-news/create",
-        //         },
-        //         {
-        //             id: "5.2",
-        //             name: "Danh sách",
-        //             link: "/admin/category-news",
-        //         },
-        //         {
-        //             id: "5.3",
-        //             name: "Danh sách đã xóa",
-        //             link: "/admin/category-news/trash",
-        //         },
-        //     ]
-        // },
+        {
+            id: "6",
+            name: "Banner",
+            link: "/admin/banners",
+            svg: <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 256 256"><path fill="#000000" d="m131.79 69.65l-43.63 96a4 4 0 0 1-3.64 2.35H28.23a8.2 8.2 0 0 1-6.58-3.13a8 8 0 0 1 .43-10.25L57.19 116L22.08 77.38a8 8 0 0 1-.43-10.26A8.22 8.22 0 0 1 28.23 64h99.92a4 4 0 0 1 3.64 5.65m105.77-27.41a8.3 8.3 0 0 0-5.79-2.24H168a8 8 0 0 0-7.28 4.69l-42.57 93.65a4 4 0 0 0 3.64 5.66h57.79l-34.86 76.69a8 8 0 1 0 14.56 6.62l80-176a8 8 0 0 0-1.72-9.07"/></svg>,
+            sub_menu: [
+                {
+                    id: "6.1",
+                    name: "Thêm",
+                    link: "/admin/banners/create",
+                },
+                {
+                    id: "6.2",
+                    name: "Danh sách",
+                    link: "/admin/banners",
+                },
+            ]
+        },
         // {
         //     id: "6",
         //     name: "Tin tức",

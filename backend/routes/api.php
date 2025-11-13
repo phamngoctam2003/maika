@@ -18,6 +18,7 @@ use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\Api\VnpayController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\ResetPasswordController;
+use App\Http\Controllers\BannerController;
 
 Route::get('test-api', function () {
     return response()->json([
@@ -71,6 +72,7 @@ route::group(['prefix' => 'books'], function () {
     route::get('/categories/all', [BookController::class, 'getAllCategories']);
 });
 
+
 route::group(['prefix' => 'chapters'], function () {
     route::get('/', [ChapterController::class, 'index']);
     route::post('create', [ChapterController::class, 'create']);
@@ -89,6 +91,13 @@ Route::group(['prefix' => 'roles'], function () {
     // route::get('trash', [TrashedRoleController::class, 'index'])->middleware('check.permission:delete-role');
     // route::post('restore', [TrashedRoleController::class, 'restore'])->middleware('check.permission:delete-role');
     // route::delete('force-delete/{id}', [TrashedRoleController::class, 'forceDelete'])->middleware('check.permission:delete-role');
+});
+
+route::group(['prefix' => 'banners'], function () {
+    route::get('/', [BannerController::class, 'index']);
+    route::post('create', [BannerController::class, 'create']);
+    route::post('/update/{id}', [BannerController::class, 'update']);
+    route::post('/destroy', [BannerController::class, 'delete']);
 });
 
 Route::group([
