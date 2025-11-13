@@ -22,7 +22,7 @@ use App\Http\Controllers\BannerController;
 
 Route::get('test-api', function () {
     return response()->json([
-        'message' => 'API đang hoạt động!',
+        'message' => 'test lần 2!',
         'data' => [
             'name' => 'Laravel API',
             'version' => '12.0.0',
