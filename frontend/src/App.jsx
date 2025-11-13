@@ -15,6 +15,9 @@ import { Home, User, Categories, Create_category, Roles, Update_Role, Create_rol
 import Payment from "./pages/admin/payment";
 import Update_Payment from "./pages/admin/payment/update";
 
+import Banners from "./pages/admin/banners";
+import Create_banner from "./pages/admin/banners/create";
+
 import Packages from "./pages/admin/packages";
 import CreatePackage from "./pages/admin/packages/create";
 import UpdatePackage from "./pages/admin/packages/update";
@@ -60,6 +63,9 @@ function App() {
     { path: 'packages', element: < Packages /> },
     { path: 'packages/create', element: < CreatePackage /> },
     { path: 'packages/update/:id', element: < UpdatePackage /> },
+
+    { path: 'banners', element: < Banners /> },
+    { path: 'banners/create', element: < Create_banner /> },
 
     { path: 'accounts', element: < Accounts /> },
     { path: 'accounts/rolelevel/:userId', element: < Set_Role_Account /> },

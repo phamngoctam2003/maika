@@ -138,7 +138,6 @@ const Create_Book = () => {
         setFormatId(e);
     };
 
-    console.log("Author", author);
     return (
         <div className="pt-16 px-4 lg:ml-64">
             <Breadcrumb items={breadcrumbItems} />
